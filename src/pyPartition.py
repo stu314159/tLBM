@@ -239,12 +239,12 @@ if __name__=="__main__":
       put testing code here  
     """
     #Nx = 447; Ny = 447; Nz = 838;from pymetis import part_graph #<-- requires that the PrgEnv-intel module be selected
-    Nx = 50; Ny = 50; Nz = 250;
+    Nx = 10; Ny = 10; Nz = 10;
     print("nnodes = %g" % (Nx*Ny*Nz))
     lat15 = D3Q15Lattice(Nx, Ny, Nz);
     print("initializing the adjacency list")
     lat15.initialize_adjDict();
-    numProcs = 64;
+    numProcs = 4;
     print("setting the partition")
     lat15.set_Partition(numParts = numProcs,numTrials = 8000,style = '3D')
 
