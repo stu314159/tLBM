@@ -1,3 +1,0 @@
-/p/home/sblair/work/projects/tLBM/build/CMakeFiles/edit_cache.dir
-/p/home/sblair/work/projects/tLBM/build/CMakeFiles/rebuild_cache.dir
-/p/home/sblair/work/projects/tLBM/build/CMakeFiles/tLBM.dir
