@@ -57,7 +57,7 @@ def set_geometric_partition(Nx,Ny,Nz,px,py,pz):
     
     """
     partList = []
-    bx = Nx/px; by = Ny/py; bz = Nz/pz # block x,y and z minimum sizes
+    bx = int(Nx/px); by = int(Ny/py); bz = int(Nz/pz) # block x,y and z minimum sizes
     #part = 0
     zmin = 0
     for z in range(pz):
