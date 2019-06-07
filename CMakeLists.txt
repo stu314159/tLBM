@@ -13,4 +13,7 @@ include_directories ("${PROJECT_SOURCE_DIR}/include")
 
 add_executable(tLBM src/tLBM.cpp 
                     src/Problem.cpp
-                    include/Problem.h) 
+                    include/Problem.h)
+
+target_include_directories(tLBM PUBLIC include
+                                PRIVATE src) 
