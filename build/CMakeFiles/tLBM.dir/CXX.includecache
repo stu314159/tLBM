@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/Problem.h
+string
+-
+
+/p/home/sblair/work/projects/tLBM/src/Problem.cpp
+Problem.h
+/p/home/sblair/work/projects/tLBM/src/Problem.h
+
+/p/home/sblair/work/projects/tLBM/src/tLBM.cpp
+iostream
+-
+mpi.h
+-
+Problem.cpp
+/p/home/sblair/work/projects/tLBM/src/Problem.cpp
+

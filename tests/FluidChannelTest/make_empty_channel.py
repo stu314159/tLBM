@@ -7,7 +7,7 @@ write the *.mat file and the *.vtk files
 
 # ajust python path so required modules are visible
 import sys
-sys.path.insert(1,'../../src')
+sys.path.insert(1,'../../src/python')
 
 
 import FluidChannel as fc

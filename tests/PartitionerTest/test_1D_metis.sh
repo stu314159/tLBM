@@ -13,7 +13,7 @@ depFiles+="vtkHelper.py "
 depFiles+="tLBM_partition.py "
 
 # copy necessary source files from the src folder to the tmp folder
-cd ../../src
+cd ../../python
 
 for i in $depFiles; do
   cp $i ../tests/PartitionerTest/tmp/.

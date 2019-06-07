@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
-sys.path.insert(1,'../../src')
+sys.path.insert(1,'../../python')
 
 import FluidChannel as fc
 import numpy as np
