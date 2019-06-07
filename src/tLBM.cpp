@@ -1,6 +1,6 @@
 #include <iostream>
 #include <mpi.h>
-#include "Problem.cpp"
+#include "Problem.h"
 
 int main(int argc, char* argv[]){
 
