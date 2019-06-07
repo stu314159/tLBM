@@ -2,6 +2,9 @@ cmake_minimum_required (VERSION 3.5)
 project (tLBM VERSION 0.1
                LANGUAGES CXX)
 
+find_package(MPI REQUIRED)
+
+
 #[==[
 this is a multi-line comment put here for the hell of it.
 so, here is a second line of comments...
@@ -15,4 +18,6 @@ add_executable(tLBM src/tLBM.cpp
 
 target_compile_options(tLBM PUBLIC -Wall -Wextra -Wpedantic)
 target_include_directories(tLBM PUBLIC include
-                                PRIVATE src) 
+                                PRIVATE src)
+
+target_link_libraries(tLBM ${MPI_C_LIBRARIES}) 
