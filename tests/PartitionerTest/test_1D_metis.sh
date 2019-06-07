@@ -33,20 +33,9 @@ disc="D3Q27"
 style="1D"
 parts=5
 
-echo "testing 1D partitioning scripts"
-
 ./tLBM_partition.py $geom $disc $style $parts 
 
-exitStat=$?
-echo "exitStat = $exitStat"
-
-if [ $exitStat == 0 ]
-then
-  echo "test successful!"
-else
-  echo "test failed!"
-fi
-
+echo "exitStat =$?"
 
 # clean up 
 cd ..

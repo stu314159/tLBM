@@ -30,10 +30,10 @@ cp ../test_geom.py .
 # partition the geometry
 geom="test_geom.mat"
 disc="D3Q27"
-style="1D"
-parts=5
+style="metis"
+parts=8
 
-echo "testing 1D partitioning scripts"
+echo "testing $style partitioning scripts"
 
 ./tLBM_partition.py $geom $disc $style $parts 
 
