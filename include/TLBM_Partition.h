@@ -13,6 +13,7 @@ class TLBM_Partition{
   private:
     int rank;
     int size;
+    int tlbm_initialize();
 
 };
 
