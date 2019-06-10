@@ -12,12 +12,12 @@ public:
 
 private:
   unsigned int numSpd;
-  vector<int> ex;
-  vector<int> ey;
-  vector<int> ez;
-  vector<int> bbSpd;
-  vector<double> w;
+  std::vector<int> ex;
+  std::vector<int> ey;
+  std::vector<int> ez;
+  std::vector<int> bbSpd;
+  std::vector<double> w;
 
-}
+};
 
 #endif
