@@ -6,7 +6,6 @@
 
 #include <string>
 
-
 class Problem{
 
 public:
