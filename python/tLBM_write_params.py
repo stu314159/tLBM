@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python3 
 
 #tLBM_write_params.py
 """
@@ -98,8 +98,8 @@ p_conv_fact = (((l_conv_fact/t_conv_fact)**2)*(1./3.))/(l_conv_fact**3)
 rho_lbm = rho_p*(l_conv_fact**3)
 #rho_lbm = rho_p
 
-print 'There are %d nodes listed in ndType'%len(ndType)
-print 'Writing those to file'
+print('There are %d nodes listed in ndType'%len(ndType))
+print('Writing those to file')
 ndTypeFileName = 'ndType.lbm'
 ndTypeFile = open(ndTypeFileName,'w')
 for i in range(len(ndType)):
@@ -107,8 +107,8 @@ for i in range(len(ndType)):
     ndTypeFile.write('%i \n'%nT)
 ndTypeFile.close()
 
-print 'There are %d nodes listed as subspace nodes'%len(ssNds)
-print 'Writing those to file'
+print('There are %d nodes listed as subspace nodes'%len(ssNds))
+print('Writing those to file')
 ssNdFileName = 'ssNds.lbm'
 ssNdFile = open(ssNdFileName,'w')
 for i in range(len(ssNds)):
@@ -116,24 +116,24 @@ for i in range(len(ssNds)):
     ssNdFile.write('%i \n'%ss)
 ssNdFile.close()
 
-print 'l_conv_fact = %g.\n'%l_conv_fact
-print 'p_conv_fact = %g.\n'%p_conv_fact
+print('l_conv_fact = %g.\n'%l_conv_fact)
+print('p_conv_fact = %g.\n'%p_conv_fact)
 
 
-print 'Number of lattice points = %d.' % nnodes
-print 'Number of time-steps = %d.' % Num_ts
-print 'LBM viscosity = %g.' % nu_lbm
-print 'LBM relaxation parameter (omega) = %g.' % omega
-print 'LBM flow Mach number = %g. ' % u_lbm
-print 'Nx = %d' % Nx
-print 'Ny = %d' % Ny
-print 'Nz = %d' % Nz
+print('Number of lattice points = %d.' % nnodes)
+print('Number of time-steps = %d.' % Num_ts)
+print('LBM viscosity = %g.' % nu_lbm)
+print('LBM relaxation parameter (omega) = %g.' % omega)
+print('LBM flow Mach number = %g. ' % u_lbm)
+print('Nx = %d' % Nx)
+print('Ny = %d' % Ny)
+print('Nz = %d' % Nz)
 
 #run_dec = raw_input('Would you like to continue? [Y/n]: ')
 run_dec = 'y' # just let it run
 
 if run_dec!='n' and run_dec!='N':
-    print 'Ok! Cross your fingers!!'
+    print('Ok! Cross your fingers!!')
     # write the input file
     params = open('params.lbm','w')
     params.write('%s \n'% lattice_type) # lattice selection (keep.  We might actually use this)
@@ -168,7 +168,7 @@ if run_dec!='n' and run_dec!='N':
     params.close()
     
 else:
-    print 'Run aborted.  Better luck next time!'
+    print('Run aborted.  Better luck next time!')
 
 
 
