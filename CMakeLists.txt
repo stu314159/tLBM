@@ -14,7 +14,9 @@ so, here is a second line of comments...
 
 add_executable(tLBM src/tLBM.cpp 
                     src/Problem.cpp
-                    include/Problem.h)
+                    src/TLBM_Partition.cpp
+                    include/Problem.h
+                    include/TLBM_Partition.h)
 
 target_compile_options(tLBM PUBLIC -Wall -Wextra -Wpedantic)
 target_include_directories(tLBM PUBLIC include
