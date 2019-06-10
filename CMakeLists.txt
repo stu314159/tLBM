@@ -15,8 +15,10 @@ so, here is a second line of comments...
 add_executable(tLBM src/tLBM.cpp 
                     src/Problem.cpp
                     src/TLBM_Partition.cpp
+                    src/LatticeStructure.cpp
                     include/Problem.h
-                    include/TLBM_Partition.h)
+                    include/TLBM_Partition.h
+                    include/LatticeStructure.h)
 
 target_compile_options(tLBM PUBLIC -Wall -Wextra -Wpedantic)
 target_include_directories(tLBM PUBLIC include
