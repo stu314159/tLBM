@@ -3,15 +3,15 @@
 #include <stdexcept>
 
 void Problem::load_input(){
-  ifstream input_params("params.lbm",ios::in);
-  if(!input_params.is_open())
+  std::ifstream input_params("params.lbm",std::ios::in);
+  if(!input_params.is_open()){
     throw std::runtime_error("Could not open params.lbm!");
-  
+  }
   input_params >> latticeType;
   input_params >> dynamics;
   input_params >> numTs;
   input_params >> warmupTs;
-  input_params >> plotFreq
+  input_params >> plotFreq;
   input_params >> cs;
   input_params >> rhoLBM;
   input_params >> uLBM; 
@@ -29,7 +29,5 @@ void Problem::load_input(){
   input_params >> pConvFact;
   input_params >> pRefIdx;
   input_params >> ssDataFlag;
-
-
   input_params.close();
 }
