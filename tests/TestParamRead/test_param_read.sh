@@ -41,7 +41,7 @@ aprun -n 1 ./tLBM_write_params.py $MAT_FILE $latticeType $dynamics \
 
 export OMP_NUM_THREADS=$nOMP
 
-aprun -n $nParts -d $nOMP ./tLBM
+aprun -n $nParts -d $nOMP ./tLBMexec
 
 # test complete; clean up
 

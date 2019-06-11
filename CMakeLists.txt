@@ -12,7 +12,7 @@ so, here is a second line of comments...
 
 #include_directories ("${PROJECT_SOURCE_DIR}/include")
 
-add_executable(tLBM src/tLBM.cpp 
+add_executable(tLBMexec src/tLBM.cpp 
                     src/Problem.cpp
                     src/TLBM_Partition.cpp
                     src/LatticeStructure.cpp
