@@ -22,10 +22,10 @@ add_executable(tLBMexec src/tLBM.cpp
                     include/LatticeStructure.h
                     include/D3Q15LatticeStructure.h)
 
-target_compile_options(tLBM PUBLIC -Wall -Wextra -Wpedantic)
-target_include_directories(tLBM PUBLIC include
+target_compile_options(tLBMexec PUBLIC -Wall -Wextra -Wpedantic)
+target_include_directories(tLBMexec PUBLIC include
                                 PRIVATE src ${MPI_INCLUDE_PATH})
 
-target_link_libraries(tLBM ${MPI_C_LIBRARIES})
+target_link_libraries(tLBMexec ${MPI_C_LIBRARIES})
 
  
