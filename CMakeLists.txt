@@ -26,4 +26,6 @@ target_compile_options(tLBM PUBLIC -Wall -Wextra -Wpedantic)
 target_include_directories(tLBM PUBLIC include
                                 PRIVATE src ${MPI_INCLUDE_PATH})
 
-target_link_libraries(tLBM ${MPI_C_LIBRARIES}) 
+target_link_libraries(tLBM ${MPI_C_LIBRARIES})
+
+ 
