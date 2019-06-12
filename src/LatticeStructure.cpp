@@ -1,6 +1,7 @@
 #include "LatticeStructure.h"
 
-LatticeStructure::LatticeStructure(){
+LatticeStructure::LatticeStructure(): numSpd(0)
+{
 
 }
 
