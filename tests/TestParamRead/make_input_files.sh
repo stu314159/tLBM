@@ -1,7 +1,7 @@
 #!/bin/bash
 
 N_divs=11
-latticeType=D3Q27
+latticeType=D3Q15
 dynamics=2
 partitionMethod=metis
 nParts=4
