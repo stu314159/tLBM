@@ -26,8 +26,8 @@ add_executable(tLBMexec src/tLBM.cpp
 
 target_compile_options(tLBMexec PUBLIC -Wall -Wextra -Wpedantic -std=c++11)
 target_include_directories(tLBMexec PUBLIC include
-                                PRIVATE src ${MPI_INCLUDE_PATH})
+	                            PRIVATE src ${MPI_CXX_INCLUDE_PATH})
 
-target_link_libraries(tLBMexec ${MPI_C_LIBRARIES})
+target_link_libraries(tLBMexec ${MPI_CXX_LIBRARIES})
 
  
