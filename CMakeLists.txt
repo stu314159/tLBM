@@ -17,10 +17,12 @@ add_executable(tLBMexec src/tLBM.cpp
                     src/TLBM_Partition.cpp
                     src/LatticeStructure.cpp
                     src/D3Q15LatticeStructure.cpp
+                    src/D3Q19LatticeStructure.cpp
                     include/Problem.h
                     include/TLBM_Partition.h
                     include/LatticeStructure.h
-                    include/D3Q15LatticeStructure.h)
+                    include/D3Q15LatticeStructure.h
+                    include/D3Q19LatticeStructure.h)
 
 target_compile_options(tLBMexec PUBLIC -Wall -Wextra -Wpedantic -std=c++11)
 target_include_directories(tLBMexec PUBLIC include
