@@ -14,6 +14,8 @@ int main(int argc, char* argv[]){
   printf("Constructing a partition object for rank %d of %d\n",rank,size);
   TLBM_Partition myPart(rank,size);
 
+  printf("Rank %d complete!\n",rank);
+
   MPI_Finalize();
   return 0;
 }
