@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <fstream>
 #include <iostream>
+#include <exception>
 
 
 TLBM_Partition::TLBM_Partition(int r, int s):
@@ -46,15 +47,31 @@ void TLBM_Partition::load_parts(){
 // as my neighbors.
    std::ifstream parts("parts.lbm");
    int p;
-   int ndInd = 0; // global node index of current lattice point
+   int gNdInd = 0; // global node index of current lattice point
+   int localNdInd = 0; // local node index counter
    partSizes = std::vector<int>(size,0);
+   std::pair<std::map<int,int>::iterator,bool> ret;
+
    while (parts >> p){
 	   partSizes[p]+=1; // increment the # LPs in partition p
 	   if (p == rank)
 	   {
-	     localNdList.push_back(ndInd);
+	     localNdList.push_back(gNdInd); // add to the local node list
+
+	     // register nodes in the global to local and local to global maps
+	     ret = localToGlobal.insert( std::pair<int,int>(localNdInd,gNdInd) );
+	     if (ret.second == false){
+	    	 throw "local to global key already existed!";
+	     }
+
+	     ret = globalToLocal.insert( std::pair<int,int>(gNdInd,localNdInd));
+	     if (ret.second == false){
+	    	 throw "global to local key already existed!";
+	     }
+	     localNdInd += 1; // increment the local node index
+
 	   }
-	   ndInd+=1;
+	   gNdInd+=1;
    }
    parts.close(); // needed?
 

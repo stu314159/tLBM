@@ -7,6 +7,7 @@
 
 #include <list>
 #include <vector>
+#include <map>
 
 struct LatticeIndex{
 	// essentially a 3-tuple to hold integer indices into a 3D lattice
@@ -34,6 +35,8 @@ class TLBM_Partition{
     LatticeStructure * myLattice;
     std::list<int> localNdList; // my lattice points
     std::vector<int> partSizes; // number of LPs in each partition
+    std::map<int,int> globalToLocal;
+    std::map<int,int> localToGlobal;
     int tlbm_initialize();
     void load_parts();
 
