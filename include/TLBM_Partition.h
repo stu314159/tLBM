@@ -6,6 +6,7 @@
 #include "D3Q19LatticeStructure.h"
 
 #include <list>
+#include <vector>
 
 struct LatticeIndex{
 	// essentially a 3-tuple to hold integer indices into a 3D lattice
@@ -31,7 +32,8 @@ class TLBM_Partition{
     int rank;
     int size;
     LatticeStructure * myLattice;
-    std::list<int> myLPs; // my lattice points
+    std::list<int> localNdList; // my lattice points
+    std::vector<int> partSizes; // number of LPs in each partition
     int tlbm_initialize();
     void load_parts();
 

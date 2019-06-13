@@ -2,6 +2,9 @@
 #include <stdexcept>
 #include <string>
 #include <cstdio>
+#include <fstream>
+#include <iostream>
+
 
 TLBM_Partition::TLBM_Partition(int r, int s):
 rank(r),size(s)
@@ -18,7 +21,6 @@ TLBM_Partition::~TLBM_Partition(){
 int TLBM_Partition::tlbm_initialize(){
 
   thisProblem.load_input();
-
   // construct appropriate lattice type
   if (thisProblem.latticeType == std::string("D3Q15"))
   {
@@ -33,7 +35,7 @@ int TLBM_Partition::tlbm_initialize(){
   }else {
 	  throw std::invalid_argument("Invalid Lattice Structure!");
   }
-
+  load_parts();
 
 
   return 0; //<-- indicates no problem with initialization
@@ -42,6 +44,31 @@ int TLBM_Partition::tlbm_initialize(){
 void TLBM_Partition::load_parts(){
  // read parts.lbm and obtain information about lattice points in my partition as well
 // as my neighbors.
+   std::ifstream parts("parts.lbm");
+   int p;
+   int ndInd = 0; // global node index of current lattice point
+   partSizes = std::vector<int>(size,0);
+   while (parts >> p){
+	   partSizes[p]+=1; // increment the # LPs in partition p
+	   if (p == rank)
+	   {
+	     localNdList.push_back(ndInd);
+	   }
+	   ndInd+=1;
+   }
+   parts.close(); // needed?
+
+//   // say something about nodes in each partition
+//   if (rank == 0){
+//	   std::cout << "part Sizes = ";
+//	   for(auto i = partSizes.begin();i != partSizes.end(); ++i){
+//		   std::cout << *i << ' ';
+//	   }
+//	   std::cout << std::endl;
+//   }
+//
+//   printf("Rank %d size of localNdList = %d \n",rank,static_cast<int>(localNdList.size()));
+
 
 }
 
