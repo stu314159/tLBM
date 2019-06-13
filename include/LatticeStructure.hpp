@@ -64,7 +64,8 @@ const int * LatticeStructure<T>::get_bbSpd(){
 }
 
 template <class T>
-LatticeStructure<T>::LatticeStructure()
+LatticeStructure<T>::LatticeStructure():
+ex(0),ey(0),ez(0),w(0),bbSpd(0)
 {
 
 }

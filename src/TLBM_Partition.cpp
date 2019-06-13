@@ -34,7 +34,10 @@ int TLBM_Partition::tlbm_initialize(){
 	  myLattice = new D3Q19LatticeStructure<real>;
 
 
-  }else {
+  }else if (thisProblem.latticeType == std::string("D3Q27"))
+  {
+	  myLattice = new D3Q27LatticeStructure<real>;
+  } else {
 	  throw std::invalid_argument("Invalid Lattice Structure!");
   }
   load_parts();
