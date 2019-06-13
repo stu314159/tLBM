@@ -10,6 +10,7 @@
 
 #include "LatticeStructure.h"
 
+template < class T>
 class D3Q19LatticeStructure : public LatticeStructure
 {
 
@@ -22,7 +23,7 @@ private:
   const int ex[19] = {0,1,-1,0,0,0,0,1,-1,1,-1,1,-1,1,-1,0,0,0,0};
   const int ey[19] = {0,0,0,1,-1,0,0,1,1,-1,-1,0,0,0,0,1,-1,1,-1};
   const int ez[19] = {0,0,0,0,0,1,-1,0,0,0,0,1,1,-1,-1,1,1,-1,-1};
-  const float w[19] = {3.f/9.f,1.f/18.f,1.f/18.f,1.f/18.f,1.f/18.f,1.f/18.f,1.f/18.f,
+  const T w[19] = {3.f/9.f,1.f/18.f,1.f/18.f,1.f/18.f,1.f/18.f,1.f/18.f,1.f/18.f,
 		    1.f/36.f,1.f/36.f,1.f/36.f,1.f/36.f,1.f/36.f,1.f/36.f,
 		1.f/36.f,1.f/36.f,1.f/36.f,1.f/36.f,1.f/36.f,1.f/36.f};
   const int bbSpd[19] = {0, 2, 1, 4, 3, 6, 5, 10, 9, 8, 7, 14, 13,

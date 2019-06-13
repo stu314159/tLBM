@@ -8,15 +8,19 @@
 #include "LatticeStructure.h"
 #include "D3Q19LatticeStructure.h"
 
-D3Q19LatticeStructure::D3Q19LatticeStructure():
+template <class T>
+D3Q19LatticeStructure<T>::D3Q19LatticeStructure():
 LatticeStructure()
 {
 numSpd = 19;
 }
 
-D3Q19LatticeStructure::~D3Q19LatticeStructure(){
+template <class T>
+D3Q19LatticeStructure<T>::~D3Q19LatticeStructure(){
 
 }
 
-
+void tempFun1(){
+	D3Q19LatticeStructure<real> tempObj;
+}
 

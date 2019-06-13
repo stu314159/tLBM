@@ -4,10 +4,13 @@
 #include "LatticeStructure.h"
 #include "D3Q15LatticeStructure.h"
 #include "D3Q19LatticeStructure.h"
+#include "TLBM_definitions.h" // global constants and definitions.  Hack-ish?
 
 #include <list>
 #include <vector>
 #include <map>
+
+
 
 struct LatticeIndex{
 	// essentially a 3-tuple to hold integer indices into a 3D lattice

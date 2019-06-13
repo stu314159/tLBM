@@ -5,6 +5,7 @@
 // parameters for a tLBM simulation.
 
 #include <string>
+#include "TLBM_definitions.h"
 
 class Problem{
 
@@ -19,21 +20,21 @@ public:
   int numTs;
   int warmupTs; // number of timesteps to run prior to writing data to disk
   int plotFreq; // timesteps between data writes
-  float cs;  // turbulence parameter
-  float rhoLBM;
-  float uLBM;
-  float omega;
+  real cs;  // turbulence parameter
+  real rhoLBM;
+  real uLBM;
+  real omega;
   int nx;  // lattice size in X,Y, and Z directions
   int ny;
   int nz;
   int restartFlag; // [0 = no re-start | 1 = re-start]
   int timeAvgFlag; // [0 = no time average | 1 = time average]
-  float lx_p;  // physical lenght of domain in each dimension
-  float ly_p;
-  float lz_p;
-  float tConvFact;  // conversion factors for time, length, and pressure
-  float lConvFact;
-  float pConvFact;
+  real lx_p;  // physical lenght of domain in each dimension
+  real ly_p;
+  real lz_p;
+  real tConvFact;  // conversion factors for time, length, and pressure
+  real lConvFact;
+  real pConvFact;
   int pRefIdx;   // node index for reference pressure
   int ssDataFlag;  // [0 = do not take subset data | 1 = take subset data ]
 

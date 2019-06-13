@@ -25,12 +25,12 @@ int TLBM_Partition::tlbm_initialize(){
   // construct appropriate lattice type
   if (thisProblem.latticeType == std::string("D3Q15"))
   {
-	 myLattice = new D3Q15LatticeStructure;
+	 myLattice = new D3Q15LatticeStructure<real>;
 
 
   }else if(thisProblem.latticeType == std::string("D3Q19"))
   {
-	  myLattice = new D3Q19LatticeStructure;
+	  myLattice = new D3Q19LatticeStructure<real>;
 
 
   }else {

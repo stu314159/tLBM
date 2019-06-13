@@ -22,7 +22,8 @@ add_executable(tLBMexec src/tLBM.cpp
                     include/TLBM_Partition.h
                     include/LatticeStructure.h
                     include/D3Q15LatticeStructure.h
-                    include/D3Q19LatticeStructure.h)
+                    include/D3Q19LatticeStructure.h
+                    include/TLBM_definitions.h)
 
 target_compile_options(tLBMexec PUBLIC -Wall -Wextra -Wpedantic -std=c++11)
 target_include_directories(tLBMexec PUBLIC include
