@@ -1,9 +1,9 @@
 #ifndef TLBM_PARTITION_H
 #define TLBM_PARTITION_H
 #include "Problem.h"
-#include "LatticeStructure.h"
-#include "D3Q15LatticeStructure.h"
-#include "D3Q19LatticeStructure.h"
+#include "LatticeStructure.hpp"
+#include "D3Q15LatticeStructure.hpp"
+#include "D3Q19LatticeStructure.hpp"
 #include "TLBM_definitions.h" // global constants and definitions.  Hack-ish?
 
 #include <list>
@@ -35,16 +35,17 @@ class TLBM_Partition{
   private:
     int rank;
     int size;
-    LatticeStructure * myLattice;
+    LatticeStructure<real> * myLattice;
     std::vector<int> localNdList; // my lattice points
     std::vector<int> partSizes; // number of LPs in each partition
     std::map<int,int> globalToLocal;
     std::map<int,int> localToGlobal;
     int numLnodes;
     int writeOffset;
-    int * adjList = NULL;
+    int * adjMatrix = NULL;
     int tlbm_initialize();
     void load_parts();
+    void create_adj_matrix();
 
 };
 

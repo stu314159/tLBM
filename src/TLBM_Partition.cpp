@@ -17,7 +17,7 @@ rank(r),size(s)
 
 TLBM_Partition::~TLBM_Partition(){
   delete myLattice;
-  delete adjList;
+  delete adjMatrix;
 }
 
 int TLBM_Partition::tlbm_initialize(){
@@ -97,7 +97,18 @@ void TLBM_Partition::load_parts(){
 //    printf("Rank %d write offset = %d \n",rank,writeOffset);
     numLnodes = partSizes[rank]; // just to make this easier
 //    printf("Rank %d creating adjList with %d speeds \n",rank,myLattice->get_numSpd());
-    adjList = new int[numLnodes*myLattice->get_numSpd()];
+
+
+}
+
+void TLBM_Partition::create_adj_matrix(){
+  unsigned int numSpd = myLattice->get_numSpd();
+  adjMatrix = new int[numLnodes*numSpd];
+//  const int * ex = myLattice->get_ex();
+//  const int * ey = myLattice->get_ey();
+//  const int * ez = myLattice->get_ez();
+
+
 
 }
 
