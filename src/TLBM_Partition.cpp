@@ -41,6 +41,7 @@ int TLBM_Partition::tlbm_initialize(){
 	  throw std::invalid_argument("Invalid Lattice Structure!");
   }
   load_parts();
+  create_adj_matrix();
 
 
   return 0; //<-- indicates no problem with initialization
@@ -130,6 +131,7 @@ int TLBM_Partition::get_tgt_index(int gInd, int ex, int ey, int ez){
 	tgt.Y = (src.Y + ey)%thisProblem.ny;
 	tgt.Z = (src.Z + ez)%thisProblem.nz;
 
+	// get correct "wrap-around" behavior
 	if (tgt.X < 0)
 		tgt.X += thisProblem.nx;
 
