@@ -75,6 +75,9 @@ void TLBM_Partition::load_parts(){
    }
    parts.close(); // needed?
 
+   // compute write offsets
+
+
 //   // say something about nodes in each partition
 //   if (rank == 0){
 //	   std::cout << "part Sizes = ";
@@ -85,7 +88,12 @@ void TLBM_Partition::load_parts(){
 //   }
 //
 //   printf("Rank %d size of localNdList = %d \n",rank,static_cast<int>(localNdList.size()));
+    writeOffset = 0;
+    for (auto i = partSizes.begin(); i < partSizes.begin()+rank;++i){
 
+    	writeOffset += *i;
+    }
+//    printf("Rank %d write offset = %d \n",rank,writeOffset);
 
 }
 

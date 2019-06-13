@@ -40,6 +40,7 @@ class TLBM_Partition{
     std::vector<int> partSizes; // number of LPs in each partition
     std::map<int,int> globalToLocal;
     std::map<int,int> localToGlobal;
+    int writeOffset;
     int tlbm_initialize();
     void load_parts();
 
