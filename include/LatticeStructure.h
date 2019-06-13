@@ -7,6 +7,7 @@ class LatticeStructure
 public:
   LatticeStructure();
   ~LatticeStructure();
+  unsigned int get_numSpd(){return numSpd;}
   
 
 protected:
