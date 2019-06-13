@@ -21,6 +21,8 @@ add_executable(tLBMexec src/tLBM.cpp
                     include/D3Q15LatticeStructure.hpp
                     include/D3Q19LatticeStructure.hpp
                     include/D3Q27LatticeStructure.hpp
+                    include/HaloDataObject.hpp
+                    include/HaloDataOrganizer.hpp
                     include/TLBM_definitions.h)
 
 target_compile_options(tLBMexec PUBLIC -Wall -Wextra -Wpedantic -std=c++11)

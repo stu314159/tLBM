@@ -5,6 +5,8 @@
 #include "D3Q15LatticeStructure.hpp"
 #include "D3Q19LatticeStructure.hpp"
 #include "D3Q27LatticeStructure.hpp"
+#include "HaloDataObject.hpp"
+#include "HaloDataOrganizer.hpp"
 #include "TLBM_definitions.h" // global constants and definitions.  Hack-ish?
 
 #include <list>
