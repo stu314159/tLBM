@@ -29,9 +29,10 @@ class TLBM_Partition{
     TLBM_Partition(int rank, int size);
     ~TLBM_Partition();
     LatticeIndex get_xyz_index(int gInd);
+    int get_tgt_index(int gInd, int ex, int ey, int ez);
     int get_gInd(int x, int y, int z);
     int get_gInd(LatticeIndex myXYZ);
- 
+
 
   private:
     int rank;
@@ -47,6 +48,11 @@ class TLBM_Partition{
     int tlbm_initialize();
     void load_parts();
     void create_adj_matrix();
+
+    static inline unsigned getIDx(int nSpd, int nIdx, int spd){
+    	return nIdx*nSpd + spd;
+    	// return spd*nnods + nIdx; // use this if it performs faster.
+    }
 
 };
 

@@ -107,13 +107,42 @@ void TLBM_Partition::load_parts(){
 void TLBM_Partition::create_adj_matrix(){
   unsigned int numSpd = myLattice->get_numSpd();
   adjMatrix = new int[numLnodes*numSpd];
-//  const int * ex = myLattice->get_ex();
-//  const int * ey = myLattice->get_ey();
-//  const int * ez = myLattice->get_ez();
-
-
-
+  const int * ex = myLattice->get_ex();
+  const int * ey = myLattice->get_ey();
+  const int * ez = myLattice->get_ez();
+  int tgt, node;
+  for (int nd = 0; nd < numLnodes;nd++){
+	  node = localNdList[nd];// note this is a global node number of the local node
+	  for(unsigned spd = 0; spd < numSpd; spd++){
+		  tgt = get_tgt_index(node,ex[spd],ey[spd],ez[spd]);
+		  adjMatrix[getIDx(numSpd,nd,spd)] = tgt;
+	  }
+  }
 }
+
+int TLBM_Partition::get_tgt_index(int gInd, int ex, int ey, int ez){
+
+	LatticeIndex tgt; //ret.X = 0; ret.Y = 0; ret.Z = 0;
+
+	LatticeIndex src =  get_xyz_index(gInd);
+
+	tgt.X = (src.X + ex)%thisProblem.nx;
+	tgt.Y = (src.Y + ey)%thisProblem.ny;
+	tgt.Z = (src.Z + ez)%thisProblem.nz;
+
+	if (tgt.X < 0)
+		tgt.X += thisProblem.nx;
+
+	if (tgt.Y < 0)
+		tgt.Y += thisProblem.ny;
+
+	if (tgt.Z < 0)
+		tgt.Z += thisProblem.nz;
+
+	return get_gInd(tgt);
+}
+
+
 
 LatticeIndex TLBM_Partition::get_xyz_index(int gInd){
 //	z = g_nd/(self.Nx*self.Ny)
