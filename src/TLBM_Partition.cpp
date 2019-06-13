@@ -39,3 +39,26 @@ int TLBM_Partition::tlbm_initialize(){
   return 0; //<-- indicates no problem with initialization
 }
 
+LatticeIndex TLBM_Partition::get_xyz_index(int gInd){
+//	z = g_nd/(self.Nx*self.Ny)
+//	y = (g_nd - z*self.Nx*self.Ny)/self.Nx
+//	x = (g_nd - z*self.Nx*self.Ny - y*self.Nx)
+//	return (x,y,z)
+	LatticeIndex rVal;
+	rVal.Z = gInd/(thisProblem.nx*thisProblem.ny);
+	rVal.Y = (gInd - rVal.Z*thisProblem.nx*thisProblem.ny)/thisProblem.nx;
+	rVal.X = (gInd - rVal.Z*thisProblem.nx*thisProblem.ny - rVal.Y*thisProblem.nx);
+
+	return rVal;
+
+}
+
+int TLBM_Partition::get_gInd(int x, int y, int z){
+//	return x+y*self.Nx + z*self.Nx*self.Ny
+	return x + y*thisProblem.nx + z*thisProblem.nx*thisProblem.ny;
+}
+
+int TLBM_Partition::get_gInd(LatticeIndex myXYZ){
+	return myXYZ.X + myXYZ.Y*thisProblem.nx + myXYZ.Z*thisProblem.nx*thisProblem.ny;
+}
+
