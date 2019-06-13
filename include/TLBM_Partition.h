@@ -5,6 +5,8 @@
 #include "D3Q15LatticeStructure.h"
 #include "D3Q19LatticeStructure.h"
 
+#include <list>
+
 struct LatticeIndex{
 	// essentially a 3-tuple to hold integer indices into a 3D lattice
 	// assumes Lattice points are ordered: first X-direction, then Y-direction
@@ -28,8 +30,10 @@ class TLBM_Partition{
   private:
     int rank;
     int size;
-    int tlbm_initialize();
     LatticeStructure * myLattice;
+    std::list<int> myLPs; // my lattice points
+    int tlbm_initialize();
+    void load_parts();
 
 };
 

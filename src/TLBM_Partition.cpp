@@ -39,6 +39,12 @@ int TLBM_Partition::tlbm_initialize(){
   return 0; //<-- indicates no problem with initialization
 }
 
+void TLBM_Partition::load_parts(){
+ // read parts.lbm and obtain information about lattice points in my partition as well
+// as my neighbors.
+
+}
+
 LatticeIndex TLBM_Partition::get_xyz_index(int gInd){
 //	z = g_nd/(self.Nx*self.Ny)
 //	y = (g_nd - z*self.Nx*self.Ny)/self.Nx
