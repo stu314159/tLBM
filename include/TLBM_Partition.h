@@ -36,7 +36,7 @@ class TLBM_Partition{
     int rank;
     int size;
     LatticeStructure * myLattice;
-    std::list<int> localNdList; // my lattice points
+    std::vector<int> localNdList; // my lattice points
     std::vector<int> partSizes; // number of LPs in each partition
     std::map<int,int> globalToLocal;
     std::map<int,int> localToGlobal;
