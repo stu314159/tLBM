@@ -12,6 +12,7 @@
 #include <list>
 #include <vector>
 #include <map>
+#include <set>
 
 
 
@@ -40,9 +41,10 @@ class TLBM_Partition{
     int rank;
     int size;
     LatticeStructure<real> * myLattice;
-    std::vector<int> localNdList; // my lattice points
+    std::vector<int> localNdList; // my lattice points (global node numbers)
     std::vector<int> partSizes; // number of LPs in each partition
     std::vector<int> partsG; // partition assignment for each node by global node number
+    std::set<int> boundaryNdList;
     std::map<int,int> globalToLocal;
     std::map<int,int> localToGlobal;
     int numLnodes;
@@ -51,6 +53,7 @@ class TLBM_Partition{
     int tlbm_initialize();
     void load_parts();
     void create_adj_matrix();
+    void compute_halo_data();
 
     static inline unsigned getIDx(int nSpd, int nIdx, int spd){
     	return nIdx*nSpd + spd;

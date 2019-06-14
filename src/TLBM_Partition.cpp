@@ -27,13 +27,9 @@ int TLBM_Partition::tlbm_initialize(){
   if (thisProblem.latticeType == std::string("D3Q15"))
   {
 	 myLattice = new D3Q15LatticeStructure<real>;
-
-
   }else if(thisProblem.latticeType == std::string("D3Q19"))
   {
 	  myLattice = new D3Q19LatticeStructure<real>;
-
-
   }else if (thisProblem.latticeType == std::string("D3Q27"))
   {
 	  myLattice = new D3Q27LatticeStructure<real>;
@@ -44,6 +40,8 @@ int TLBM_Partition::tlbm_initialize(){
   load_parts();
 
   create_adj_matrix();
+
+  compute_halo_data();
 
   return 0;
 }
@@ -66,19 +64,16 @@ void TLBM_Partition::load_parts(){
 	   if (p == rank)
 	   {
 	     localNdList.push_back(gNdInd); // add to the local node list
-
 	     // register nodes in the global to local and local to global maps
 	     ret = localToGlobal.insert( std::pair<int,int>(localNdInd,gNdInd) );
 	     if (ret.second == false){
 	    	 throw "local to global key already existed!";
 	     }
-
 	     ret = globalToLocal.insert( std::pair<int,int>(gNdInd,localNdInd));
 	     if (ret.second == false){
 	    	 throw "global to local key already existed!";
 	     }
 	     localNdInd += 1; // increment the local node index
-
 	   }
 	   partsG[gNdInd]=p; // load partition number into partsG vector
 	   gNdInd+=1;
@@ -97,6 +92,7 @@ void TLBM_Partition::load_parts(){
 
 void TLBM_Partition::create_adj_matrix(){
   unsigned int numSpd = myLattice->get_numSpd();
+//  printf("Rank %d, numSpd: %d\n",rank,numSpd);
   adjMatrix = new int[numLnodes*numSpd];
   const int * ex = myLattice->get_ex();
   const int * ey = myLattice->get_ey();
@@ -106,9 +102,50 @@ void TLBM_Partition::create_adj_matrix(){
 	  node = localNdList[nd];// note this is a global node number of the local node
 	  for(unsigned spd = 0; spd < numSpd; spd++){
 		  tgt = get_tgt_index(node,ex[spd],ey[spd],ez[spd]);
+//		  printf("Rank %d, node %d, spd %d, tgt node: %d \n",
+//				  rank,node,spd,tgt);
 		  adjMatrix[getIDx(numSpd,nd,spd)] = tgt;
 	  }
   }
+}
+
+void TLBM_Partition::compute_halo_data()
+{
+	int numSpd = myLattice->get_numSpd();
+	int tgtNd, tgtP;
+	for (int nd = 0; nd < numLnodes; nd++)
+	{
+		// iterate through the adjacency list for all of my local nodes
+		for(auto spd = 0; spd < numSpd; spd++)
+		{
+			tgtNd = adjMatrix[getIDx(numSpd,nd,spd)]; // get global node number of tgt node
+			tgtP = partsG[tgtNd];// get partition number of tgt node
+			// if tgtP not equal to rank, then nd is in the set of boundary nodes
+			if (tgtP != rank)
+			{
+				boundaryNdList.insert(nd); // local node number of boundary nodes
+				// Create a Halo Data Object for in/out comms from tgtP
+				// within the nodes Halo Data Organizer
+
+			}
+
+		}
+
+	}
+//	printf("Rank %u has %lu nds on bnl \n",rank,boundaryNdList.size());
+
+//	// check to see that this works
+//	if (rank == 0)
+//	{
+//
+//		std::cout << "rank " << rank << " boundary node list:" << std::endl;
+//		for(auto i = boundaryNdList.begin(); i != boundaryNdList.end(); ++i)
+//		{
+//			std::cout << *i << " ";
+//		}
+//		std::cout << std::endl;
+//	}
+
 }
 
 int TLBM_Partition::get_tgt_index(int gInd, int ex, int ey, int ez){

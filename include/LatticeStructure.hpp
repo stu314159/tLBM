@@ -22,13 +22,20 @@ public:
   const int * get_ez();
   const T * get_w();
   const int * get_bbSpd();
+  void setEx(int * x){ex = x;}
+  void setEy(int * y){ey = y;}
+  void setEz(int * z){ez = z;}
+  void setW(T * tw) {w = tw;}
+  void setBB(int * bb){bbSpd = bb;}
+  void set_numSpd(int ns){numSpd = ns;}
+
 protected:
-  int numSpd = 0;
-  const int * ex;
-  const int * ey;
-  const int * ez;
-  const T * w;
-  const int * bbSpd;
+  int numSpd;
+  int * ex;
+  int * ey;
+  int * ez;
+  T * w;
+  int * bbSpd;
 };
 
 template <class T>
