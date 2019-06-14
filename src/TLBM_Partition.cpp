@@ -55,6 +55,8 @@ void TLBM_Partition::load_parts(){
    int gNdInd = 0; // global node index of current lattice point
    int localNdInd = 0; // local node index counter
    partSizes = std::vector<int>(size,0);
+   int nNodes = thisProblem.nx*thisProblem.ny*thisProblem.nz;
+   partsG = std::vector<int> (nNodes,0);
    std::pair<std::map<int,int>::iterator,bool> ret;
 
    while (parts >> p){
@@ -76,6 +78,7 @@ void TLBM_Partition::load_parts(){
 	     localNdInd += 1; // increment the local node index
 
 	   }
+	   partsG[gNdInd]=p; // load partition number into partsG vector
 	   gNdInd+=1;
    }
    parts.close(); // needed?

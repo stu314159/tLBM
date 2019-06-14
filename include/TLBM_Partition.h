@@ -42,6 +42,7 @@ class TLBM_Partition{
     LatticeStructure<real> * myLattice;
     std::vector<int> localNdList; // my lattice points
     std::vector<int> partSizes; // number of LPs in each partition
+    std::vector<int> partsG; // partition assignment for each node by global node number
     std::map<int,int> globalToLocal;
     std::map<int,int> localToGlobal;
     int numLnodes;
