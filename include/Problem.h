@@ -18,6 +18,7 @@ public:
   std::string latticeType;  // [ "D3Q15" | "D3Q19" | "D3Q27" ]
   int dynamics; // [1 = LBGK | 2 = RBGK | 3 = MRT]
   int numTs;
+  int tsRepFreq;
   int warmupTs; // number of timesteps to run prior to writing data to disk
   int plotFreq; // timesteps between data writes
   real cs;  // turbulence parameter

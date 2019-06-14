@@ -10,7 +10,7 @@
 TLBM_Partition::TLBM_Partition(int r, int s):
 rank(r),size(s)
 {
-  
+//  printf("rank %d entering constructor \n",rank);
   tlbm_initialize();
 
 }
@@ -40,7 +40,10 @@ int TLBM_Partition::tlbm_initialize(){
   } else {
 	  throw std::invalid_argument("Invalid Lattice Structure!");
   }
+
+//  printf("rank %d loading parts \n",rank);
   load_parts();
+//  printf("rank %d done loading parts \n",rank);
   create_adj_matrix();
 
 
@@ -50,15 +53,19 @@ int TLBM_Partition::tlbm_initialize(){
 void TLBM_Partition::load_parts(){
  // read parts.lbm and obtain information about lattice points in my partition as well
 // as my neighbors.
+
+//   printf("rank %d starting load_parts \n",rank);
    std::ifstream parts("parts.lbm");
    int p;
    int gNdInd = 0; // global node index of current lattice point
    int localNdInd = 0; // local node index counter
    partSizes = std::vector<int>(size,0);
    int nNodes = thisProblem.nx*thisProblem.ny*thisProblem.nz;
+//   printf("Rank %d thinks there are %d nodes\n",rank,nNodes);
    partsG = std::vector<int> (nNodes,0);
    std::pair<std::map<int,int>::iterator,bool> ret;
 
+//   printf("rank %d file open, beginning to load parts \n",rank);
    while (parts >> p){
 	   partSizes[p]+=1; // increment the # LPs in partition p
 	   if (p == rank)
@@ -78,13 +85,13 @@ void TLBM_Partition::load_parts(){
 	     localNdInd += 1; // increment the local node index
 
 	   }
-	   partsG[gNdInd]=p; // load partition number into partsG vector
+	   //partsG[gNdInd]=p; // load partition number into partsG vector
 	   gNdInd+=1;
    }
    parts.close(); // needed?
 
-   // compute write offsets
 
+   // compute write offsets
 
 //   // say something about nodes in each partition
 //   if (rank == 0){
@@ -94,7 +101,7 @@ void TLBM_Partition::load_parts(){
 //	   }
 //	   std::cout << std::endl;
 //   }
-//
+
 //   printf("Rank %d size of localNdList = %d \n",rank,static_cast<int>(localNdList.size()));
     writeOffset = 0;
     for (auto i = partSizes.begin(); i < partSizes.begin()+rank;++i){

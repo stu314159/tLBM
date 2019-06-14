@@ -10,6 +10,7 @@ void Problem::load_input(){
   input_params >> latticeType;
   input_params >> dynamics;
   input_params >> numTs;
+  input_params >> tsRepFreq;
   input_params >> warmupTs;
   input_params >> plotFreq;
   input_params >> cs;
