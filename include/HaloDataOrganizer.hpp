@@ -18,6 +18,8 @@ class HaloDataOrganizer
 public:
 	HaloDataOrganizer();
 	~HaloDataOrganizer();
+	void add_neighbor(int ngbNum, HaloDataObject<T> ngbHalo);
+	int get_num_neighbors();
 
 private:
 	// map keys: neighboring partition rank.
@@ -39,6 +41,17 @@ HaloDataOrganizer<T>::~HaloDataOrganizer()
 
 }
 
+template <class T>
+int HaloDataOrganizer<T>::get_num_neighbors()
+{
+	return Halo.size();
+}
+
+template <class T>
+void HaloDataOrganizer<T>::add_neighbor(int ngbNum,HaloDataObject<T> ngbHalo)
+{
+	Halo[ngbNum] = ngbHalo;
+}
 
 
 #endif /* INCLUDE_HALODATAORGANIZER_HPP_ */
