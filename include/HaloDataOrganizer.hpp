@@ -9,7 +9,7 @@
 #define INCLUDE_HALODATAORGANIZER_HPP_
 
 #include <map>
-#include "TLBM_definitions.h"
+//#include "TLBM_definitions.h"
 #include "HaloDataObject.hpp"
 
 template <class T>
@@ -17,6 +17,7 @@ class HaloDataOrganizer
 {
 public:
 	HaloDataOrganizer();
+	//HaloDataOrganizer(int ngb);
 	~HaloDataOrganizer();
 	void add_neighbor(int ngbNum, HaloDataObject<T> ngbHalo);
 	int get_num_neighbors();
@@ -34,6 +35,8 @@ HaloDataOrganizer<T>::HaloDataOrganizer()
 {
 
 }
+
+
 
 template <class T>
 HaloDataOrganizer<T>::~HaloDataOrganizer()

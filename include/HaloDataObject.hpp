@@ -8,7 +8,7 @@
 #ifndef INCLUDE_HALODATAOBJECT_HPP_
 #define INCLUDE_HALODATAOBJECT_HPP_
 
-#include "TLBM_definitions.h"
+//#include "TLBM_definitions.h"
 #include <map>
 #include <vector>
 
@@ -20,12 +20,12 @@ public:
 	HaloDataObject();
 	~HaloDataObject();
 	void insert_item(int gnn,int spd);
+
 private:
 	std::map<int,std::vector<int>> DataMap;
 	int numItems;
 	T* buffer;
 };
-
 
 
 template <class T>
