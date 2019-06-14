@@ -1,13 +1,15 @@
 #ifndef TLBM_PARTITION_H
 #define TLBM_PARTITION_H
+
+#include "TLBM_definitions.h" // global constants and definitions.  Hack-ish?
 #include "Problem.h"
 #include "LatticeStructure.hpp"
 #include "D3Q15LatticeStructure.hpp"
 #include "D3Q19LatticeStructure.hpp"
 #include "D3Q27LatticeStructure.hpp"
-#include "HaloDataObject.hpp"
 #include "HaloDataOrganizer.hpp"
-#include "TLBM_definitions.h" // global constants and definitions.  Hack-ish?
+#include "HaloDataObject.hpp"
+
 
 #include <list>
 #include <vector>
@@ -47,6 +49,8 @@ class TLBM_Partition{
     std::set<int> boundaryNdList;
     std::map<int,int> globalToLocal;
     std::map<int,int> localToGlobal;
+    HaloDataOrganizer<real> HDO_out;
+    HaloDataOrganizer<real> HDO_in;
     int numLnodes;
     int writeOffset;
     int * adjMatrix = NULL;
