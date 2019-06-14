@@ -41,31 +41,26 @@ int TLBM_Partition::tlbm_initialize(){
 	  throw std::invalid_argument("Invalid Lattice Structure!");
   }
 
-//  printf("rank %d loading parts \n",rank);
   load_parts();
-//  printf("rank %d done loading parts \n",rank);
+
   create_adj_matrix();
 
-
-  return 0; //<-- indicates no problem with initialization
+  return 0;
 }
 
 void TLBM_Partition::load_parts(){
  // read parts.lbm and obtain information about lattice points in my partition as well
 // as my neighbors.
 
-//   printf("rank %d starting load_parts \n",rank);
    std::ifstream parts("parts.lbm");
    int p;
    int gNdInd = 0; // global node index of current lattice point
    int localNdInd = 0; // local node index counter
    partSizes = std::vector<int>(size,0);
    int nNodes = thisProblem.nx*thisProblem.ny*thisProblem.nz;
-//   printf("Rank %d thinks there are %d nodes\n",rank,nNodes);
    partsG = std::vector<int> (nNodes,0);
    std::pair<std::map<int,int>::iterator,bool> ret;
 
-//   printf("rank %d file open, beginning to load parts \n",rank);
    while (parts >> p){
 	   partSizes[p]+=1; // increment the # LPs in partition p
 	   if (p == rank)
@@ -85,33 +80,18 @@ void TLBM_Partition::load_parts(){
 	     localNdInd += 1; // increment the local node index
 
 	   }
-	   //partsG[gNdInd]=p; // load partition number into partsG vector
+	   partsG[gNdInd]=p; // load partition number into partsG vector
 	   gNdInd+=1;
    }
    parts.close(); // needed?
 
-
    // compute write offsets
-
-//   // say something about nodes in each partition
-//   if (rank == 0){
-//	   std::cout << "part Sizes = ";
-//	   for(auto i = partSizes.begin();i != partSizes.end(); ++i){
-//		   std::cout << *i << ' ';
-//	   }
-//	   std::cout << std::endl;
-//   }
-
-//   printf("Rank %d size of localNdList = %d \n",rank,static_cast<int>(localNdList.size()));
     writeOffset = 0;
     for (auto i = partSizes.begin(); i < partSizes.begin()+rank;++i){
-
     	writeOffset += *i;
     }
-//    printf("Rank %d write offset = %d \n",rank,writeOffset);
-    numLnodes = partSizes[rank]; // just to make this easier
-//    printf("Rank %d creating adjList with %d speeds \n",rank,myLattice->get_numSpd());
 
+    numLnodes = partSizes[rank]; // just to make this easier
 
 }
 
