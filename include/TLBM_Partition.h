@@ -37,6 +37,7 @@ class TLBM_Partition{
     int get_tgt_index(int gInd, int ex, int ey, int ez);
     int get_gInd(int x, int y, int z);
     int get_gInd(LatticeIndex myXYZ);
+    int get_cut_size();
 
 
   private:

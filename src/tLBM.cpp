@@ -18,6 +18,8 @@ int main(int argc, char* argv[]){
 
   TLBM_Partition myPart(rank,size);
 
+  printf("Rank %d, cut-size: %d \n",rank,myPart.get_cut_size());
+
   if (rank == 0)
   {
 	  printf("Test complete.");

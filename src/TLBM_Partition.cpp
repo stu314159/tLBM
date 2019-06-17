@@ -181,6 +181,12 @@ void TLBM_Partition::compute_halo_data()
 
 }
 
+int TLBM_Partition::get_cut_size()
+{
+
+	return HDO_out.get_cut_size();
+}
+
 int TLBM_Partition::get_tgt_index(int gInd, int ex, int ey, int ez){
 
 	LatticeIndex tgt; //ret.X = 0; ret.Y = 0; ret.Z = 0;
