@@ -4,7 +4,7 @@
 
 
 
-N_divs=5
+N_divs=15
 latticeType=D3Q15
 dynamics=2
 partitionMethod=1D

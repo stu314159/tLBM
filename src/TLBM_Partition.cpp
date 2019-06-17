@@ -126,6 +126,7 @@ void TLBM_Partition::compute_halo_data()
 				boundaryNdList.insert(nd); // local node number of boundary nodes
 				// Create a Halo Data Object for in/out comms from tgtP
 				// within the nodes Halo Data Organizer
+				ngbSet.insert(tgtP);
 
 			}
 
@@ -133,6 +134,7 @@ void TLBM_Partition::compute_halo_data()
 
 	}
 //	printf("Rank %u has %lu nds on bnl \n",rank,boundaryNdList.size());
+	printf("Rank %u has %lu neighbors \n",rank,ngbSet.size());
 
 //	// check to see that this works
 //	if (rank == 0)
@@ -145,6 +147,8 @@ void TLBM_Partition::compute_halo_data()
 //		}
 //		std::cout << std::endl;
 //	}
+
+
 
 }
 

@@ -11,6 +11,10 @@
 //#include "TLBM_definitions.h"
 #include <map>
 #include <vector>
+#include <set>
+#include <iostream>
+#include <cstdio>
+#include <string>
 
 
 template <class T>
@@ -20,10 +24,11 @@ public:
 	HaloDataObject();
 	~HaloDataObject();
 	void insert_item(int gnn,int spd);
-	std::vector<int> & operator[](int gnd);
+	std::set<int> & operator[](int gnd);
+	void print_halo() const;
 
 private:
-	std::map<int,std::vector<int>> DataMap;
+	std::map<int,std::set<int>> DataMap;
 	int numItems;
 	T* buffer;
 };
@@ -43,15 +48,35 @@ HaloDataObject<T>::~HaloDataObject()
 }
 
 template <class T>
-std::vector<int> & HaloDataObject<T>::operator[](int gnn)
+void HaloDataObject<T>::print_halo() const
+{
+	// iterate over all keys (global nodes) for the object
+	for(const auto &gnd_iter : DataMap)
+	{
+		printf("For global node %d: ",gnd_iter.first);
+		std::string spdList ("");
+		for(const auto & spd_iter : gnd_iter.second)
+		{
+			spdList += std::to_string(spd_iter) + " ";
+		}
+		printf("%s \n",spdList.c_str());
+
+	}
+
+}
+
+template <class T>
+std::set<int> & HaloDataObject<T>::operator[](int gnn)
 {
 	return DataMap[gnn];
 }
 template <class T>
 void HaloDataObject<T>::insert_item(int gnn,int spd)
 {
+	printf("For node %d, inserting speed %d \n",gnn,spd);
 	numItems+=1;
-	DataMap[gnn].push_back(spd);
+	DataMap[gnn].insert(spd);
+
 
 }
 
