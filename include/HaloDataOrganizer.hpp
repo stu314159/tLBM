@@ -19,8 +19,9 @@ public:
 	HaloDataOrganizer();
 	//HaloDataOrganizer(int ngb);
 	~HaloDataOrganizer();
-	void add_neighbor(int ngbNum, HaloDataObject<T> ngbHalo);
+	void add_neighbor(int ngbNum);
 	int get_num_neighbors();
+	int get_cut_size();
 	HaloDataObject<T>& operator[](int k);
 	void print_halo();
 
@@ -58,6 +59,18 @@ void HaloDataOrganizer<T>::print_halo()
 }
 
 template <class T>
+int HaloDataOrganizer<T>::get_cut_size()
+{
+	int numCuts = 0;
+	for (const auto & keyIter : Halo)
+	{
+		numCuts += keyIter.second.get_num_items();
+	}
+	return numCuts; // fix this in a minute
+
+}
+
+template <class T>
 HaloDataObject<T> & HaloDataOrganizer<T>::operator[](int k)
 {
 	return Halo[k];
@@ -70,9 +83,9 @@ int HaloDataOrganizer<T>::get_num_neighbors()
 }
 
 template <class T>
-void HaloDataOrganizer<T>::add_neighbor(int ngbNum,HaloDataObject<T> ngbHalo)
+void HaloDataOrganizer<T>::add_neighbor(int ngbNum)
 {
-	Halo[ngbNum] = ngbHalo;
+	Halo[ngbNum] = HaloDataObject<T>();
 }
 
 

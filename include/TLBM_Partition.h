@@ -49,8 +49,10 @@ class TLBM_Partition{
     std::set<int> boundaryNdList;
     std::map<int,int> globalToLocal;
     std::map<int,int> localToGlobal;
-    std::map<int,HaloDataOrganizer<real>> HDO_out_dict;
-    std::map<int,HaloDataOrganizer<real>> HDO_in_dict;
+//    std::map<int,HaloDataOrganizer<real>> HDO_out_dict;
+//    std::map<int,HaloDataOrganizer<real>> HDO_in_dict;
+    HaloDataOrganizer<real> HDO_out;
+    HaloDataOrganizer<real> HDO_in;
     std::set<int> ngbSet;
     int numLnodes;
     int writeOffset;

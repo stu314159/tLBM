@@ -26,6 +26,8 @@ public:
 	void insert_item(int gnn,int spd);
 	std::set<int> & operator[](int gnd);
 	void print_halo() const;
+	int print_num_nodes() const;
+	int get_num_items() const;
 
 private:
 	std::map<int,std::set<int>> DataMap;
@@ -45,6 +47,18 @@ template <class T>
 HaloDataObject<T>::~HaloDataObject()
 {
 
+}
+
+template <class T>
+int HaloDataObject<T>::get_num_items() const
+{
+	return numItems;
+}
+
+template <class T>
+int HaloDataObject<T>::print_num_nodes() const
+{
+	return DataMap.size();
 }
 
 template <class T>
@@ -73,7 +87,7 @@ std::set<int> & HaloDataObject<T>::operator[](int gnn)
 template <class T>
 void HaloDataObject<T>::insert_item(int gnn,int spd)
 {
-	printf("For node %d, inserting speed %d \n",gnn,spd);
+//	printf("For node %d, inserting speed %d \n",gnn,spd);
 	numItems+=1;
 	DataMap[gnn].insert(spd);
 

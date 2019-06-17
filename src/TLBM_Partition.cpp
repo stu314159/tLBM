@@ -134,7 +134,36 @@ void TLBM_Partition::compute_halo_data()
 
 	}
 //	printf("Rank %u has %lu nds on bnl \n",rank,boundaryNdList.size());
-	printf("Rank %u has %lu neighbors \n",rank,ngbSet.size());
+//	printf("Rank %u has %lu neighbors \n",rank,ngbSet.size());
+
+	// add set of neighbors to the HaloDataOrganizer for data in and out.
+    for(const auto & ngbIt : ngbSet)
+    {
+    	HDO_out.add_neighbor(ngbIt);
+    	HDO_in.add_neighbor(ngbIt);
+    }
+
+    // iterate over boundary nodes, traverse the boundary node
+    // adjacency list, and add nodes from the halo into the HDOs.
+
+    for (const auto & bnlIt : boundaryNdList)
+    {
+    	int nd = globalToLocal[bnlIt];
+    	for(int spd = 0; spd < numSpd; ++spd)
+    	{
+    		const int * bbSpd = myLattice->get_bbSpd();
+    		tgtNd = adjMatrix[getIDx(numSpd,nd,spd)]; // get global node number of tgt node
+    		tgtP = partsG[tgtNd];
+    		if ( tgtP != rank)
+    		{
+    			HDO_out[tgtP].insert_item(tgtNd,spd);
+    			HDO_in[tgtP].insert_item(nd,bbSpd[spd]);
+    		}
+
+    	}
+    }
+
+
 
 //	// check to see that this works
 //	if (rank == 0)
