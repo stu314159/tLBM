@@ -148,7 +148,7 @@ void TLBM_Partition::compute_halo_data()
 
     for (const auto & bnlIt : boundaryNdList)
     {
-    	//int nd = globalToLocal[bnlIt];
+
     	int nd = bnlIt; // bnl is already the local node number of boundary nodes
     	for(int spd = 0; spd < numSpd; ++spd)
     	{
