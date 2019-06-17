@@ -9,6 +9,8 @@
 #define INCLUDE_HALODATAORGANIZER_HPP_
 
 #include <map>
+#include <set>
+#include <algorithm>
 //#include "TLBM_definitions.h"
 #include "HaloDataObject.hpp"
 
@@ -22,8 +24,10 @@ public:
 	void add_neighbor(int ngbNum);
 	int get_num_neighbors();
 	int get_cut_size();
+	int get_num_halo_nodes();
 	HaloDataObject<T>& operator[](int k);
 	void print_halo();
+	std::set<int> get_halo_nodes() const;
 
 private:
 	// map keys: neighboring partition rank.
@@ -48,6 +52,26 @@ HaloDataOrganizer<T>::~HaloDataOrganizer()
 }
 
 template <class T>
+std::set<int> HaloDataOrganizer<T>::get_halo_nodes() const
+{
+	std::set<int> haloSet;
+	std::set<int> tempSet;
+
+	for(const auto & haloIt : Halo)
+	{
+		tempSet = haloIt.second.get_halo_nodes();
+		for (const auto & tIt : tempSet)
+		{
+			haloSet.insert(tIt);
+		}
+
+	}
+
+	return haloSet;
+
+}
+
+template <class T>
 void HaloDataOrganizer<T>::print_halo()
 {
 	for(const auto &ngb_it : Halo)
@@ -68,6 +92,17 @@ int HaloDataOrganizer<T>::get_cut_size()
 	}
 	return numCuts; // fix this in a minute
 
+}
+
+template <class T>
+int HaloDataOrganizer<T>::get_num_halo_nodes()
+{
+	int numHalo = 0;
+	for (const auto & keyIter : Halo)
+	{
+		numHalo += keyIter.second.get_num_nodes();
+	}
+	return numHalo;
 }
 
 template <class T>

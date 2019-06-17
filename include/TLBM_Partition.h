@@ -48,6 +48,7 @@ class TLBM_Partition{
     std::vector<int> partSizes; // number of LPs in each partition
     std::vector<int> partsG; // partition assignment for each node by global node number
     std::set<int> boundaryNdList;
+    std::set<int> haloNodes;
     std::map<int,int> globalToLocal;
     std::map<int,int> localToGlobal;
 //    std::map<int,HaloDataOrganizer<real>> HDO_out_dict;
@@ -56,6 +57,8 @@ class TLBM_Partition{
     HaloDataOrganizer<real> HDO_in;
     std::set<int> ngbSet;
     int numLnodes;
+    int numHaloNodes;
+    int totalNodes;
     int writeOffset;
     int * adjMatrix = NULL;
     int tlbm_initialize();

@@ -148,7 +148,8 @@ void TLBM_Partition::compute_halo_data()
 
     for (const auto & bnlIt : boundaryNdList)
     {
-    	int nd = globalToLocal[bnlIt];
+    	//int nd = globalToLocal[bnlIt];
+    	int nd = bnlIt; // bnl is already the local node number of boundary nodes
     	for(int spd = 0; spd < numSpd; ++spd)
     	{
     		const int * bbSpd = myLattice->get_bbSpd();
@@ -158,10 +159,22 @@ void TLBM_Partition::compute_halo_data()
     		{
     			HDO_out[tgtP].insert_item(tgtNd,spd);
     			HDO_in[tgtP].insert_item(nd,bbSpd[spd]);
+    			// above is okay since local node numbers are generated in order
+    			// of increasing global node number.
     		}
 
     	}
     }
+
+    // compute the number of halo nodes.
+    numHaloNodes = HDO_out.get_num_halo_nodes();
+    //printf("Rank %d, num halo nodes: %d \n",rank,numHaloNodes);
+    totalNodes  = numLnodes + numHaloNodes;
+
+    // I guess I need a list of the halo nodes (by global node number)
+    haloNodes = HDO_out.get_halo_nodes();
+    // confirm num halo nodes
+//    printf("Rank %d, num halonodes: %lu \n",rank,haloNodes.size());
 
 
 

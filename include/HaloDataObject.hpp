@@ -28,6 +28,8 @@ public:
 	void print_halo() const;
 	int print_num_nodes() const;
 	int get_num_items() const;
+	int get_num_nodes()const;
+	std::set<int> get_halo_nodes() const;
 
 private:
 	std::map<int,std::set<int>> DataMap;
@@ -50,15 +52,34 @@ HaloDataObject<T>::~HaloDataObject()
 }
 
 template <class T>
+std::set<int> HaloDataObject<T>::get_halo_nodes() const
+{
+	std::set<int> haloNodes;
+	for (const auto & gnn : DataMap)
+	{
+		haloNodes.insert(gnn.first);
+	}
+	return haloNodes;
+
+}
+
+
+template <class T>
 int HaloDataObject<T>::get_num_items() const
 {
 	return numItems;
 }
 
 template <class T>
-int HaloDataObject<T>::print_num_nodes() const
+int HaloDataObject<T>::get_num_nodes() const
 {
 	return DataMap.size();
+}
+
+template <class T>
+int HaloDataObject<T>::print_num_nodes() const
+{
+	return DataMap.size(); // why, again, do I have this function?
 }
 
 template <class T>
