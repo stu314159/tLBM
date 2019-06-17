@@ -20,6 +20,7 @@ public:
 	HaloDataObject();
 	~HaloDataObject();
 	void insert_item(int gnn,int spd);
+	std::vector<int> & operator[](int gnd);
 
 private:
 	std::map<int,std::vector<int>> DataMap;
@@ -41,6 +42,11 @@ HaloDataObject<T>::~HaloDataObject()
 
 }
 
+template <class T>
+std::vector<int> & HaloDataObject<T>::operator[](int gnn)
+{
+	return DataMap[gnn];
+}
 template <class T>
 void HaloDataObject<T>::insert_item(int gnn,int spd)
 {
