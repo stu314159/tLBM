@@ -172,25 +172,17 @@ void TLBM_Partition::compute_halo_data()
     totalNodes  = numLnodes + numHaloNodes;
 
     // I guess I need a list of the halo nodes (by global node number)
-    haloNodes = HDO_out.get_halo_nodes();
-    // confirm num halo nodes
-//    printf("Rank %d, num halonodes: %lu \n",rank,haloNodes.size());
+    haloNodes = HDO_out.get_halo_nodes(); // set of global node numbers for halo nodes
 
-
-
-//	// check to see that this works
-//	if (rank == 0)
-//	{
-//
-//		std::cout << "rank " << rank << " boundary node list:" << std::endl;
-//		for(auto i = boundaryNdList.begin(); i != boundaryNdList.end(); ++i)
-//		{
-//			std::cout << *i << " ";
-//		}
-//		std::cout << std::endl;
-//	}
-
-
+   // generate local nodes for the halo nodes and add to the local2global node map.
+    int lNd = numLnodes; // initialize to the next local node number
+    for (const auto & hnIt : haloNodes)
+    {
+    	localNdList.push_back(hnIt);
+    	globalToLocal[hnIt] = lNd;
+    	localToGlobal[lNd] = hnIt;
+    	++lNd;
+    }
 
 }
 
