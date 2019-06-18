@@ -30,6 +30,7 @@ public:
 	int get_num_items() const;
 	int get_num_nodes()const;
 	std::set<int> get_halo_nodes() const;
+	T* get_buffer() const;
 
 private:
 	std::map<int,std::set<int>> DataMap;
@@ -49,6 +50,12 @@ template <class T>
 HaloDataObject<T>::~HaloDataObject()
 {
 
+}
+
+template <class T>
+T* HaloDataObject<T>::get_buffer() const
+{
+	return buffer;
 }
 
 template <class T>
