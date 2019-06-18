@@ -17,6 +17,7 @@ class D3Q27LatticeStructure : public LatticeStructure<T>
 public:
   D3Q27LatticeStructure();
   ~D3Q27LatticeStructure();
+  void set_inlet_bc_macro(T * fIn, T * uz, T * rho, const T u_bc, const int nd);
 
 private:
   static const int numSpd = 27;
@@ -60,6 +61,10 @@ D3Q27LatticeStructure<T>::~D3Q27LatticeStructure(){
 
 }
 
+template <class T>
+void D3Q27LatticeStructure<T>::set_inlet_bc_macro(T * fIN, T * uz, T * rho, const T u_bc, const int nd)
+{
 
+}
 
 #endif /* INCLUDE_D3Q27LATTICESTRUCTURE_HPP_ */

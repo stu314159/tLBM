@@ -381,6 +381,16 @@ void TLBM_Partition::process_node_list(real * fOut, const real * fIn,
 			ux[nd] = 0; uy[nd] = 0; uz[nd] = 0; // set macroscopic speed to zero
 			myLattice->bounce_back(fOut,fIn,nd);
 		}
+		// node type 2 = inlet velocity node
+		// node type 3 = outlet pressure node
+		// node type 5 = specified u_z node
+		if (ndType[nd] == 2)
+		{
+			myLattice->set_inlet_bc_macro(const_cast<real *>(fIn),uz,rho,
+					thisProblem.uLBM,nd); // const_cast is some sketchy shit
+			// but it is better than making fIn always non-const
+
+		}
 
 
 	}

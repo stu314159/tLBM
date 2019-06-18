@@ -16,6 +16,7 @@ class D3Q15LatticeStructure : public LatticeStructure<T>
 public:
   D3Q15LatticeStructure();
   ~D3Q15LatticeStructure();
+  void set_inlet_bc_macro(T * fIn, T * uz, T * rho, const T u_bc, const int nd);
 
 private:
   static const int numSpd=15;
@@ -52,6 +53,19 @@ template < class T >
 D3Q15LatticeStructure<T>::~D3Q15LatticeStructure(){
 
 }
+
+template < class T >
+void D3Q15LatticeStructure<T>::set_inlet_bc_macro(T * fIn, T * uz, T * rho, const T u_bc, const int nd)
+{
+//	f.uz = f.u_bc;
+//		f.ux = 0.; f.uy = 0.;
+//		f.rho = (1./(1. - f.uz))*(2.*
+//				(f.f[6]+f.f[11]+f.f[12]+f.f[13]+f.f[14])+
+//				(f.f[0]+f.f[1]+f.f[2]+f.f[3]+f.f[4]));
+	uz[nd] = u_bc;
+
+}
+
 
 
 #endif /* INCLUDE_D3Q15LATTICESTRUCTURE_HPP_ */

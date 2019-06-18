@@ -15,7 +15,7 @@ class LatticeStructure
 {
 public:
   LatticeStructure();
-  ~LatticeStructure();
+  virtual ~LatticeStructure();
   int get_numSpd();
   const int * get_ex();
   const int * get_ey();
@@ -36,6 +36,7 @@ public:
   void compute_macroscopic_data(T * ux, T * uy, T * uz, T * rho,
 		  const T * fIn, const int nd);
   void bounce_back(T * fOut, const T * fIN, const int nd);
+  virtual void set_inlet_bc_macro(T * fIn, T * uz, T * rho, const T u_bc, const int nd) = 0;
 
 
 protected:
