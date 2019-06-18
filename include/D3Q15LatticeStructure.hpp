@@ -65,16 +65,16 @@ void D3Q15LatticeStructure<T>::set_inlet_bc_macro(const T * fIn, T* ux, T* uy,
 //				(f.f[6]+f.f[11]+f.f[12]+f.f[13]+f.f[14])+
 //				(f.f[0]+f.f[1]+f.f[2]+f.f[3]+f.f[4]));
 	T f6,f11,f12,f13,f14,f0,f1,f2,f3,f4;
-	f6 = fIn[getIDx(numSpd,nd,6)];
-	f11 = fIn[getIDx(numSpd,nd,11)];
-	f12 = fIn[getIDx(numSpd,nd,12)];
-	f13 = fIn[getIDx(numSpd,nd,13)];
-	f14 = fIn[getIDx(numSpd,nd,14)];
-	f0 = fIn[getIDx(numSpd,nd,0)];
-	f1 = fIn[getIDx(numSpd,nd,1)];
-	f2 = fIn[getIDx(numSpd,nd,2)];
-	f3 = fIn[getIDx(numSpd,nd,3)];
-	f4 = fIn[getIDx(numSpd,nd,4)];
+	f6 = fIn[this->getIDx(numSpd,nd,6)];
+	f11 = fIn[this->getIDx(numSpd,nd,11)];
+	f12 = fIn[this->getIDx(numSpd,nd,12)];
+	f13 = fIn[this->getIDx(numSpd,nd,13)];
+	f14 = fIn[this->getIDx(numSpd,nd,14)];
+	f0 = fIn[this->getIDx(numSpd,nd,0)];
+	f1 = fIn[this->getIDx(numSpd,nd,1)];
+	f2 = fIn[this->getIDx(numSpd,nd,2)];
+	f3 = fIn[this->getIDx(numSpd,nd,3)];
+	f4 = fIn[this->getIDx(numSpd,nd,4)];
 	ux[nd] = 0; uy[nd] = 0; uz[nd] = u_bc;
 	rho[nd] = (1./(1. - u_bc))*(2.*
 			(f6 + f11 + f12 + f13 + f14) +
