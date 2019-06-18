@@ -72,6 +72,7 @@ class TLBM_Partition{
     void compute_halo_data();
     void make_adj_matrix_local();
     void allocate_arrays();
+    void load_ndType();
 
     static inline unsigned getIDx(int nSpd, int nIdx, int spd){
     	return nIdx*nSpd + spd;

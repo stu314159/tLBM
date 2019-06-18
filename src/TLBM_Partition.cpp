@@ -48,7 +48,30 @@ int TLBM_Partition::tlbm_initialize(){
 
   make_adj_matrix_local();
 
+  allocate_arrays();
+
+  load_ndType();
+
   return 0;
+}
+
+void TLBM_Partition::load_ndType()
+{
+	std::ifstream ndtype("ndType.lbm");
+	int nt;
+	int gNdInd = 0;
+	int localNdInd;
+
+	while (ndtype >> nt){
+		if (partsG[gNdInd] == rank)// if gNdInd is a local node
+		{
+			localNdInd = globalToLocal.at(gNdInd); // get the local node index
+			ndType[localNdInd] = nt; // assign node type to the ndType array
+		}
+
+		++gNdInd;
+	}
+	ndtype.close();
 }
 
 void TLBM_Partition::load_parts(){
