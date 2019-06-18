@@ -52,6 +52,8 @@ int TLBM_Partition::tlbm_initialize(){
 
   load_ndType();
 
+  initialize_data_arrays();
+
   return 0;
 }
 
@@ -245,6 +247,22 @@ void TLBM_Partition::allocate_arrays()
 	fEven = new real[numSpd*numLnodes];
 	fOdd = new real[numSpd*numLnodes];
 	ndType = new int[numLnodes];
+
+}
+
+void TLBM_Partition::initialize_data_arrays()
+{
+	int numSpd = myLattice->get_numSpd();
+	const real * w = myLattice->get_w();
+	real rho = thisProblem.rhoLBM;
+	for(auto nd = 0; nd<numLnodes; ++nd)
+	{
+		for(auto spd = 0; spd < numSpd; ++spd)
+		{
+			fEven[getIDx(numSpd,nd,spd)] = w[spd]*rho;
+			fOdd[getIDx(numSpd,nd,spd)] = w[spd]*rho;
+		}
+	}
 
 }
 

@@ -73,6 +73,7 @@ class TLBM_Partition{
     void make_adj_matrix_local();
     void allocate_arrays();
     void load_ndType();
+    void initialize_data_arrays();
 
     static inline unsigned getIDx(int nSpd, int nIdx, int spd){
     	return nIdx*nSpd + spd;
