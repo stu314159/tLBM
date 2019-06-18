@@ -17,7 +17,10 @@ rank(r),size(s)
 
 TLBM_Partition::~TLBM_Partition(){
   delete myLattice;
-  delete adjMatrix;
+  delete [] adjMatrix;
+  delete [] fEven;
+  delete [] fOdd;
+  delete [] ndType;
 }
 
 int TLBM_Partition::tlbm_initialize(){
@@ -211,6 +214,15 @@ void TLBM_Partition::make_adj_matrix_local()
 		  // use map::at to generate an exception if tgtNd is not in the map
 		}
 	}
+}
+
+void TLBM_Partition::allocate_arrays()
+{
+	int numSpd = myLattice->get_numSpd();
+	fEven = new real[numSpd*numLnodes];
+	fOdd = new real[numSpd*numLnodes];
+	ndType = new int[numLnodes];
+
 }
 
 int TLBM_Partition::get_cut_size()

@@ -61,11 +61,17 @@ class TLBM_Partition{
     int totalNodes;
     int writeOffset;
     int * adjMatrix = NULL;
+    int * ndType = NULL;
+    real* fEven = NULL;
+    real* fOdd = NULL;
+    real* fIn = NULL;
+    real* fOut = NULL;
     int tlbm_initialize();
     void load_parts();
     void create_adj_matrix();
     void compute_halo_data();
     void make_adj_matrix_local();
+    void allocate_arrays();
 
     static inline unsigned getIDx(int nSpd, int nIdx, int spd){
     	return nIdx*nSpd + spd;
