@@ -7,8 +7,8 @@
 #include <exception>
 
 
-TLBM_Partition::TLBM_Partition(int r, int s):
-rank(r),size(s)
+TLBM_Partition::TLBM_Partition(int r, int s, MPI_Comm c):
+rank(r),size(s), comm(c)
 {
 //  printf("rank %d entering constructor \n",rank);
   tlbm_initialize();
@@ -59,6 +59,8 @@ int TLBM_Partition::tlbm_initialize(){
   load_ndType();
 
   initialize_data_arrays();
+
+  write_node_ordering();
 
   return 0;
 }
@@ -274,6 +276,24 @@ void TLBM_Partition::initialize_data_arrays()
 			fOdd[getIDx(numSpd,nd,spd)] = w[spd]*rho;
 		}
 	}
+
+}
+
+void TLBM_Partition::write_node_ordering()
+{
+	MPI_File fh;
+	MPI_Status status;
+	int rc;
+
+	rc = MPI_File_open(comm,"ordering.b_dat",
+			MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
+
+	//int offset_s = firstSlice*Nx*Ny*sizeof(int);
+	//MPI_File_write_at(fh_snl,offset_s,snl+HALO*Nx*Ny,numEntries,MPI_INT,&mpi_s1);
+	int offset = writeOffset*sizeof(int);
+	MPI_File_write_at(fh,offset,localNdList.data(),numLnodes,MPI_INT,&status);
+
+	MPI_File_close(&fh);
 
 }
 

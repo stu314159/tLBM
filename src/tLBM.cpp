@@ -16,7 +16,7 @@ int main(int argc, char* argv[]){
 	  printf("Commencing test with %d processes\n",size);
   }
 
-  TLBM_Partition myPart(rank,size);
+  TLBM_Partition myPart(rank,size,MPI_COMM_WORLD);
 
 //  printf("Rank %d, cut-size: %d \n",rank,myPart.get_cut_size());
 

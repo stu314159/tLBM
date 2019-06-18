@@ -1,6 +1,8 @@
 #ifndef TLBM_PARTITION_H
 #define TLBM_PARTITION_H
 
+#include <mpi.h>
+
 #include "TLBM_definitions.h" // global constants and definitions.  Hack-ish?
 #include "Problem.h"
 #include "LatticeStructure.hpp"
@@ -31,7 +33,7 @@ class TLBM_Partition{
 
   public:
     Problem thisProblem;
-    TLBM_Partition(int rank, int size);
+    TLBM_Partition(int rank, int size, MPI_Comm comm);
     ~TLBM_Partition();
     LatticeIndex get_xyz_index(int gInd);
     int get_tgt_index(int gInd, int ex, int ey, int ez);
@@ -43,6 +45,7 @@ class TLBM_Partition{
   private:
     int rank;
     int size;
+    MPI_Comm comm;
     LatticeStructure<real> * myLattice;
     std::vector<int> localNdList; // my lattice points (global node numbers)
     std::vector<int> partSizes; // number of LPs in each partition
@@ -51,8 +54,6 @@ class TLBM_Partition{
     std::set<int> haloNodes;
     std::map<int,int> globalToLocal;
     std::map<int,int> localToGlobal;
-//    std::map<int,HaloDataOrganizer<real>> HDO_out_dict;
-//    std::map<int,HaloDataOrganizer<real>> HDO_in_dict;
     HaloDataOrganizer<real> HDO_out;
     HaloDataOrganizer<real> HDO_in;
     std::set<int> ngbSet;
@@ -78,6 +79,7 @@ class TLBM_Partition{
     void allocate_arrays();
     void load_ndType();
     void initialize_data_arrays();
+    void write_node_ordering();
 
     static inline unsigned getIDx(int nSpd, int nIdx, int spd){
     	return nIdx*nSpd + spd;
