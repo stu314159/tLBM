@@ -368,6 +368,28 @@ int TLBM_Partition::get_gInd(LatticeIndex myXYZ){
 
 void TLBM_Partition::take_LBM_time_step(bool isEven)
 {
+	// set fIn and fOut
+	if (isEven)
+	{
+		fIn = fEven;
+		fOut = fOdd;
+	}else{
+		fIn = fOdd;
+		fOut = fEven;
+	}
+
+	// process boundary nodes
+
+
+	// extract halo data
+
+	// initiate MPI Isend/Irecv
+
+	// process interior nodes
+
+	// ensure MPI comms are complete
+
+	// distribute incoming halo data
 
 }
 
