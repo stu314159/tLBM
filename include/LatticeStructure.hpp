@@ -28,7 +28,7 @@ public:
   void setW(T * tw) {w = tw;}
   void setBB(int * bb){bbSpd = bb;}
   void set_numSpd(int ns){numSpd = ns;}
-  static inline unsigned getIDx(int nSpd, int nIdx, int spd){
+  inline unsigned getIDx(int nSpd, int nIdx, int spd){
       	return nIdx*nSpd + spd;
       	// return spd*nnods + nIdx; // use this if it performs faster.
       }
@@ -36,7 +36,8 @@ public:
   void compute_macroscopic_data(T * ux, T * uy, T * uz, T * rho,
 		  const T * fIn, const int nd);
   void bounce_back(T * fOut, const T * fIN, const int nd);
-  virtual void set_inlet_bc_macro(T * fIn, T * uz, T * rho, const T u_bc, const int nd) = 0;
+  virtual void set_inlet_bc_macro(const T * fIn, T* ux, T* uy, T * uz, T * rho,
+		  const T u_bc, const int nd) = 0;
 
 
 protected:

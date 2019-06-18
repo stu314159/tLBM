@@ -17,7 +17,8 @@ class D3Q19LatticeStructure : public LatticeStructure<T>
 public:
   D3Q19LatticeStructure();
   ~D3Q19LatticeStructure();
-  void set_inlet_bc_macro(T * fIn, T * uz, T * rho, const T u_bc, const int nd);
+  void set_inlet_bc_macro(const T * fIn, T* ux, T* uy, T * uz, T * rho,
+		  const T u_bc, const int nd);
 
 private:
   static const int numSpd = 19;
@@ -57,7 +58,8 @@ D3Q19LatticeStructure<T>::~D3Q19LatticeStructure(){
 }
 
 template <class T>
-void D3Q19LatticeStructure<T>::set_inlet_bc_macro(T * fIn,T * uz, T * rho, const T u_bc, const int nd)
+void D3Q19LatticeStructure<T>::set_inlet_bc_macro(const T * fIn,T* ux, T* uy,T * uz,
+		T * rho, const T u_bc, const int nd)
 {
 
 }

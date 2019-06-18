@@ -386,9 +386,8 @@ void TLBM_Partition::process_node_list(real * fOut, const real * fIn,
 		// node type 5 = specified u_z node
 		if (ndType[nd] == 2)
 		{
-			myLattice->set_inlet_bc_macro(const_cast<real *>(fIn),uz,rho,
-					thisProblem.uLBM,nd); // const_cast is some sketchy shit
-			// but it is better than making fIn always non-const
+			myLattice->set_inlet_bc_macro(fIn,ux, uy, uz,rho,
+					thisProblem.uLBM,nd);
 
 		}
 
