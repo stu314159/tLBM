@@ -62,10 +62,14 @@ class TLBM_Partition{
     int writeOffset;
     int * adjMatrix = NULL;
     int * ndType = NULL;
-    real* fEven = NULL;
-    real* fOdd = NULL;
-    real* fIn = NULL;
-    real* fOut = NULL;
+    real * fEven = NULL;
+    real * fOdd = NULL;
+    real * fIn = NULL;
+    real * fOut = NULL;
+    real * ux = NULL;
+    real * uy = NULL;
+    real * uz = NULL;
+    real * rho = NULL;
     int tlbm_initialize();
     void load_parts();
     void create_adj_matrix();

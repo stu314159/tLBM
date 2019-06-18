@@ -21,6 +21,12 @@ TLBM_Partition::~TLBM_Partition(){
   delete [] fEven;
   delete [] fOdd;
   delete [] ndType;
+
+  delete [] ux;
+  delete [] uy;
+  delete [] uz;
+  delete [] rho;
+
 }
 
 int TLBM_Partition::tlbm_initialize(){
@@ -247,6 +253,11 @@ void TLBM_Partition::allocate_arrays()
 	fEven = new real[numSpd*numLnodes];
 	fOdd = new real[numSpd*numLnodes];
 	ndType = new int[numLnodes];
+
+	ux = new real[numLnodes];
+	uy = new real[numLnodes];
+	uz = new real[numLnodes];
+	rho = new real[numLnodes];
 
 }
 
