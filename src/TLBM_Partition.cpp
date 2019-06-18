@@ -43,6 +43,8 @@ int TLBM_Partition::tlbm_initialize(){
 
   compute_halo_data();
 
+  make_adj_matrix_local();
+
   return 0;
 }
 
@@ -159,6 +161,12 @@ void TLBM_Partition::compute_halo_data()
     		{
     			HDO_out[tgtP].insert_item(tgtNd,spd);
     			HDO_in[tgtP].insert_item(nd,bbSpd[spd]);
+    			// HDO_out now recorded the global node number (in order) and
+    			// speed of all data to be transferred to each neighbor.
+    			//
+    			// HDO_in has the local node number and speeds of all data that
+    			// will be received from neighboring partitions.
+    			//
     			// above is okay since local node numbers are generated in order
     			// of increasing global node number.
     		}
@@ -166,12 +174,12 @@ void TLBM_Partition::compute_halo_data()
     	}
     }
 
-    // compute the number of halo nodes.
+    // compute the total number of halo nodes.
     numHaloNodes = HDO_out.get_num_halo_nodes();
     //printf("Rank %d, num halo nodes: %d \n",rank,numHaloNodes);
     totalNodes  = numLnodes + numHaloNodes;
 
-    // I guess I need a list of the halo nodes (by global node number)
+    // make a list of the halo nodes (by global node number)
     haloNodes = HDO_out.get_halo_nodes(); // set of global node numbers for halo nodes
 
    // generate local nodes for the halo nodes and add to the local2global node map.
@@ -184,6 +192,25 @@ void TLBM_Partition::compute_halo_data()
     	++lNd;
     }
 
+}
+
+void TLBM_Partition::make_adj_matrix_local()
+{
+	// now that all entries in the (global) adjacency matrix
+	// have a local node identity, the adjacency list can be
+	// converted to local node numbers
+	int numSpd = myLattice->get_numSpd();
+	int tgtNd;
+	for (int nd = 0; nd < numLnodes; nd++)
+	{
+		// iterate through the adjacency list for all of my local nodes
+		for(auto spd = 0; spd < numSpd; spd++)
+		{
+		  tgtNd = adjMatrix[getIDx(numSpd,nd,spd)]; // get global node number of tgt node
+		  adjMatrix[getIDx(numSpd,nd,spd)] = globalToLocal.at(tgtNd);
+		  // use map::at to generate an exception if tgtNd is not in the map
+		}
+	}
 }
 
 int TLBM_Partition::get_cut_size()

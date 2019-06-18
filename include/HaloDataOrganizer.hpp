@@ -90,7 +90,7 @@ int HaloDataOrganizer<T>::get_cut_size()
 	{
 		numCuts += keyIter.second.get_num_items();
 	}
-	return numCuts; // fix this in a minute
+	return numCuts;
 
 }
 

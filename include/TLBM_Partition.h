@@ -65,6 +65,7 @@ class TLBM_Partition{
     void load_parts();
     void create_adj_matrix();
     void compute_halo_data();
+    void make_adj_matrix_local();
 
     static inline unsigned getIDx(int nSpd, int nIdx, int spd){
     	return nIdx*nSpd + spd;
