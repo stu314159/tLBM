@@ -372,9 +372,16 @@ void TLBM_Partition::process_node_list(real * fOut, const real * fIn,
 {
 	// create scratch data arrays
 	const int numSpd = myLattice->get_numSpd();
+
 	for(auto const & nd : nodeList)
 	{
 		myLattice->compute_macroscopic_data(ux,uy,uz,rho,fIn,nd);
+		if (ndType[nd] == 1) // 1 is a solid node
+		{
+			ux[nd] = 0; uy[nd] = 0; uz[nd] = 0; // set macroscopic speed to zero
+			myLattice->bounce_back(fOut,fIn,nd);
+		}
+
 
 	}
 }

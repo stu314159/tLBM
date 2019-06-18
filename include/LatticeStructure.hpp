@@ -35,6 +35,7 @@ public:
 
   void compute_macroscopic_data(T * ux, T * uy, T * uz, T * rho,
 		  const T * fIn, const int nd);
+  void bounce_back(T * fOut, const T * fIN, const int nd);
 
 
 protected:
@@ -67,6 +68,15 @@ void LatticeStructure<T>::compute_macroscopic_data(T * ux, T * uy, T * uz, T * r
 	uz_l /= rho_l;
 	ux[nd] = ux_l; uy[nd] = uy_l; uz[nd] = uz_l; rho[nd] = rho_l;
 
+}
+
+template <class T>
+void LatticeStructure<T>::bounce_back(T * fOut, const T * fIn, const int nd)
+{
+	for (int spd = 0; spd < numSpd; ++spd)
+	{
+		fOut[getIDx(numSpd,nd,bbSpd[spd])] = fIn[getIDx(numSpd,nd,spd)];
+	}
 }
 
 
