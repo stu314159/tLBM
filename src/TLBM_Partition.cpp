@@ -29,6 +29,21 @@ TLBM_Partition::~TLBM_Partition(){
 
 }
 
+int TLBM_Partition::get_num_ts()
+{
+	return thisProblem.numTs;
+}
+
+int TLBM_Partition::get_ts_rep_freq()
+{
+	return thisProblem.tsRepFreq;
+}
+
+int TLBM_Partition::get_plot_freq()
+{
+	return thisProblem.plotFreq;
+}
+
 int TLBM_Partition::tlbm_initialize(){
 
   thisProblem.load_input();
@@ -349,5 +364,10 @@ int TLBM_Partition::get_gInd(int x, int y, int z){
 
 int TLBM_Partition::get_gInd(LatticeIndex myXYZ){
 	return myXYZ.X + myXYZ.Y*thisProblem.nx + myXYZ.Z*thisProblem.nx*thisProblem.ny;
+}
+
+void TLBM_Partition::take_LBM_time_step(bool isEven)
+{
+
 }
 

@@ -40,6 +40,10 @@ class TLBM_Partition{
     int get_gInd(int x, int y, int z);
     int get_gInd(LatticeIndex myXYZ);
     int get_cut_size();
+    int get_num_ts();
+    int get_ts_rep_freq();
+    int get_plot_freq();
+    void take_LBM_time_step(bool isEven);
 
 
   private:

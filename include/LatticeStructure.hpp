@@ -28,6 +28,11 @@ public:
   void setW(T * tw) {w = tw;}
   void setBB(int * bb){bbSpd = bb;}
   void set_numSpd(int ns){numSpd = ns;}
+  static inline unsigned getIDx(int nSpd, int nIdx, int spd){
+      	return nIdx*nSpd + spd;
+      	// return spd*nnods + nIdx; // use this if it performs faster.
+      }
+
 
 protected:
   int numSpd;
