@@ -88,6 +88,7 @@ class TLBM_Partition{
     void write_node_ordering();
     void make_interior_node_list();
 
+
     static inline unsigned getIDx(int nSpd, int nIdx, int spd){
     	return nIdx*nSpd + spd;
     	// return spd*nnods + nIdx; // use this if it performs faster.

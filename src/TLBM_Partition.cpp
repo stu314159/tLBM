@@ -370,8 +370,15 @@ int TLBM_Partition::get_gInd(LatticeIndex myXYZ){
 void TLBM_Partition::process_node_list(real * fOut, const real * fIn,
 		const std::set<int>& nodeList)
 {
+	// create scratch data arrays
+	const int numSpd = myLattice->get_numSpd();
+	for(auto const & nd : nodeList)
+	{
+		myLattice->compute_macroscopic_data(ux,uy,uz,rho,fIn,nd);
 
+	}
 }
+
 
 void TLBM_Partition::make_interior_node_list()
 {

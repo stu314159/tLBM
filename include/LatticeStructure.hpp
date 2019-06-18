@@ -33,6 +33,9 @@ public:
       	// return spd*nnods + nIdx; // use this if it performs faster.
       }
 
+  void compute_macroscopic_data(T * ux, T * uy, T * uz, T * rho,
+		  const T * fIn, const int nd);
+
 
 protected:
   int numSpd;
@@ -42,6 +45,30 @@ protected:
   T * w;
   int * bbSpd;
 };
+
+template <class T>
+void LatticeStructure<T>::compute_macroscopic_data(T * ux, T * uy, T * uz, T * rho,
+		const T * fIn, const int nd){
+	T ux_l = 0;
+	T uy_l = 0;
+	T uz_l = 0;
+	T rho_l = 0;
+	T f;
+	for ( int spd = 0; spd < numSpd; ++spd)
+	{
+		f = fIn[getIDx(numSpd,nd,spd)];
+		rho_l += f;
+		ux_l += f*ex[spd];
+		uy_l += f*ey[spd];
+		uz_l += f*ez[spd];
+	}
+	ux_l /= rho_l;
+	uy_l /= rho_l;
+	uz_l /= rho_l;
+	ux[nd] = ux_l; uy[nd] = uy_l; uz[nd] = uz_l; rho[nd] = rho_l;
+
+}
+
 
 template <class T>
 int LatticeStructure<T>::get_numSpd(){
