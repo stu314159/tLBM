@@ -77,6 +77,8 @@ int TLBM_Partition::tlbm_initialize(){
 
   write_node_ordering();
 
+  make_interior_node_list();
+
   return 0;
 }
 
@@ -365,7 +367,23 @@ int TLBM_Partition::get_gInd(int x, int y, int z){
 int TLBM_Partition::get_gInd(LatticeIndex myXYZ){
 	return myXYZ.X + myXYZ.Y*thisProblem.nx + myXYZ.Z*thisProblem.nx*thisProblem.ny;
 }
+void TLBM_Partition::process_node_list(real * fOut, const real * fIn,
+		const std::set<int>& nodeList)
+{
 
+}
+
+void TLBM_Partition::make_interior_node_list()
+{
+	for(int nd = 0; nd < numLnodes; ++nd)
+	{
+		if (!boundaryNdList.count(nd))
+		{ // not in the boundary node list
+			interiorNdList.insert(nd);
+		}
+	}
+
+}
 void TLBM_Partition::take_LBM_time_step(bool isEven)
 {
 	// set fIn and fOut
@@ -379,7 +397,7 @@ void TLBM_Partition::take_LBM_time_step(bool isEven)
 	}
 
 	// process boundary nodes
-
+	process_node_list(fOut,fIn,boundaryNdList);
 
 	// extract halo data
 

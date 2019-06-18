@@ -44,6 +44,7 @@ class TLBM_Partition{
     int get_ts_rep_freq();
     int get_plot_freq();
     void take_LBM_time_step(bool isEven);
+    void process_node_list(real * fOut, const real * fIn, const std::set<int>& nodeList);
 
 
   private:
@@ -54,7 +55,8 @@ class TLBM_Partition{
     std::vector<int> localNdList; // my lattice points (global node numbers)
     std::vector<int> partSizes; // number of LPs in each partition
     std::vector<int> partsG; // partition assignment for each node by global node number
-    std::set<int> boundaryNdList;
+    std::set<int> boundaryNdList; // local node number set of boundary nodes
+    std::set<int> interiorNdList; // local node number set of non-boundary nodes
     std::set<int> haloNodes;
     std::map<int,int> globalToLocal;
     std::map<int,int> localToGlobal;
@@ -84,6 +86,7 @@ class TLBM_Partition{
     void load_ndType();
     void initialize_data_arrays();
     void write_node_ordering();
+    void make_interior_node_list();
 
     static inline unsigned getIDx(int nSpd, int nIdx, int spd){
     	return nIdx*nSpd + spd;
