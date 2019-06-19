@@ -69,8 +69,6 @@ void D3Q19LatticeStructure<T>::set_inlet_bc_micro(T* fIn, const T* fEq, const in
 		fIn[this->getIDx(numSpd,n,sp[s])]= fEq[this->getIDx(numSpd,n,sp[s])]+
 				fIn[this->getIDx(numSpd,n,bbSp[s])]-fEq[this->getIDx(numSpd,n,bbSp[s])];
 	}
-
-
 }
 
 

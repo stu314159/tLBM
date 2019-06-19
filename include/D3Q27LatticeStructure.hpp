@@ -64,8 +64,16 @@ D3Q27LatticeStructure<T>::~D3Q27LatticeStructure(){
 }
 
 template <class T>
-void D3Q27LatticeStructure<T>::set_inlet_bc_micro(T* fIn, const T* fEq, const int nd)
+void D3Q27LatticeStructure<T>::set_inlet_bc_micro(T* fIn, const T* fEq, const int n)
 {
+	int sp[9]={5,11,13,15,17,19,21,23,25};
+	int bbSp[9]={6,14,12,18,16,26,24,22,20};
+	int numBB = 9;
+	for(int s=0 ; s<numBB ; ++s)
+	{
+		fIn[this->getIDx(numSpd,n,sp[s])]= fEq[this->getIDx(numSpd,n,sp[s])]+
+				fIn[this->getIDx(numSpd,n,bbSp[s])]-fEq[this->getIDx(numSpd,n,bbSp[s])];
+	}
 
 }
 
