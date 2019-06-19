@@ -19,7 +19,7 @@ public:
   ~D3Q27LatticeStructure();
   void set_inlet_bc_macro(const T * fIn, T* ux, T* uy, T * uz,
 		  T * rho, const T u_bc, const int nd);
-  void set_inlet_bc_micro(T* fIn, const int nd);
+  void set_inlet_bc_micro(T* fIn, const T* fEq, const int nd);
 
 private:
   static const int numSpd = 27;
@@ -64,7 +64,7 @@ D3Q27LatticeStructure<T>::~D3Q27LatticeStructure(){
 }
 
 template <class T>
-void D3Q27LatticeStructure<T>::set_inlet_bc_micro(T* fIn, const int nd)
+void D3Q27LatticeStructure<T>::set_inlet_bc_micro(T* fIn, const T* fEq, const int nd)
 {
 
 }

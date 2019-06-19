@@ -40,7 +40,7 @@ public:
   void bounce_back(T * fOut, const T * fIN, const int nd);
   virtual void set_inlet_bc_macro(const T * fIn, T* ux, T* uy, T * uz, T * rho,
 		  const T u_bc, const int nd) = 0;
-  virtual void set_inlet_bc_micro(T* fIn,const int nd) = 0;
+  virtual void set_inlet_bc_micro(T* fIn,const T* fEq, const int nd) = 0;
 
 
 protected:

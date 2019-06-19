@@ -372,8 +372,6 @@ int TLBM_Partition::get_gInd(LatticeIndex myXYZ){
 void TLBM_Partition::process_node_list(real * fOut, const real * fIn,
 		const std::set<int>& nodeList)
 {
-	// create scratch data arrays
-	const int numSpd = myLattice->get_numSpd();
 
 	for(auto const & nd : nodeList)
 	{
@@ -395,7 +393,7 @@ void TLBM_Partition::process_node_list(real * fOut, const real * fIn,
 		{
 			myLattice->set_inlet_bc_macro(fIn,ux, uy, uz,rho,
 					thisProblem.uLBM,nd);
-			myLattice->set_inlet_bc_micro(const_cast<real *>(fIn),nd);
+			myLattice->set_inlet_bc_micro(const_cast<real *>(fIn),fEq,nd);
 		}
 		if (ndType[nd] == 3)
 		{

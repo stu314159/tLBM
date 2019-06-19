@@ -18,7 +18,7 @@ public:
   ~D3Q15LatticeStructure();
   void set_inlet_bc_macro(const T * fIn,T* ux, T* uy, T * uz, T * rho,
 		  const T u_bc, const int nd);
-  void set_inlet_bc_micro(T* fIn, const int nd);
+  void set_inlet_bc_micro(T* fIn, const T* fEq, const int nd);
 
 private:
   static const int numSpd=15;
@@ -57,7 +57,7 @@ D3Q15LatticeStructure<T>::~D3Q15LatticeStructure(){
 }
 
 template <class T>
-void D3Q15LatticeStructure<T>::set_inlet_bc_micro(T* fIn, const int n)
+void D3Q15LatticeStructure<T>::set_inlet_bc_micro(T* fIn, const T* fEq, const int n)
 {
 //	int sp[5]={5,7,8,9,10};
 //	  int bbSp[5]={6,11,12,13,14};
@@ -72,7 +72,8 @@ void D3Q15LatticeStructure<T>::set_inlet_bc_micro(T* fIn, const int n)
 	int numBB = 5;
 	for(int s=0 ; s<numBB ; ++s)
 	{
-		//fIn[getIDx(numSpd,n,s)]= ... need fEq
+		fIn[this->getIDx(numSpd,n,sp[s])]= fEq[this->getIDx(numSpd,n,sp[s])]+
+				fIn[this->getIDx(numSpd,n,bbSp[s])]-fEq[this->getIDx(numSpd,n,bbSp[s])];
 	}
 
 }
