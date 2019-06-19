@@ -62,9 +62,40 @@ D3Q27LatticeStructure<T>::~D3Q27LatticeStructure(){
 }
 
 template <class T>
-void D3Q27LatticeStructure<T>::set_inlet_bc_macro(const T * fIN, T* ux, T* uy,T * uz,
+void D3Q27LatticeStructure<T>::set_inlet_bc_macro(const T * fIn, T* ux, T* uy,T * uz,
 		T * rho, const T u_bc, const int nd)
 {
+//	f.uz = f.u_bc;
+//		f.ux = 0; f.uy = 0.;
+//		f.rho = (1./(1. - f.uz))*(2.*(f.f[6]+f.f[14]+f.f[12]+
+//				f.f[18]+f.f[16]+f.f[26]+f.f[24]+f.f[22]+f.f[20])+
+//				(f.f[0]+f.f[1]+f.f[2]+f.f[3]+f.f[4]+
+//						f.f[7]+f.f[8]+f.f[9]+f.f[10]));
+
+	T f6, f14, f12, f18, f16, f26, f24, f22, f20, f0, f1, f2, f3, f4, f7, f8, f9, f10;
+	f0 = fIn[this->getIDx(numSpd,nd,0)];
+	f1 = fIn[this->getIDx(numSpd,nd,1)];
+	f2 = fIn[this->getIDx(numSpd,nd,2)];
+	f3 = fIn[this->getIDx(numSpd,nd,3)];
+	f4 = fIn[this->getIDx(numSpd,nd,4)];
+	f6 = fIn[this->getIDx(numSpd,nd,6)];
+	f7 = fIn[this->getIDx(numSpd,nd,7)];
+	f8 = fIn[this->getIDx(numSpd,nd,8)];
+	f9 = fIn[this->getIDx(numSpd,nd,9)];
+	f10 = fIn[this->getIDx(numSpd,nd,10)];
+	f12 = fIn[this->getIDx(numSpd,nd,12)];
+	f14 = fIn[this->getIDx(numSpd,nd,14)];
+	f16 = fIn[this->getIDx(numSpd,nd,16)];
+	f18 = fIn[this->getIDx(numSpd,nd,18)];
+	f20 = fIn[this->getIDx(numSpd,nd,20)];
+	f22 = fIn[this->getIDx(numSpd,nd,22)];
+	f24 = fIn[this->getIDx(numSpd,nd,24)];
+	f26 = fIn[this->getIDx(numSpd,nd,26)];
+
+	ux[nd] = 0.; uy[nd] = 0.; uz[nd] = u_bc;
+	rho[nd] = (1./(1. - u_bc))*(2*(f6 + f14 + f12 + f18 + f16 + f26 + f24 + f22 + f20) +
+			(f0 + f1 + f2 + f3 + f4 + f7 + f8 + f9 + f10));
+
 
 }
 
