@@ -304,8 +304,12 @@ void TLBM_Partition::write_node_ordering()
 	MPI_Status status;
 	int rc;
 
-	rc = MPI_File_open(comm,"ordering.b_dat",
+	rc = MPI_File_open(comm,(char *)"ordering.b_dat",
 			MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
+	if(rc)
+	{
+		throw "Error opening file to write node ordering";
+	}
 
 	//int offset_s = firstSlice*Nx*Ny*sizeof(int);
 	//MPI_File_write_at(fh_snl,offset_s,snl+HALO*Nx*Ny,numEntries,MPI_INT,&mpi_s1);
