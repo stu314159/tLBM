@@ -59,7 +59,21 @@ D3Q15LatticeStructure<T>::~D3Q15LatticeStructure(){
 template <class T>
 void D3Q15LatticeStructure<T>::set_inlet_bc_micro(T* fIn, const int n)
 {
+//	int sp[5]={5,7,8,9,10};
+//	  int bbSp[5]={6,11,12,13,14};
+//	  int numBB = 5;
+//	  for(int s=0;s<numBB;s++)
+//	  {
+//		  f.f[sp[s]]=f.fEq[sp[s]]+f.f[bbSp[s]]-f.fEq[bbSp[s]];
+//	  }
 
+	int sp[5] = {5,7,8,9,10};
+	int bbSp[5] = {6,11,12,13,14};
+	int numBB = 5;
+	for(int s=0 ; s<numBB ; ++s)
+	{
+		//fIn[getIDx(numSpd,n,s)]= ... need fEq
+	}
 
 }
 

@@ -35,6 +35,8 @@ public:
 
   void compute_macroscopic_data(T * ux, T * uy, T * uz, T * rho,
 		  const T * fIn, const int nd);
+  void compute_equilibrium(T * fEq,
+		  const T* ux, const T* uy, const T* uz, const T* rho, const int nd);
   void bounce_back(T * fOut, const T * fIN, const int nd);
   virtual void set_inlet_bc_macro(const T * fIn, T* ux, T* uy, T * uz, T * rho,
 		  const T u_bc, const int nd) = 0;
@@ -71,6 +73,20 @@ void LatticeStructure<T>::compute_macroscopic_data(T * ux, T * uy, T * uz, T * r
 	uz_l /= rho_l;
 	ux[nd] = ux_l; uy[nd] = uy_l; uz[nd] = uz_l; rho[nd] = rho_l;
 
+}
+
+template <class T>
+void LatticeStructure<T>::compute_equilibrium(T* fEq,
+		const T* ux, const T* uy, const T* uz, const T* rho, const int nd)
+{
+	T cu;
+	for (int spd = 0; spd<numSpd; ++spd)
+	{
+		fEq[getIDx(numSpd,nd,spd)]=0;
+		cu = 3.0*(ex[spd]*ux[nd]+ey[spd]*uy[nd]+ez[spd]*uz[nd]);
+		fEq[getIDx(numSpd,nd,spd)]=w[spd]*rho[nd]*
+				(1.0+cu+0.5*(cu*cu)-3./2.*(ux[nd]*ux[nd]+uy[nd]*uy[nd]+uz[nd]*uz[nd]));
+	}
 }
 
 template <class T>

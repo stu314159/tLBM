@@ -20,6 +20,7 @@ TLBM_Partition::~TLBM_Partition(){
   delete [] adjMatrix;
   delete [] fEven;
   delete [] fOdd;
+  delete [] fEq;
   delete [] ndType;
 
   delete [] ux;
@@ -271,6 +272,7 @@ void TLBM_Partition::allocate_arrays()
 	int numSpd = myLattice->get_numSpd();
 	fEven = new real[numSpd*numLnodes];
 	fOdd = new real[numSpd*numLnodes];
+	fEq = new real[numSpd*numLnodes];
 	ndType = new int[numLnodes];
 
 	ux = new real[numLnodes];
@@ -380,7 +382,12 @@ void TLBM_Partition::process_node_list(real * fOut, const real * fIn,
 		{
 			ux[nd] = 0; uy[nd] = 0; uz[nd] = 0; // set macroscopic speed to zero
 			myLattice->bounce_back(fOut,fIn,nd);
+			continue; // skip to next iteration of the for-loop
 		}
+
+		// other than solid nodes, all nodes will need to compute equilibrium.
+		myLattice->compute_equilibrium(fEq,ux,uy,uz,rho,nd);
+
 		// node type 2 = inlet velocity node
 		// node type 3 = outlet pressure node
 		// node type 5 = specified u_z node

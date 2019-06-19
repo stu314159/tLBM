@@ -71,6 +71,7 @@ class TLBM_Partition{
     int * ndType = NULL;
     real * fEven = NULL;
     real * fOdd = NULL;
+    real * fEq = NULL;
     real * fIn = NULL;
     real * fOut = NULL;
     real * ux = NULL;
