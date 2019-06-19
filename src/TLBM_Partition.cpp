@@ -388,6 +388,11 @@ void TLBM_Partition::process_node_list(real * fOut, const real * fIn,
 		{
 			myLattice->set_inlet_bc_macro(fIn,ux, uy, uz,rho,
 					thisProblem.uLBM,nd);
+			myLattice->set_inlet_bc_micro(const_cast<real *>(fIn),nd);
+		}
+		if (ndType[nd] == 3)
+		{
+
 
 		}
 

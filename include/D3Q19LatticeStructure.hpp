@@ -19,6 +19,7 @@ public:
   ~D3Q19LatticeStructure();
   void set_inlet_bc_macro(const T * fIn, T* ux, T* uy, T * uz, T * rho,
 		  const T u_bc, const int nd);
+  void set_inlet_bc_micro(T* fIn, const int nd);
 
 private:
   static const int numSpd = 19;
@@ -58,16 +59,16 @@ D3Q19LatticeStructure<T>::~D3Q19LatticeStructure(){
 }
 
 template <class T>
+void D3Q19LatticeStructure<T>::set_inlet_bc_micro(T* fIn, const int nd)
+{
+
+}
+
+
+template <class T>
 void D3Q19LatticeStructure<T>::set_inlet_bc_macro(const T * fIn,T* ux, T* uy,T * uz,
 		T * rho, const T u_bc, const int nd)
 {
-
-//	f.uz = f.u_bc;
-//		f.ux = 0.; f.uy = 0.;
-//		f.rho = (1./(1.-f.uz))*(2.*(f.f[6]+f.f[13]+f.f[14]+
-//				f.f[17]+f.f[18])+
-//				(f.f[0]+f.f[1]+f.f[2]+f.f[3]+f.f[4]+
-//						f.f[7]+f.f[8]+f.f[9]+f.f[10]));
 
 
 	T f0, f1, f2, f3, f4, f6, f7, f8, f9, f10, f13, f14, f17, f18;
