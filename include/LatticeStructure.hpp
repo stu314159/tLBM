@@ -52,6 +52,8 @@ public:
   void compute_strain_tensor(T* S, const T* fIn, const T* fEq, const int nd);
   void apply_turbulence_model(T omega, const T* S, const T cs);
 
+  void relax(T* fOut, const T* fIn, const T* fEq, const T omega, const int nd);
+
 
 protected:
   int numSpd;
@@ -128,6 +130,16 @@ void LatticeStructure<T>::apply_turbulence_model(T omega, const T* S, const T cs
 	P*=cs; P = sqrt(P+nu*nu)-nu;
 	nu_e = P/6.;
 	omega = 1./(3.*(nu+nu_e)+0.5);
+}
+
+template <class T>
+void LatticeStructure<T>::relax(T* fOut, const T* fIn, const T* fEq, const T omega, const int nd)
+{
+	for (int spd = 0; spd<numSpd; ++spd)
+	{
+		int idx = getIDx(numSpd,nd,spd);
+		fOut[idx] = fIn[idx] - omega*(fIn[idx] - fEq[idx]);
+	}
 }
 
 template <class T>

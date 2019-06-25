@@ -409,13 +409,24 @@ void TLBM_Partition::process_node_list(real * fOut, const real * fIn,
 			myLattice->set_uz_bc(const_cast<real *>(fIn),ux,uy,uz,rho,thisProblem.uLBM,nd);
 		}
 
+		real omega = thisProblem.omega;
 		if (thisProblem.cs > 0)
 		{
 			// create data structures needed for each individual lattice point
 			real S[9] = {0,0,0,0,0,0,0,0,0};
 			myLattice->compute_strain_tensor(S,fIn, fEq, nd);
-			real omega = thisProblem.omega;
 			myLattice->apply_turbulence_model(omega,S,thisProblem.cs);
+		}
+
+		// pick between relaxation methodologies
+		switch(thisProblem.dynamics)
+		{
+		case 1:
+			myLattice->relax(fOut,fIn,fEq,omega,nd); break;
+
+//		case 2:
+//
+//		case 3:
 
 		}
 
