@@ -45,6 +45,9 @@ public:
 		  const int nd) = 0;
   virtual void set_outlet_bc_micro(T* fIn, const T* fEq, const int nd) = 0;
 
+  void set_uz_bc(T* fIn, const T* ux, const T* uy, T* uz, const T* rho,
+		  const T u_bc, const int nd);
+
 
 protected:
   int numSpd;
@@ -101,6 +104,18 @@ void LatticeStructure<T>::bounce_back(T * fOut, const T * fIn, const int nd)
 	}
 }
 
+template <class T>
+void LatticeStructure<T>::set_uz_bc(T* fIn, const T* ux, const T* uy, T* uz,
+		const T* rho, const T u_bc, const int nd)
+{
+	for ( int spd = 0; spd<numSpd; ++spd)
+	{
+		// pushes fIn[spd] values towards one such that uz = u_bc, ux = uy = 0.
+		fIn[this->getIDx(numSpd,nd,spd)] += 3.*rho[nd]*w[spd]*
+				(ez[spd]*(u_bc - uz[nd]) + ex[spd]*(0.-ux[nd]) + ey[spd]*(0. - uy[spd]));
+	}
+
+}
 
 template <class T>
 int LatticeStructure<T>::get_numSpd(){
