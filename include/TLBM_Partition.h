@@ -45,6 +45,10 @@ class TLBM_Partition{
     int get_plot_freq();
     void take_LBM_time_step(bool isEven);
     void process_node_list(real * fOut, const real * fIn, const std::set<int>& nodeList);
+    static inline unsigned getIDx(int nSpd, int nIdx, int spd){
+        	return nIdx*nSpd + spd;
+        	// return spd*nnods + nIdx; // use this if it performs faster.
+        }
 
 
   private:
@@ -93,10 +97,7 @@ class TLBM_Partition{
     void extract_halo_data(real * fOut);
 
 
-    static inline unsigned getIDx(int nSpd, int nIdx, int spd){
-    	return nIdx*nSpd + spd;
-    	// return spd*nnods + nIdx; // use this if it performs faster.
-    }
+
 
 };
 

@@ -31,9 +31,12 @@ public:
 	int get_num_nodes()const;
 	std::set<int> get_halo_nodes() const;
 	T* get_buffer() const;
+	int * get_ndNums(){return ndNums;}
+	int * get_spds(){return spds;}
 
 	void allocate_arrays();
 	void fill_nums_and_speeds(std::map<int,int> & globalToLocal);
+
 
 private:
 	std::map<int,std::set<int>> DataMap; // map between global node numbers and speeds
@@ -41,6 +44,7 @@ private:
 	T* buffer;
 	int * ndNums;
 	int * spds;
+
 };
 
 
