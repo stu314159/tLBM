@@ -20,6 +20,7 @@ public:
   void set_inlet_bc_macro(const T * fIn, T* ux, T* uy, T * uz, T * rho,
 		  const T u_bc, const int nd);
   void set_inlet_bc_micro(T* fIn, const T* fEq, const int nd);
+  void set_outlet_bc_macro(const T* fIn, T* uz, T* rho, const T rho_bc, const int nd);
 
 private:
   static const int numSpd = 19;
@@ -96,6 +97,30 @@ void D3Q19LatticeStructure<T>::set_inlet_bc_macro(const T * fIn,T* ux, T* uy,T *
     uz[nd] = u_bc; ux[nd] = 0; uy[nd] = 0;
     rho[nd] = (1./(1.-u_bc))*(2.*(f6 + f13 + f14 + f17 + f18) +
     		(f0 + f1 + f2 + f3 + f4 + f7 + f8 + f9 + f10));
+
+}
+
+template <class T>
+void D3Q19LatticeStructure<T>::set_outlet_bc_macro(const T* fIn, T* uz, T* rho, const T rho_bc, const int nd)
+{
+	rho[nd] = rho_bc;
+	T f0,f1,f2,f3,f4,f5,f7,f8,f9,f10,f11,f12,f15,f16;
+	f0 = fIn[this->getIDx(numSpd,nd,0)];
+	f1 = fIn[this->getIDx(numSpd,nd,1)];
+	f2 = fIn[this->getIDx(numSpd,nd,2)];
+	f3 = fIn[this->getIDx(numSpd,nd,3)];
+	f4 = fIn[this->getIDx(numSpd,nd,4)];
+	f5 = fIn[this->getIDx(numSpd,nd,5)];
+	f7 = fIn[this->getIDx(numSpd,nd,7)];
+	f8 = fIn[this->getIDx(numSpd,nd,8)];
+	f9 = fIn[this->getIDx(numSpd,nd,9)];
+	f10 = fIn[this->getIDx(numSpd,nd,10)];
+	f11 = fIn[this->getIDx(numSpd,nd,11)];
+	f12 = fIn[this->getIDx(numSpd,nd,12)];
+	f15 = fIn[this->getIDx(numSpd,nd,15)];
+	f16 = fIn[this->getIDx(numSpd,nd,16)];
+
+	uz[nd] = -1. + (1./rho_bc)*(2.*(f5+f11+f12+f15+f16)+(f0+f1+f2+f3+f4+f7+f8+f9+f10));
 
 }
 

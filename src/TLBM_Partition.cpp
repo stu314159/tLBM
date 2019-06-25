@@ -401,6 +401,7 @@ void TLBM_Partition::process_node_list(real * fOut, const real * fIn,
 		}
 		if (ndType[nd] == 3)
 		{
+			myLattice->set_outlet_bc_macro(fIn,ux,rho,thisProblem.rhoLBM,nd);
 
 
 		}
