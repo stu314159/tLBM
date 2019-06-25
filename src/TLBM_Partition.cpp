@@ -424,7 +424,11 @@ void TLBM_Partition::process_node_list(real * fOut, const real * fIn,
 		case 1:
 			myLattice->relax(fOut,fIn,fEq,omega,nd); break;
 
-//		case 2:
+		case 2: // for now, do not do this.
+			real piFlat[9] = {0,0,0,0,0,0,0,0,0};
+			myLattice->compute_piflat(piFlat,fIn,fEq,nd);
+
+			break;
 //
 //		case 3:
 

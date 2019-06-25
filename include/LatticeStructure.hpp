@@ -54,6 +54,8 @@ public:
 
   void relax(T* fOut, const T* fIn, const T* fEq, const T omega, const int nd);
 
+  void compute_piflat(T* piFlat,const T* fIn, const T* fEq, const int nd);
+
 
 protected:
   int numSpd;
@@ -116,6 +118,22 @@ void LatticeStructure<T>::compute_strain_tensor(T* S,const T* fIn, const T* fEq,
 				S[i*nDim+j]+=e[i]*e[j]*(fIn[this->getIDx(numSpd,nd,spd)] - fEq[this->getIDx(numSpd,nd,spd)]);
 			}
 		}
+	}
+
+}
+
+template <class T>
+void LatticeStructure<T>::compute_piflat(T* piFlat, const T* fIn, const T* fEq, const int nd)
+{
+	T fNeq;
+	for(int spd = 0; spd<numSpd; ++spd)
+	{
+		int idx = getIDx(numSpd,nd,spd);
+		fNeq = fIn[idx] - fEq[idx];
+		piFlat[0]+=ex[spd]*ey[spd]*fNeq;
+		piFlat[1]+=ey[spd]*ex[spd]*fNeq;
+		piFlat[2]+=ez[spd]*ex[spd]*fNeq;
+
 	}
 
 }

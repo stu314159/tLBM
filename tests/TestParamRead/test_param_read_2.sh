@@ -6,7 +6,7 @@
 
 N_divs=15
 latticeType=D3Q15
-dynamics=2
+dynamics=1
 partitionMethod=1D
 nParts=5
 nOMP=1
