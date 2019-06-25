@@ -28,6 +28,8 @@ public:
 	HaloDataObject<T>& operator[](int k);
 	void print_halo();
 	std::set<int> get_halo_nodes() const;
+	void allocate_halo_arrays();
+	void fill_arrays(std::map<int,int> & globalToLocal);
 
 private:
 	// map keys: neighboring partition rank.
@@ -48,6 +50,25 @@ HaloDataOrganizer<T>::HaloDataOrganizer()
 template <class T>
 HaloDataOrganizer<T>::~HaloDataOrganizer()
 {
+
+}
+
+template <class T>
+void HaloDataOrganizer<T>::allocate_halo_arrays()
+{
+	for(auto & haloIt : Halo)
+	{
+		haloIt.second.allocate_arrays();
+	}
+}
+
+template <class T>
+void HaloDataOrganizer<T>::fill_arrays(std::map<int,int> & globalToLocal)
+{
+	for(auto & haloIt : Halo)
+	{
+		haloIt.second.fill_nums_and_speeds(globalToLocal);
+	}
 
 }
 

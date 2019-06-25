@@ -80,6 +80,8 @@ int TLBM_Partition::tlbm_initialize(){
 
   make_interior_node_list();
 
+  finalize_halo_data_arrays();
+
   return 0;
 }
 
@@ -214,12 +216,13 @@ void TLBM_Partition::compute_halo_data()
     		if ( tgtP != rank)
     		{
     			HDO_out[tgtP].insert_item(tgtNd,spd);
-    			HDO_in[tgtP].insert_item(nd,bbSpd[spd]);
+    			HDO_in[tgtP].insert_item(localToGlobal[nd],bbSpd[spd]);
     			// HDO_out now recorded the global node number (in order) and
     			// speed of all data to be transferred to each neighbor.
     			//
-    			// HDO_in has the local node number and speeds of all data that
+    			// HDO_in has the global node number and speeds of all data that
     			// will be received from neighboring partitions.
+    			// (will be converted back to local node number when the HDO allocates and fills low-level arrays)
     			//
     			// above is okay since local node numbers are generated in order
     			// of increasing global node number.
@@ -245,6 +248,23 @@ void TLBM_Partition::compute_halo_data()
     	localToGlobal[lNd] = hnIt;
     	++lNd;
     }
+
+
+}
+
+void TLBM_Partition::finalize_halo_data_arrays()
+{
+	//cycle through Halo Data Objects contained within each Halo Data Organizer (both in and out)
+	// a) allocate arrays
+	// b) load the nodeNums and spds arrays with the *local* node number and speed corresponding to
+	//    each entry to be made in the buffer
+	HDO_in.allocate_halo_arrays();
+	HDO_out.allocate_halo_arrays();
+
+	HDO_in.fill_arrays(globalToLocal);
+	HDO_out.fill_arrays(globalToLocal);
+
+
 
 }
 
@@ -462,6 +482,12 @@ void TLBM_Partition::make_interior_node_list()
 	}
 
 }
+
+void TLBM_Partition::extract_halo_data(real * fOut)
+{
+
+}
+
 void TLBM_Partition::take_LBM_time_step(bool isEven)
 {
 	// set fIn and fOut
@@ -478,6 +504,7 @@ void TLBM_Partition::take_LBM_time_step(bool isEven)
 	process_node_list(fOut,fIn,boundaryNdList);
 
 	// extract halo data
+	extract_halo_data(fOut);
 
 	// initiate MPI Isend/Irecv
 

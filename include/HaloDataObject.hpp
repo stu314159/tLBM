@@ -32,24 +32,58 @@ public:
 	std::set<int> get_halo_nodes() const;
 	T* get_buffer() const;
 
+	void allocate_arrays();
+	void fill_nums_and_speeds(std::map<int,int> & globalToLocal);
+
 private:
-	std::map<int,std::set<int>> DataMap;
+	std::map<int,std::set<int>> DataMap; // map between global node numbers and speeds
 	int numItems;
 	T* buffer;
+	int * ndNums;
+	int * spds;
 };
 
 
 template <class T>
-HaloDataObject<T>::HaloDataObject():
-numItems(0), buffer(0)
+void HaloDataObject<T>::allocate_arrays()
 {
+  buffer = new T[numItems];
+  ndNums = new int[numItems];
+  spds = new int[numItems];
+}
+
+template <class T>
+HaloDataObject<T>::HaloDataObject():
+numItems(0), buffer(0), ndNums(0), spds(0)
+{
+
+}
+
+template <class T>
+void HaloDataObject<T>::fill_nums_and_speeds(std::map<int,int> & globalToLocal)
+{
+	int entry = 0;
+	for(const auto & gNdIt : DataMap)
+	{
+		int gNd = gNdIt.first;
+		int lNd = globalToLocal[gNd];
+		for(const auto & spdIt : gNdIt.second)
+		{
+			ndNums[entry] = lNd;
+			spds[entry] = spdIt;
+			++entry;
+		}
+
+	}
 
 }
 
 template <class T>
 HaloDataObject<T>::~HaloDataObject()
 {
-
+  delete [] buffer;
+  delete [] ndNums;
+  delete [] spds;
 }
 
 template <class T>
