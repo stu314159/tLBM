@@ -483,6 +483,27 @@ void TLBM_Partition::make_interior_node_list()
 
 }
 
+int TLBM_Partition::get_num_global_nodes()
+{
+	int Nx = thisProblem.nx;
+	int Ny = thisProblem.ny;
+	int Nz = thisProblem.nz;
+
+	return Nx*Ny*Nz;
+}
+
+real TLBM_Partition::get_data_member(const real * f, const int nd, const int spd)
+{
+	int numSpd = myLattice->get_numSpd();
+	return f[getIDx(numSpd,nd,spd)];
+}
+
+void TLBM_Partition::set_data_member(real * f,const real val, const int nd, const int spd)
+{
+	int numSpd = myLattice->get_numSpd();
+	f[getIDx(numSpd,nd,spd)] = val;
+}
+
 void TLBM_Partition::extract_halo_data(real * fOut)
 {
 
@@ -509,6 +530,7 @@ void TLBM_Partition::take_LBM_time_step(bool isEven)
 	// initiate MPI Isend/Irecv
 
 	// process interior nodes
+	process_node_list(fOut,fIn,interiorNdList);
 
 	// ensure MPI comms are complete
 

@@ -43,6 +43,9 @@ class TLBM_Partition{
     int get_num_ts();
     int get_ts_rep_freq();
     int get_plot_freq();
+    int get_num_global_nodes();
+    real get_data_member(const real * f, const int nd, const int spd);
+    void set_data_member(real * f, const real val, const int nd, const int spd);
     void take_LBM_time_step(bool isEven);
     void process_node_list(real * fOut, const real * fIn, const std::set<int>& nodeList);
     static inline unsigned getIDx(int nSpd, int nIdx, int spd){

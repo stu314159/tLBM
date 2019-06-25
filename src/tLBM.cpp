@@ -18,10 +18,6 @@ int main(int argc, char* argv[]){
 
   TLBM_Partition myPart(rank,size,MPI_COMM_WORLD);
 
-//  printf("Rank %d, cut-size: %d \n",rank,myPart.get_cut_size());
-
-  // note: tLBM needs to ask a partition how many time steps there are and
-  // when to write, etc...
   int numTs, tsRepFreq, plotFreq;
 
   numTs = myPart.get_num_ts();
@@ -54,6 +50,9 @@ int main(int argc, char* argv[]){
   {
 	  printf("Test complete.\n");
 	  printf("Elapsed time: %g seconds \n",execTime);
+	  int numNodes = myPart.get_num_global_nodes();
+	  double LPUs = numNodes*numTs/execTime;
+	  printf("Estimated LPU/s = %g \n",LPUs);
   }
 
   MPI_Finalize();
