@@ -88,6 +88,7 @@ class TLBM_Partition{
     void initialize_data_arrays();
     void write_node_ordering();
     void make_interior_node_list();
+    void stream_node_data(real * fOut, const real * fIn, const int nd);
 
 
     static inline unsigned getIDx(int nSpd, int nIdx, int spd){

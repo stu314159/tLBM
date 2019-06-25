@@ -429,14 +429,27 @@ void TLBM_Partition::process_node_list(real * fOut, const real * fIn,
 			myLattice->compute_piflat(piFlat,fIn,fEq,nd);
 
 			break;
-//
 //		case 3:
 
 		}
 
+		stream_node_data(fOut, fIn, nd);
+
+
 	}
 }
 
+void TLBM_Partition::stream_node_data(real * fOut, const real * fIn, const int nd)
+{
+	int numSpd = myLattice->get_numSpd();
+	for(int spd = 0; spd<numSpd;++spd)
+	{
+		int idx = getIDx(numSpd,nd,spd);
+		int t_idx = adjMatrix[idx];
+		fOut[t_idx] = fIn[idx];
+	}
+
+}
 
 void TLBM_Partition::make_interior_node_list()
 {
