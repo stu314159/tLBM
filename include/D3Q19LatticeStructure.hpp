@@ -21,6 +21,7 @@ public:
 		  const T u_bc, const int nd);
   void set_inlet_bc_micro(T* fIn, const T* fEq, const int nd);
   void set_outlet_bc_macro(const T* fIn, T* uz, T* rho, const T rho_bc, const int nd);
+  void set_outlet_bc_micro(T* fIn, const T* fEq, const int nd);
 
 private:
   static const int numSpd = 19;
@@ -70,6 +71,20 @@ void D3Q19LatticeStructure<T>::set_inlet_bc_micro(T* fIn, const T* fEq, const in
 		fIn[this->getIDx(numSpd,n,sp[s])]= fEq[this->getIDx(numSpd,n,sp[s])]+
 				fIn[this->getIDx(numSpd,n,bbSp[s])]-fEq[this->getIDx(numSpd,n,bbSp[s])];
 	}
+}
+
+template <class T>
+void D3Q19LatticeStructure<T>::set_outlet_bc_micro(T* fIn, const T* fEq, const int nd)
+{
+	int sp[5]={6,14,13,18,17};
+	int bbSp[5]={5,11,12,15,16};
+	int numBB = 5;
+	for(int s=0;s<numBB;s++)
+	{
+		fIn[this->getIDx(numSpd,nd,sp[s])] = fEq[this->getIDx(numSpd,nd,sp[s])] +
+				fIn[this->getIDx(numSpd,nd,bbSp[s])]-fEq[this->getIDx(numSpd,nd,bbSp[s])];
+	}
+
 }
 
 

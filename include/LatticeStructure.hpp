@@ -43,6 +43,7 @@ public:
   virtual void set_inlet_bc_micro(T* fIn,const T* fEq, const int nd) = 0;
   virtual void set_outlet_bc_macro(const T * fIn, T * uz, T * rho, const T rho_bc,
 		  const int nd) = 0;
+  virtual void set_outlet_bc_micro(T* fIn, const T* fEq, const int nd) = 0;
 
 
 protected:
