@@ -7,11 +7,10 @@ write the *.mat file and the *.vtk files
 
 # ajust python path so required modules are visible
 import sys
-sys.path.insert(1,'../../src/python')
+sys.path.insert(1,'../../python')
 
 
 import FluidChannel as fc
-import numpy as np
 
 # overall channel dimensions
 aLx_p = 1.0;

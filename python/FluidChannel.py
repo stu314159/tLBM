@@ -1204,8 +1204,10 @@ class FluidChannel:
         
         mat_dict['ssNds']=self.get_subset_nodeSet()
         
+        if geom_filename[-4:] != ".mat":
+            geom_filename+=".mat"
 
-        scipy.io.savemat(geom_filename,mat_dict)
+        scipy.io.savemat(geom_filename,mat_dict,appendmat=False)
 
     def add_subset(self,ss):
         """

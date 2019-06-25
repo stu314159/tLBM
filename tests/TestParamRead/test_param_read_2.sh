@@ -62,7 +62,7 @@ mpirun -np 1 ./tLBM_write_params.py $MAT_FILE $latticeType $dynamics \
 
 export OMP_NUM_THREADS=$nOMP
 
-mpirun -np -n $nParts ./tLBMexec
+#mpirun -np -n $nParts ./tLBMexec
 
 fi
 
