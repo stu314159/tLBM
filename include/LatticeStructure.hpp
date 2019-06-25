@@ -9,6 +9,7 @@
 #define INCLUDE_LATTICESTRUCTURE_HPP_
 
 #include "TLBM_definitions.h"
+#include <cmath>
 
 template < class T >
 class LatticeStructure
@@ -49,6 +50,7 @@ public:
 		  const T u_bc, const int nd);
 
   void compute_strain_tensor(T* S, const T* fIn, const T* fEq, const int nd);
+  void apply_turbulence_model(T omega, const T* S, const T cs);
 
 
 protected:
@@ -114,6 +116,18 @@ void LatticeStructure<T>::compute_strain_tensor(T* S,const T* fIn, const T* fEq,
 		}
 	}
 
+}
+
+template <class T>
+void LatticeStructure<T>::apply_turbulence_model(T omega, const T* S, const T cs)
+{
+	T nu, nu_e;
+	nu = ((1./omega)- 0.5)/3.0;
+	T P;
+	P = sqrt(S[0]*S[0]+S[4]*S[4]+S[8]*S[8] + 2.0*(S[1]*S[1]+S[2]*S[2] + S[5]*S[5]));
+	P*=cs; P = sqrt(P+nu*nu)-nu;
+	nu_e = P/6.;
+	omega = 1./(3.*(nu+nu_e)+0.5);
 }
 
 template <class T>
