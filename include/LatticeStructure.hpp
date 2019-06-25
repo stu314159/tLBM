@@ -48,6 +48,8 @@ public:
   void set_uz_bc(T* fIn, const T* ux, const T* uy, T* uz, const T* rho,
 		  const T u_bc, const int nd);
 
+  void compute_strain_tensor(T* S, const T* fIn, const T* fEq, const int nd);
+
 
 protected:
   int numSpd;
@@ -93,6 +95,25 @@ void LatticeStructure<T>::compute_equilibrium(T* fEq,
 		fEq[getIDx(numSpd,nd,spd)]=w[spd]*rho[nd]*
 				(1.0+cu+0.5*(cu*cu)-3./2.*(ux[nd]*ux[nd]+uy[nd]*uy[nd]+uz[nd]*uz[nd]));
 	}
+}
+
+template <class T>
+void LatticeStructure<T>::compute_strain_tensor(T* S,const T* fIn, const T* fEq, const int nd)
+{
+	T e[3];
+	const int nDim = 3;
+	for(int spd = 0; spd<numSpd;++spd)
+	{
+		e[0] = ex[spd]; e[1] = ey[spd]; e[2] = ez[spd];
+		for(int i = 0; i<nDim; ++i)
+		{
+			for(int j = 0; j<nDim; ++j)
+			{
+				S[i*nDim+j]+=e[i]*e[j]*(fIn[this->getIDx(numSpd,nd,spd)] - fEq[this->getIDx(numSpd,nd,spd)]);
+			}
+		}
+	}
+
 }
 
 template <class T>
