@@ -44,6 +44,7 @@ int main(int argc, char* argv[]){
 		if((ts+1)%plotFreq == 0)
 		{
 			// plot the data at specified intervals
+			myPart.write_data();
 		}
 
 	}

@@ -8,7 +8,7 @@
 
 
 TLBM_Partition::TLBM_Partition(int r, int s, MPI_Comm c):
-rank(r),size(s), comm(c)
+rank(r),size(s), comm(c),dataWriteNum(0)
 {
 //  printf("rank %d entering constructor \n",rank);
   tlbm_initialize();
@@ -346,6 +346,53 @@ void TLBM_Partition::write_node_ordering()
 	MPI_File_write_at(fh,offset,localNdList.data(),numLnodes,MPI_INT,&status);
 
 	MPI_File_close(&fh);
+
+}
+
+void TLBM_Partition::write_data()
+{
+	MPI_File fh;
+	MPI_Status status;
+	int rc;
+	std::string fileName = "ux"+std::to_string(dataWriteNum)+".b_dat";
+	int offset = writeOffset*sizeof(real);
+
+	rc = MPI_File_open(comm,fileName.c_str(),MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
+	MPI_File_write_at(fh,offset,ux,numLnodes,MPI_DTYPE,&status);
+	MPI_File_close(&fh);
+	if(rc)
+	{
+		throw "Error opening file to write ux";
+	}
+
+	fileName = "uy"+std::to_string(dataWriteNum)+".b_dat";
+	rc = MPI_File_open(comm,fileName.c_str(),MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
+	MPI_File_write_at(fh,offset,uy,numLnodes,MPI_DTYPE,&status);
+	MPI_File_close(&fh);
+	if(rc)
+	{
+		throw "Error opening file to write uy";
+	}
+
+	fileName = "uz"+std::to_string(dataWriteNum)+".b_dat";
+	rc = MPI_File_open(comm,fileName.c_str(),MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
+	MPI_File_write_at(fh,offset,uz,numLnodes,MPI_DTYPE,&status);
+	MPI_File_close(&fh);
+	if(rc)
+	{
+		throw "Error opening file to write uz";
+	}
+
+	fileName = "rho"+std::to_string(dataWriteNum)+".b_dat";
+	rc = MPI_File_open(comm,fileName.c_str(),MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
+	MPI_File_write_at(fh,offset,rho,numLnodes,MPI_DTYPE,&status);
+	MPI_File_close(&fh);
+	if(rc)
+	{
+		throw "Error opening file to write rho";
+	}
+	++dataWriteNum;
+
 
 }
 
