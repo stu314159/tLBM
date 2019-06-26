@@ -506,6 +506,8 @@ void TLBM_Partition::set_data_member(real * f,const real val, const int nd, cons
 
 void TLBM_Partition::extract_halo_data(real * fOut)
 {
+	int numSpd = myLattice->get_numSpd();
+	HDO_out.extract_halo_data(fOut,numSpd);
 
 }
 

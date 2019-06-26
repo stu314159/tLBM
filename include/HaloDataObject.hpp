@@ -36,6 +36,11 @@ public:
 
 	void allocate_arrays();
 	void fill_nums_and_speeds(std::map<int,int> & globalToLocal);
+	static inline unsigned getIDx(int nSpd, int nIdx, int spd){
+		return nIdx*nSpd + spd;
+		// return spd*nnods + nIdx; // use this if it performs faster.
+	}
+	void extract_halo_data(const T* fOut, const int numSpd);
 
 
 private:
@@ -60,6 +65,16 @@ template <class T>
 HaloDataObject<T>::HaloDataObject():
 numItems(0), buffer(0), ndNums(0), spds(0)
 {
+
+}
+
+template <class T>
+void HaloDataObject<T>::extract_halo_data(const T* fOut, const int numSpd)
+{
+	for(int i = 0; i<numItems; ++i)
+	{
+		buffer[i] = fOut[getIDx(numSpd,ndNums[i],spds[i])];
+	}
 
 }
 

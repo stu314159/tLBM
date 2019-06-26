@@ -30,6 +30,11 @@ public:
 	std::set<int> get_halo_nodes() const;
 	void allocate_halo_arrays();
 	void fill_arrays(std::map<int,int> & globalToLocal);
+	static inline unsigned getIDx(int nSpd, int nIdx, int spd){
+		return nIdx*nSpd + spd;
+		// return spd*nnods + nIdx; // use this if it performs faster.
+	}
+	void extract_halo_data(const T* fOut, const int numSpd);
 
 private:
 	// map keys: neighboring partition rank.
@@ -50,6 +55,16 @@ HaloDataOrganizer<T>::HaloDataOrganizer()
 template <class T>
 HaloDataOrganizer<T>::~HaloDataOrganizer()
 {
+
+}
+
+template <class T>
+void HaloDataOrganizer<T>::extract_halo_data(const T* fOut, const int numSpd)
+{
+	for(auto & ngbIT : Halo)
+	{
+		ngbIT.second.extract_halo_data(fOut,numSpd);
+	}
 
 }
 
