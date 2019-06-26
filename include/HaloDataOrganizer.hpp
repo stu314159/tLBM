@@ -35,6 +35,7 @@ public:
 		// return spd*nnods + nIdx; // use this if it performs faster.
 	}
 	void extract_halo_data(const T* fOut, const int numSpd);
+	void insert_halo_data(T* fOut, const int numSpd);
 
 private:
 	// map keys: neighboring partition rank.
@@ -66,6 +67,15 @@ void HaloDataOrganizer<T>::extract_halo_data(const T* fOut, const int numSpd)
 		ngbIT.second.extract_halo_data(fOut,numSpd);
 	}
 
+}
+
+template <class T>
+void HaloDataOrganizer<T>::insert_halo_data(T* fOut, const int numSpd)
+{
+	for(auto & ngbIT: Halo)
+	{
+		ngbIT.second.insert_halo_data(fOut,numSpd);
+	}
 }
 
 template <class T>

@@ -511,6 +511,13 @@ void TLBM_Partition::extract_halo_data(real * fOut)
 
 }
 
+void TLBM_Partition::insert_halo_data(real * fOut)
+{
+	int numSpd = myLattice->get_numSpd();
+	HDO_in.insert_halo_data(fOut,numSpd);
+
+}
+
 void TLBM_Partition::take_LBM_time_step(bool isEven)
 {
 	// set fIn and fOut
@@ -537,6 +544,7 @@ void TLBM_Partition::take_LBM_time_step(bool isEven)
 	// ensure MPI comms are complete
 
 	// distribute incoming halo data
+	insert_halo_data(fOut);
 
 }
 

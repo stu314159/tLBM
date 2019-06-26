@@ -5,56 +5,63 @@
 #include "TLBM_Partition.h"
 
 int main(int argc, char* argv[]){
-  
-  int rank, size;
-  MPI_Init(&argc, &argv);
-  MPI_Comm_size(MPI_COMM_WORLD,&size);
-  MPI_Comm_rank(MPI_COMM_WORLD,&rank);
 
-  if (rank == 0)
-  {
-	  printf("Commencing test with %d processes\n",size);
-  }
+	// initialize MPI environment
+	int rank, size;
+	MPI_Init(&argc, &argv);
+	MPI_Comm_size(MPI_COMM_WORLD,&size);
+	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
 
-  TLBM_Partition myPart(rank,size,MPI_COMM_WORLD);
+	if (rank == 0)
+	{
+		printf("Commencing test with %d processes\n",size);
+	}
 
-  int numTs, tsRepFreq, plotFreq;
+	// initialize the partition.  TLBM_Partition reads input files to obtain problem data.
+	TLBM_Partition myPart(rank,size,MPI_COMM_WORLD);
 
-  numTs = myPart.get_num_ts();
-  tsRepFreq = myPart.get_ts_rep_freq();
-  plotFreq = myPart.get_plot_freq();
+	int numTs, tsRepFreq, plotFreq;
 
-  double timeStart, timeEnd, execTime;
+	numTs = myPart.get_num_ts();
+	tsRepFreq = myPart.get_ts_rep_freq();
+	plotFreq = myPart.get_plot_freq();
 
-  timeStart = MPI_Wtime();
-  for(int ts = 0; ts < numTs; ++ts)
-  {
-	  if((rank == 0) & ((ts+1)%tsRepFreq==0))
-	  {
-		  // say something comforting
-		  printf("Executing time step: %d \n",ts+1);
-	  }
+	double timeStart, timeEnd, execTime;
 
-      myPart.take_LBM_time_step(ts%2);
+	// carry out time-stepping process
+	timeStart = MPI_Wtime();
+	for(int ts = 0; ts < numTs; ++ts)
+	{
+		if((rank == 0) & ((ts+1)%tsRepFreq==0))
+		{
+			// periodically report progress
+			printf("Executing time step: %d \n",ts+1);
+		}
 
-	  if((ts+1)%plotFreq == 0)
-	  {
-		  // plot the data
-	  }
+		// carry-out a single LBM time step (including data communication)
+		myPart.take_LBM_time_step(ts%2);
 
-  }
-  timeEnd = MPI_Wtime();
-  execTime = timeEnd - timeStart;
+		if((ts+1)%plotFreq == 0)
+		{
+			// plot the data at specified intervals
+		}
 
-  if (rank == 0)
-  {
-	  printf("Test complete.\n");
-	  printf("Elapsed time: %g seconds \n",execTime);
-	  int numNodes = myPart.get_num_global_nodes();
-	  double LPUs = numNodes*numTs/execTime;
-	  printf("Estimated LPU/s = %g \n",LPUs);
-  }
+	}
+	timeEnd = MPI_Wtime();
+	execTime = timeEnd - timeStart;
 
-  MPI_Finalize();
-  return 0;
+	if (rank == 0)
+	{
+		// report basic performance parameters
+		printf("Test complete.\n");
+		printf("Elapsed time: %g seconds \n",execTime);
+		int numNodes = myPart.get_num_global_nodes();
+		double LPUs = numNodes*numTs/execTime;
+		printf("Estimated LPU/s = %g \n",LPUs);
+	}
+
+
+	// clean up MPI environment
+	MPI_Finalize();
+	return 0;
 }

@@ -41,6 +41,7 @@ public:
 		// return spd*nnods + nIdx; // use this if it performs faster.
 	}
 	void extract_halo_data(const T* fOut, const int numSpd);
+	void insert_halo_data(T* fOut, const int numSpd);
 
 
 private:
@@ -76,6 +77,15 @@ void HaloDataObject<T>::extract_halo_data(const T* fOut, const int numSpd)
 		buffer[i] = fOut[getIDx(numSpd,ndNums[i],spds[i])];
 	}
 
+}
+
+template <class T>
+void HaloDataObject<T>::insert_halo_data(T* fOut, const int numSpd)
+{
+	for(int i = 0; i<numItems; ++i)
+	{
+		fOut[getIDx(numSpd,ndNums[i],spds[i])] = buffer[i];
+	}
 }
 
 template <class T>

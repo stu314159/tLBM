@@ -49,9 +49,9 @@ class TLBM_Partition{
     void take_LBM_time_step(bool isEven);
     void process_node_list(real * fOut, const real * fIn, const std::set<int>& nodeList);
     static inline unsigned getIDx(int nSpd, int nIdx, int spd){
-        	return nIdx*nSpd + spd;
-        	// return spd*nnods + nIdx; // use this if it performs faster.
-        }
+    	return nIdx*nSpd + spd;
+    	// return spd*nnods + nIdx; // use this if it performs faster.
+    }
 
 
   private:
@@ -98,6 +98,7 @@ class TLBM_Partition{
     void make_interior_node_list();
     void stream_node_data(real * fOut, const real * fIn, const int nd);
     void extract_halo_data(real * fOut);
+    void insert_halo_data(real * fOut);
 
 
 
