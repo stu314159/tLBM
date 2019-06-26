@@ -28,6 +28,10 @@ TLBM_Partition::~TLBM_Partition(){
   delete [] uz;
   delete [] rho;
 
+  delete [] mpiInRequest;
+  delete [] mpiOutRequest;
+  delete [] mpiStatus;
+
 }
 
 int TLBM_Partition::get_num_ts()
@@ -200,6 +204,11 @@ void TLBM_Partition::compute_halo_data()
     	HDO_out.add_neighbor(ngbIt);
     	HDO_in.add_neighbor(ngbIt);
     }
+
+    // construct an array of MPI_Request(s) and Status(s)
+    mpiInRequest = new MPI_Request[ngbSet.size()];
+    mpiOutRequest = new MPI_Request[ngbSet.size()];
+    mpiStatus = new MPI_Status[ngbSet.size()];
 
     // iterate over boundary nodes, traverse the boundary node
     // adjacency list, and add nodes from the halo into the HDOs.
@@ -515,6 +524,21 @@ void TLBM_Partition::insert_halo_data(real * fOut)
 {
 	int numSpd = myLattice->get_numSpd();
 	HDO_in.insert_halo_data(fOut,numSpd);
+
+}
+
+void TLBM_Partition::initiate_data_exchange()
+{
+
+	int ngbIndex = 0;
+	int count;
+	real * in_buff;
+	real * out_buff;
+
+	for(auto & ngbIt : ngbSet)
+	{
+
+	}
 
 }
 

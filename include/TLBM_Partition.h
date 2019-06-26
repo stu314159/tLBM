@@ -85,6 +85,10 @@ class TLBM_Partition{
     real * uy = NULL;
     real * uz = NULL;
     real * rho = NULL;
+
+    MPI_Request * mpiOutRequest = NULL;
+    MPI_Request * mpiInRequest = NULL;
+    MPI_Status * mpiStatus = NULL;
     int tlbm_initialize();
     void load_parts();
     void create_adj_matrix();
@@ -99,6 +103,7 @@ class TLBM_Partition{
     void stream_node_data(real * fOut, const real * fIn, const int nd);
     void extract_halo_data(real * fOut);
     void insert_halo_data(real * fOut);
+    void initiate_data_exchange();
 
 
 
