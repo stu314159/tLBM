@@ -50,7 +50,7 @@ public:
 		  const T u_bc, const int nd);
 
   void compute_strain_tensor(T* S, const T* fIn, const T* fEq, const int nd);
-  void apply_turbulence_model(T omega, const T* S, const T cs);
+  T apply_turbulence_model(T omega, const T* S, const T cs);
 
   void relax(T* fIn, const T* fEq, const T omega, const int nd);
 
@@ -96,7 +96,6 @@ void LatticeStructure<T>::compute_equilibrium(T* fEq,
 	T cu;
 	for (int spd = 0; spd<numSpd; ++spd)
 	{
-		fEq[getIDx(numSpd,nd,spd)]=0;
 		cu = 3.0*(ex[spd]*ux[nd]+ey[spd]*uy[nd]+ez[spd]*uz[nd]);
 		fEq[getIDx(numSpd,nd,spd)]=w[spd]*rho[nd]*
 				(1.0+cu+0.5*(cu*cu)-3./2.*(ux[nd]*ux[nd]+uy[nd]*uy[nd]+uz[nd]*uz[nd]));
@@ -139,15 +138,18 @@ void LatticeStructure<T>::compute_piflat(T* piFlat, const T* fIn, const T* fEq, 
 }
 
 template <class T>
-void LatticeStructure<T>::apply_turbulence_model(T omega, const T* S, const T cs)
+T LatticeStructure<T>::apply_turbulence_model(T omega, const T* S, const T cs)
 {
+	T omega_r;
 	T nu, nu_e;
 	nu = ((1./omega)- 0.5)/3.0;
 	T P;
 	P = sqrt(S[0]*S[0]+S[4]*S[4]+S[8]*S[8] + 2.0*(S[1]*S[1]+S[2]*S[2] + S[5]*S[5]));
 	P*=cs; P = sqrt(P+nu*nu)-nu;
 	nu_e = P/6.;
-	omega = 1./(3.*(nu+nu_e)+0.5);
+	omega_r = 1./(3.*(nu+nu_e)+0.5);
+	return omega_r;
+
 }
 
 template <class T>

@@ -357,7 +357,7 @@ void TLBM_Partition::write_data()
 	std::string fileName = "ux"+std::to_string(dataWriteNum)+".b_dat";
 	int offset = writeOffset*sizeof(real);
 
-	rc = MPI_File_open(comm,fileName.c_str(),MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
+	rc = MPI_File_open(comm,(char *)(fileName.c_str()),MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
 	MPI_File_write_at(fh,offset,ux,numLnodes,MPI_DTYPE,&status);
 	MPI_File_close(&fh);
 	if(rc)
@@ -366,7 +366,7 @@ void TLBM_Partition::write_data()
 	}
 
 	fileName = "uy"+std::to_string(dataWriteNum)+".b_dat";
-	rc = MPI_File_open(comm,fileName.c_str(),MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
+	rc = MPI_File_open(comm,(char *)(fileName.c_str()),MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
 	MPI_File_write_at(fh,offset,uy,numLnodes,MPI_DTYPE,&status);
 	MPI_File_close(&fh);
 	if(rc)
@@ -375,7 +375,7 @@ void TLBM_Partition::write_data()
 	}
 
 	fileName = "uz"+std::to_string(dataWriteNum)+".b_dat";
-	rc = MPI_File_open(comm,fileName.c_str(),MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
+	rc = MPI_File_open(comm,(char *)(fileName.c_str()),MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
 	MPI_File_write_at(fh,offset,uz,numLnodes,MPI_DTYPE,&status);
 	MPI_File_close(&fh);
 	if(rc)
@@ -384,7 +384,7 @@ void TLBM_Partition::write_data()
 	}
 
 	fileName = "density"+std::to_string(dataWriteNum)+".b_dat";
-	rc = MPI_File_open(comm,fileName.c_str(),MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
+	rc = MPI_File_open(comm,(char *)(fileName.c_str()),MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
 	MPI_File_write_at(fh,offset,rho,numLnodes,MPI_DTYPE,&status);
 	MPI_File_close(&fh);
 	if(rc)
@@ -491,7 +491,7 @@ void TLBM_Partition::process_node_list(real * fOut, real * fIn,
 			// create data structures needed for each individual lattice point
 			real S[9] = {0,0,0,0,0,0,0,0,0};
 			myLattice->compute_strain_tensor(S,fIn, fEq, nd);
-			myLattice->apply_turbulence_model(omega,S,thisProblem.cs);
+			omega = myLattice->apply_turbulence_model(omega,S,thisProblem.cs);
 		}
 
 		// pick between relaxation methodologies
