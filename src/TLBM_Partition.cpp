@@ -383,7 +383,7 @@ void TLBM_Partition::write_data()
 		throw "Error opening file to write uz";
 	}
 
-	fileName = "rho"+std::to_string(dataWriteNum)+".b_dat";
+	fileName = "density"+std::to_string(dataWriteNum)+".b_dat";
 	rc = MPI_File_open(comm,fileName.c_str(),MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
 	MPI_File_write_at(fh,offset,rho,numLnodes,MPI_DTYPE,&status);
 	MPI_File_close(&fh);
