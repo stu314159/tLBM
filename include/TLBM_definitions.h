@@ -8,10 +8,10 @@
 #ifndef INCLUDE_TLBM_DEFINTIONS_H_
 #define INCLUDE_TLBM_DEFINTIONS_H_
 
-using real = double;
+using real = float;
 
 // this is a terrible hack; maybe come up with something better
-#define MPI_DTYPE MPI_DOUBLE
+#define MPI_DTYPE MPI_FLOAT
 
 
 #endif /* INCLUDE_TLBM_DEFINTIONS_H_ */

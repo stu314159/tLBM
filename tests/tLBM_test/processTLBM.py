@@ -74,10 +74,10 @@ for i in range(int(nDumps)):
   uz_fn = 'uz'+str(i)+'.b_dat'
 
   # Create numpy array from the binary data files
-  ux_i = np.fromfile(ux_fn,dtype=np.float64)
-  uy_i = np.fromfile(uy_fn,dtype=np.float64)
-  uz_i = np.fromfile(uz_fn,dtype=np.float64)
-  pressure_i = np.fromfile(rho_fn,dtype=np.float64)
+  ux_i = np.fromfile(ux_fn,dtype=np.float32)
+  uy_i = np.fromfile(uy_fn,dtype=np.float32)
+  uz_i = np.fromfile(uz_fn,dtype=np.float32)
+  pressure_i = np.fromfile(rho_fn,dtype=np.float32)
 
   # Convert to physical units
   ux_i /= u_conv_fact
@@ -125,10 +125,10 @@ if TimeAvg_flag == 1:
   uz_fn = 'wAvg.b_dat'
 
   # Create numpy array from the binary data files
-  ux_i = np.fromfile(ux_fn,dtype=np.float64)
-  uy_i = np.fromfile(uy_fn,dtype=np.float64)
-  uz_i = np.fromfile(uz_fn,dtype=np.float64)
-  pressure_i = np.fromfile(rho_fn,dtype=np.float64)
+  ux_i = np.fromfile(ux_fn,dtype=np.float32)
+  uy_i = np.fromfile(uy_fn,dtype=np.float32)
+  uz_i = np.fromfile(uz_fn,dtype=np.float32)
+  pressure_i = np.fromfile(rho_fn,dtype=np.float32)
   
     
   ux_i /= Num_ts;

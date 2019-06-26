@@ -67,7 +67,7 @@ nDumps = (Num_ts-Warmup_ts)/plot_freq
 order_map = np.fromfile('ordering.b_dat',dtype=np.int32).astype(np.int32)
 
 # Runs each data dump in serial
-for i in range(nDumps):
+for i in range(int(nDumps)):
   rho_fn = 'density'+str(i)+'.b_dat'
   ux_fn = 'ux'+str(i)+'.b_dat'
   uy_fn = 'uy'+str(i)+'.b_dat'
