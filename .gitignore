@@ -1,4 +1,6 @@
-tLBMexec
+tests/
+*.mat*
+*tLBMexec*
 .metadata
 .project
 build/

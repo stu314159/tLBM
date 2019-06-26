@@ -52,7 +52,7 @@ public:
   void compute_strain_tensor(T* S, const T* fIn, const T* fEq, const int nd);
   void apply_turbulence_model(T omega, const T* S, const T cs);
 
-  void relax(T* fOut, const T* fIn, const T* fEq, const T omega, const int nd);
+  void relax(T* fIn, const T* fEq, const T omega, const int nd);
 
   void compute_piflat(T* piFlat,const T* fIn, const T* fEq, const int nd);
 
@@ -151,12 +151,12 @@ void LatticeStructure<T>::apply_turbulence_model(T omega, const T* S, const T cs
 }
 
 template <class T>
-void LatticeStructure<T>::relax(T* fOut, const T* fIn, const T* fEq, const T omega, const int nd)
+void LatticeStructure<T>::relax(T* fIn, const T* fEq, const T omega, const int nd)
 {
 	for (int spd = 0; spd<numSpd; ++spd)
 	{
 		int idx = getIDx(numSpd,nd,spd);
-		fOut[idx] = fIn[idx] - omega*(fIn[idx] - fEq[idx]);
+		fIn[idx] = fIn[idx] - omega*(fIn[idx] - fEq[idx]);
 	}
 }
 

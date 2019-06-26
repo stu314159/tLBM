@@ -449,7 +449,7 @@ int TLBM_Partition::get_gInd(int x, int y, int z){
 int TLBM_Partition::get_gInd(LatticeIndex myXYZ){
 	return myXYZ.X + myXYZ.Y*thisProblem.nx + myXYZ.Z*thisProblem.nx*thisProblem.ny;
 }
-void TLBM_Partition::process_node_list(real * fOut, const real * fIn,
+void TLBM_Partition::process_node_list(real * fOut, real * fIn,
 		const std::set<int>& nodeList)
 {
 
@@ -473,16 +473,16 @@ void TLBM_Partition::process_node_list(real * fOut, const real * fIn,
 		{
 			myLattice->set_inlet_bc_macro(fIn,ux, uy, uz,rho,
 					thisProblem.uLBM,nd);
-			myLattice->set_inlet_bc_micro(const_cast<real *>(fIn),fEq,nd);
+			myLattice->set_inlet_bc_micro(fIn,fEq,nd);
 		}
 		if (ndType[nd] == 3)
 		{
 			myLattice->set_outlet_bc_macro(fIn,ux,rho,thisProblem.rhoLBM,nd);
-			myLattice->set_outlet_bc_micro(const_cast<real *>(fIn),fEq,nd);
+			myLattice->set_outlet_bc_micro(fIn,fEq,nd);
 		}
 		if (ndType[nd] == 5)
 		{
-			myLattice->set_uz_bc(const_cast<real *>(fIn),ux,uy,uz,rho,thisProblem.uLBM,nd);
+			myLattice->set_uz_bc(fIn,ux,uy,uz,rho,thisProblem.uLBM,nd);
 		}
 
 		real omega = thisProblem.omega;
@@ -498,7 +498,7 @@ void TLBM_Partition::process_node_list(real * fOut, const real * fIn,
 		switch(thisProblem.dynamics)
 		{
 		case 1:
-			myLattice->relax(fOut,fIn,fEq,omega,nd); break;
+			myLattice->relax(fIn,fEq,omega,nd); break;
 
 		case 2: // for now, do not do this.
 			real piFlat[9] = {0,0,0,0,0,0,0,0,0};

@@ -48,7 +48,7 @@ class TLBM_Partition{
     void set_data_member(real * f, const real val, const int nd, const int spd);
     void take_LBM_time_step(bool isEven);
     void write_data();
-    void process_node_list(real * fOut, const real * fIn, const std::set<int>& nodeList);
+    void process_node_list(real * fOut, real * fIn, const std::set<int>& nodeList);
     static inline unsigned getIDx(int nSpd, int nIdx, int spd){
     	return nIdx*nSpd + spd;
     	// return spd*nnods + nIdx; // use this if it performs faster.
