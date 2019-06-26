@@ -522,6 +522,7 @@ void TLBM_Partition::extract_halo_data(real * fOut)
 
 void TLBM_Partition::insert_halo_data(real * fOut)
 {
+	//printf("Rank %d inserting halo data\n",rank);
 	int numSpd = myLattice->get_numSpd();
 	HDO_in.insert_halo_data(fOut,numSpd);
 
@@ -535,10 +536,18 @@ void TLBM_Partition::initiate_data_exchange()
 	real * in_buff;
 	real * out_buff;
 
+
 	for(auto & ngbIt : ngbSet)
 	{
+		out_buff = HDO_out[ngbIt].get_buffer();
+		in_buff = HDO_in[ngbIt].get_buffer();
+		count = HDO_out[ngbIt].get_num_items();
+		MPI_Isend(static_cast<void *>(out_buff),count,MPI_DOUBLE,ngbIt,ngbIndex,comm,mpiOutRequest+ngbIndex);
+		MPI_Irecv(static_cast<void*>(in_buff),count,MPI_DOUBLE,ngbIt,MPI_ANY_TAG,comm,mpiInRequest+ngbIndex);
+		++ngbIndex;
 
 	}
+
 
 }
 
@@ -561,11 +570,15 @@ void TLBM_Partition::take_LBM_time_step(bool isEven)
 	extract_halo_data(fOut);
 
 	// initiate MPI Isend/Irecv
+	initiate_data_exchange();
 
 	// process interior nodes
 	process_node_list(fOut,fIn,interiorNdList);
 
-	// ensure MPI comms are complete
+
+		// ensure MPI comms are complete
+	MPI_Waitall(ngbSet.size(),mpiInRequest,mpiStatus);
+
 
 	// distribute incoming halo data
 	insert_halo_data(fOut);
