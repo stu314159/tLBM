@@ -542,8 +542,8 @@ void TLBM_Partition::initiate_data_exchange()
 		out_buff = HDO_out[ngbIt].get_buffer();
 		in_buff = HDO_in[ngbIt].get_buffer();
 		count = HDO_out[ngbIt].get_num_items();
-		MPI_Isend(static_cast<void *>(out_buff),count,MPI_DOUBLE,ngbIt,ngbIndex,comm,mpiOutRequest+ngbIndex);
-		MPI_Irecv(static_cast<void*>(in_buff),count,MPI_DOUBLE,ngbIt,MPI_ANY_TAG,comm,mpiInRequest+ngbIndex);
+		MPI_Isend(static_cast<void *>(out_buff),count,MPI_DTYPE,ngbIt,ngbIndex,comm,mpiOutRequest+ngbIndex);
+		MPI_Irecv(static_cast<void*>(in_buff),count,MPI_DTYPE,ngbIt,MPI_ANY_TAG,comm,mpiInRequest+ngbIndex);
 		++ngbIndex;
 
 	}

@@ -10,6 +10,8 @@
 
 using real = float;
 
+// this is a terrible hack; maybe come up with something better
+#define MPI_DTYPE MPI_DOUBLE
 
 
 #endif /* INCLUDE_TLBM_DEFINTIONS_H_ */
