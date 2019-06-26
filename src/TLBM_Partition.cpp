@@ -463,8 +463,7 @@ void TLBM_Partition::process_node_list(real * fOut, real * fIn,
 			continue; // skip to next iteration of the for-loop
 		}
 
-		// other than solid nodes, all nodes will need to compute equilibrium.
-		myLattice->compute_equilibrium(fEq,ux,uy,uz,rho,nd);
+
 
 		// node type 2 = inlet velocity node
 		// node type 3 = outlet pressure node
@@ -473,16 +472,22 @@ void TLBM_Partition::process_node_list(real * fOut, real * fIn,
 		{
 			myLattice->set_inlet_bc_macro(fIn,ux, uy, uz,rho,
 					thisProblem.uLBM,nd);
+			// other than solid nodes, all nodes will need to compute equilibrium.
+			myLattice->compute_equilibrium(fEq,ux,uy,uz,rho,nd);
 			myLattice->set_inlet_bc_micro(fIn,fEq,nd);
 		}
 		if (ndType[nd] == 3)
 		{
 			myLattice->set_outlet_bc_macro(fIn,ux,rho,thisProblem.rhoLBM,nd);
+			// other than solid nodes, all nodes will need to compute equilibrium.
+			myLattice->compute_equilibrium(fEq,ux,uy,uz,rho,nd);
 			myLattice->set_outlet_bc_micro(fIn,fEq,nd);
 		}
 		if (ndType[nd] == 5)
 		{
 			myLattice->set_uz_bc(fIn,ux,uy,uz,rho,thisProblem.uLBM,nd);
+			// other than solid nodes, all nodes will need to compute equilibrium.
+			myLattice->compute_equilibrium(fEq,ux,uy,uz,rho,nd);
 		}
 
 		real omega = thisProblem.omega;
