@@ -1,4 +1,4 @@
-tests/
+./tests/tLBM_test/*
 *.mat*
 *tLBMexec*
 .metadata
