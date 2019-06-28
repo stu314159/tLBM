@@ -478,7 +478,7 @@ void TLBM_Partition::process_node_list(real * fOut, real * fIn,
 		}
 		if (ndType[nd] == 3)
 		{
-			myLattice->set_outlet_bc_macro(fIn,ux,rho,thisProblem.rhoLBM,nd);
+			myLattice->set_outlet_bc_macro(fIn,uz,rho,thisProblem.rhoLBM,nd);
 			// other than solid nodes, all nodes will need to compute equilibrium.
 			myLattice->compute_equilibrium(fEq,ux,uy,uz,rho,nd);
 			myLattice->set_outlet_bc_micro(fIn,fEq,nd);
