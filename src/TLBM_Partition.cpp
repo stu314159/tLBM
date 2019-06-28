@@ -526,7 +526,8 @@ void TLBM_Partition::stream_node_data(real * fOut, const real * fIn, const int n
 	for(int spd = 0; spd<numSpd;++spd)
 	{
 		int idx = getIDx(numSpd,nd,spd);
-		int t_idx = adjMatrix[idx];
+		int t_nd = adjMatrix[idx];
+		int t_idx = getIDx(numSpd,t_nd,spd);
 		fOut[t_idx] = fIn[idx];
 	}
 
@@ -628,7 +629,7 @@ void TLBM_Partition::take_LBM_time_step(bool isEven)
 	process_node_list(fOut,fIn,interiorNdList);
 
 
-		// ensure MPI comms are complete
+	// ensure MPI comms are complete
 	MPI_Waitall(ngbSet.size(),mpiInRequest,mpiStatus);
 
 
