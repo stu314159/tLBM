@@ -171,6 +171,17 @@ void TLBM_Partition::create_adj_matrix(){
   }
 }
 
+void TLBM_Partition::print_adjacency(const int nd){
+	unsigned int numSpd = myLattice->get_numSpd();
+	std::cout << "adjacency for nd " << nd << ": ";
+	for(int s=0; s<numSpd;s++)
+	{
+		std::cout << adjMatrix[getIDx(numSpd,nd,s)] << ", ";
+	}
+	std::cout << std::endl;
+
+}
+
 void TLBM_Partition::compute_halo_data()
 {
 	int numSpd = myLattice->get_numSpd();
@@ -456,64 +467,70 @@ void TLBM_Partition::process_node_list(real * fOut, real * fIn,
 	for(auto const & nd : nodeList)
 	{
 		myLattice->compute_macroscopic_data(ux,uy,uz,rho,fIn,nd);
+		if (ndType[nd] == 0)
+		{
+			myLattice->compute_equilibrium(fEq,ux,uy,uz,rho,nd);
+
+		}
 		if (ndType[nd] == 1) // 1 is a solid node
 		{
 			ux[nd] = 0; uy[nd] = 0; uz[nd] = 0; // set macroscopic speed to zero
-			myLattice->bounce_back(fOut,fIn,nd);
-			continue; // skip to next iteration of the for-loop
-		}
-
-
-
-		// node type 2 = inlet velocity node
-		// node type 3 = outlet pressure node
-		// node type 5 = specified u_z node
-		if (ndType[nd] == 2)
-		{
-			myLattice->set_inlet_bc_macro(fIn,ux, uy, uz,rho,
-					thisProblem.uLBM,nd);
-			// other than solid nodes, all nodes will need to compute equilibrium.
 			myLattice->compute_equilibrium(fEq,ux,uy,uz,rho,nd);
-			myLattice->set_inlet_bc_micro(fIn,fEq,nd);
-		}
-		if (ndType[nd] == 3)
-		{
-			myLattice->set_outlet_bc_macro(fIn,uz,rho,thisProblem.rhoLBM,nd);
-			// other than solid nodes, all nodes will need to compute equilibrium.
-			myLattice->compute_equilibrium(fEq,ux,uy,uz,rho,nd);
-			myLattice->set_outlet_bc_micro(fIn,fEq,nd);
-		}
-		if (ndType[nd] == 5)
-		{
-			myLattice->set_uz_bc(fIn,ux,uy,uz,rho,thisProblem.uLBM,nd);
-			// other than solid nodes, all nodes will need to compute equilibrium.
-			myLattice->compute_equilibrium(fEq,ux,uy,uz,rho,nd);
+			myLattice->bounce_back(fIn,nd);
+			//continue; // skip to next iteration of the for-loop
 		}
 
-		real omega = thisProblem.omega;
-		if (thisProblem.cs > 0)
-		{
-			// create data structures needed for each individual lattice point
-			real S[9] = {0,0,0,0,0,0,0,0,0};
-			myLattice->compute_strain_tensor(S,fIn, fEq, nd);
-			omega = myLattice->apply_turbulence_model(omega,S,thisProblem.cs);
+
+		if (ndType[nd] != 1) {
+
+			// node type 2 = inlet velocity node
+			// node type 3 = outlet pressure node
+			// node type 5 = specified u_z node
+			if (ndType[nd] == 2) {
+				myLattice->set_inlet_bc_macro(fIn, ux, uy, uz, rho,
+						thisProblem.uLBM, nd);
+				// other than solid nodes, all nodes will need to compute equilibrium.
+				myLattice->compute_equilibrium(fEq, ux, uy, uz, rho, nd);
+				myLattice->set_inlet_bc_micro(fIn, fEq, nd);
+			}
+			if (ndType[nd] == 3) {
+				myLattice->set_outlet_bc_macro(fIn, uz, rho, thisProblem.rhoLBM,
+						nd);
+				// other than solid nodes, all nodes will need to compute equilibrium.
+				myLattice->compute_equilibrium(fEq, ux, uy, uz, rho, nd);
+				myLattice->set_outlet_bc_micro(fIn, fEq, nd);
+			}
+			if (ndType[nd] == 5) {
+				myLattice->set_uz_bc(fIn, ux, uy, uz, rho, thisProblem.uLBM,
+						nd);
+				// other than solid nodes, all nodes will need to compute equilibrium.
+				myLattice->compute_equilibrium(fEq, ux, uy, uz, rho, nd);
+			}
+
+			real omega = thisProblem.omega;
+			if (thisProblem.cs > 0) {
+				// create data structures needed for each individual lattice point
+				real S[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				myLattice->compute_strain_tensor(S, fIn, fEq, nd);
+				omega = myLattice->apply_turbulence_model(omega, S,
+						thisProblem.cs);
+			}
+
+			// pick between relaxation methodologies
+			switch (thisProblem.dynamics) {
+			case 1:
+				myLattice->relax(fIn, fEq, omega, nd);
+				break;
+
+			case 2: // for now, do not do this.
+				real piFlat[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+				myLattice->compute_piflat(piFlat, fIn, fEq, nd);
+
+				break;
+				//		case 3:
+
+			}
 		}
-
-		// pick between relaxation methodologies
-		switch(thisProblem.dynamics)
-		{
-		case 1:
-			myLattice->relax(fIn,fEq,omega,nd); break;
-
-		case 2: // for now, do not do this.
-			real piFlat[9] = {0,0,0,0,0,0,0,0,0};
-			myLattice->compute_piflat(piFlat,fIn,fEq,nd);
-
-			break;
-//		case 3:
-
-		}
-
 		stream_node_data(fOut, fIn, nd);
 
 

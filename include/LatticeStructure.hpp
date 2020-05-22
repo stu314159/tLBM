@@ -38,7 +38,7 @@ public:
 		  const T * fIn, const int nd);
   void compute_equilibrium(T * fEq,
 		  const T* ux, const T* uy, const T* uz, const T* rho, const int nd);
-  void bounce_back(T * fOut, const T * fIN, const int nd);
+  virtual void bounce_back(T * fIN, const int nd);
   virtual void set_inlet_bc_macro(const T * fIn, T* ux, T* uy, T * uz, T * rho,
 		  const T u_bc, const int nd) = 0;
   virtual void set_inlet_bc_micro(T* fIn,const T* fEq, const int nd) = 0;
@@ -163,12 +163,12 @@ void LatticeStructure<T>::relax(T* fIn, const T* fEq, const T omega, const int n
 }
 
 template <class T>
-void LatticeStructure<T>::bounce_back(T * fOut, const T * fIn, const int nd)
+void LatticeStructure<T>::bounce_back(T * fIn, const int nd)
 {
-	for (int spd = 0; spd < numSpd; ++spd)
-	{
-		fOut[getIDx(numSpd,nd,bbSpd[spd])] = fIn[getIDx(numSpd,nd,spd)];
-	}
+//	for (int spd = 0; spd < numSpd; ++spd)
+//	{
+//		fOut[getIDx(numSpd,nd,bbSpd[spd])] = fIn[getIDx(numSpd,nd,spd)];
+//	}
 }
 
 template <class T>

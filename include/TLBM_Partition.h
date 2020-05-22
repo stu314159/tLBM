@@ -53,6 +53,7 @@ class TLBM_Partition{
     	return nIdx*nSpd + spd;
     	// return spd*nnods + nIdx; // use this if it performs faster.
     }
+    void print_adjacency(const int nIdx);
 
 
   private:

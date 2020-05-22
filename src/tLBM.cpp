@@ -20,6 +20,11 @@ int main(int argc, char* argv[]){
 	// initialize the partition.  TLBM_Partition reads input files to obtain problem data.
 	TLBM_Partition myPart(rank,size,MPI_COMM_WORLD);
 
+
+	if (rank == 0)
+	{
+		std::cout << "partitions constructed and initialized" << std::endl;
+	}
 	int numTs, tsRepFreq, plotFreq;
 
 	numTs = myPart.get_num_ts();
