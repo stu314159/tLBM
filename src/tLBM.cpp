@@ -21,20 +21,23 @@ int main(int argc, char* argv[]){
 	TLBM_Partition myPart(rank,size,MPI_COMM_WORLD);
 
 
-	if (rank == 0)
-	{
-		std::cout << "partitions constructed and initialized" << std::endl;
-	}
 	int numTs, tsRepFreq, plotFreq;
 
+
 	numTs = myPart.get_num_ts();
+
+
 	tsRepFreq = myPart.get_ts_rep_freq();
+
+
 	plotFreq = myPart.get_plot_freq();
 
 	double timeStart, timeEnd, execTime;
 
 	// carry out time-stepping process
 	timeStart = MPI_Wtime();
+
+
 	for(int ts = 0; ts < numTs; ++ts)
 	{
 		if((rank == 0) & ((ts+1)%tsRepFreq==0))

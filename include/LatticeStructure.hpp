@@ -162,14 +162,6 @@ void LatticeStructure<T>::relax(T* fIn, const T* fEq, const T omega, const int n
 	}
 }
 
-//template <class T>
-//void LatticeStructure<T>::bounce_back(T * fIn, const int nd)
-//{
-////	for (int spd = 0; spd < numSpd; ++spd)
-////	{
-////		fOut[getIDx(numSpd,nd,bbSpd[spd])] = fIn[getIDx(numSpd,nd,spd)];
-////	}
-//}
 
 template <class T>
 void LatticeStructure<T>::set_uz_bc(T* fIn, const T* ux, const T* uy, T* uz,

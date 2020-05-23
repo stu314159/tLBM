@@ -12,7 +12,6 @@ rank(r),size(s), comm(c),dataWriteNum(0)
 {
 //  printf("rank %d entering constructor \n",rank);
   tlbm_initialize();
-
 }
 
 TLBM_Partition::~TLBM_Partition(){
@@ -85,6 +84,7 @@ int TLBM_Partition::tlbm_initialize(){
   make_interior_node_list();
 
   finalize_halo_data_arrays();
+
 
   return 0;
 }
@@ -310,8 +310,8 @@ void TLBM_Partition::make_adj_matrix_local()
 void TLBM_Partition::allocate_arrays()
 {
 	int numSpd = myLattice->get_numSpd();
-	fEven = new real[numSpd*numLnodes];
-	fOdd = new real[numSpd*numLnodes];
+	fEven = new real[numSpd*totalNodes];//larger to store halo data (as stream target) as well.
+	fOdd = new real[numSpd*totalNodes];// larger to store halo data (as stream target) as well
 	fEq = new real[numSpd*numLnodes];
 	ndType = new int[numLnodes];
 
@@ -632,6 +632,7 @@ void TLBM_Partition::take_LBM_time_step(bool isEven)
 		fIn = fOdd;
 		fOut = fEven;
 	}
+
 
 	// process boundary nodes
 	process_node_list(fOut,fIn,boundaryNdList);
