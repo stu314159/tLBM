@@ -19,6 +19,7 @@ public:
   ~D3Q19LatticeStructure();
   void set_inlet_bc_macro(const T * fIn, T* ux, T* uy, T * uz, T * rho,
 		  const T u_bc, const int nd);
+  void bounce_back(T* fIn, const int nd);
   void set_inlet_bc_micro(T* fIn, const T* fEq, const int nd);
   void set_outlet_bc_macro(const T* fIn, T* uz, T* rho, const T rho_bc, const int nd);
   void set_outlet_bc_micro(T* fIn, const T* fEq, const int nd);
@@ -59,6 +60,21 @@ template <class T>
 D3Q19LatticeStructure<T>::~D3Q19LatticeStructure(){
 
 }
+
+template < class T >
+void D3Q19LatticeStructure<T>::bounce_back(T* fIn, const int nd){
+	T tmp[numSpd];
+	for(int s=0;s<numSpd;++s)
+	{
+		tmp[s] = fIn[this->getIDx(numSpd,nd,bbSpd[s])];
+	}
+	for(int s=0;s<numSpd;++s)
+	{
+		fIn[this->getIDx(numSpd,nd,s)]=tmp[s];
+	}
+
+}
+
 
 template <class T>
 void D3Q19LatticeStructure<T>::set_inlet_bc_micro(T* fIn, const T* fEq, const int n)

@@ -174,7 +174,7 @@ void TLBM_Partition::create_adj_matrix(){
 void TLBM_Partition::print_adjacency(const int nd){
 	unsigned int numSpd = myLattice->get_numSpd();
 	std::cout << "adjacency for nd " << nd << ": ";
-	for(int s=0; s<numSpd;s++)
+	for(unsigned int s=0; s<numSpd; s++)
 	{
 		std::cout << adjMatrix[getIDx(numSpd,nd,s)] << ", ";
 	}

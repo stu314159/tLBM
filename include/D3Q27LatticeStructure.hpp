@@ -19,6 +19,7 @@ public:
   ~D3Q27LatticeStructure();
   void set_inlet_bc_macro(const T * fIn, T* ux, T* uy, T * uz,
 		  T * rho, const T u_bc, const int nd);
+  void bounce_back(T* fIn, const int nd);
   void set_inlet_bc_micro(T* fIn, const T* fEq, const int nd);
   void set_outlet_bc_macro(const T * fIn, T* uz, T* rho, const T rho_bc, const int nd);
   void set_outlet_bc_micro(T* fIn, const T* fEq, const int nd);
@@ -62,6 +63,20 @@ bbSpd{0,2,1,4,3,6,5,10,9,8,7,14,13,12,11,18,17,
 
 template <class T>
 D3Q27LatticeStructure<T>::~D3Q27LatticeStructure(){
+
+}
+
+template < class T >
+void D3Q27LatticeStructure<T>::bounce_back(T* fIn, const int nd){
+	T tmp[numSpd];
+	for(int s=0;s<numSpd;++s)
+	{
+		tmp[s] = fIn[this->getIDx(numSpd,nd,bbSpd[s])];
+	}
+	for(int s=0;s<numSpd;++s)
+	{
+		fIn[this->getIDx(numSpd,nd,s)]=tmp[s];
+	}
 
 }
 
