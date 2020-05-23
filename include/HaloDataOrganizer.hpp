@@ -39,7 +39,7 @@ public:
 
 private:
 	// map keys: neighboring partition rank.
-	// map values: a Halo Data Ojbect that contains
+	// map values: a Halo Data Object that contains a data structure describing the data to be exchanged
 
 	std::map<int,HaloDataObject<T>> Halo;
 
