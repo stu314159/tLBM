@@ -6,11 +6,10 @@
 #include <iostream>
 #include <exception>
 
-
+using namespace H5;
 TLBM_Partition::TLBM_Partition(int r, int s, MPI_Comm c):
 rank(r),size(s), comm(c),dataWriteNum(0)
 {
-//  printf("rank %d entering constructor \n",rank);
   tlbm_initialize();
 }
 
@@ -46,6 +45,11 @@ int TLBM_Partition::get_ts_rep_freq()
 int TLBM_Partition::get_plot_freq()
 {
 	return thisProblem.plotFreq;
+}
+
+int TLBM_Partition::is_restart()
+{
+    return thisProblem.restartFlag;
 }
 
 int TLBM_Partition::tlbm_initialize(){
@@ -327,14 +331,81 @@ void TLBM_Partition::initialize_data_arrays()
 	int numSpd = myLattice->get_numSpd();
 	const real * w = myLattice->get_w();
 	real rho = thisProblem.rhoLBM;
-	for(auto nd = 0; nd<numLnodes; ++nd)
+	if (is_restart())
 	{
-		for(auto spd = 0; spd < numSpd; ++spd)
+		load_restart_data();
+	}else
+	{
+		for(auto nd = 0; nd<numLnodes; ++nd)
 		{
-			fEven[getIDx(numSpd,nd,spd)] = w[spd]*rho;
-			fOdd[getIDx(numSpd,nd,spd)] = w[spd]*rho;
+			for(auto spd = 0; spd < numSpd; ++spd)
+			{
+				fEven[getIDx(numSpd,nd,spd)] = w[spd]*rho;
+				fOdd[getIDx(numSpd,nd,spd)] = w[spd]*rho;
+			}
 		}
 	}
+
+}
+
+void TLBM_Partition::load_restart_data()
+{
+	if (rank == 0)
+	{
+		printf("Loading Restart Data \n");
+	}
+	// declare arrays and allocate memory to hold restart data
+	real * ux_r;
+	real * uy_r;
+	real * uz_r;
+	real * rho_r;
+	int t_nodes = (thisProblem.nx)*(thisProblem.ny)*(thisProblem.nz);
+	ux_r = new real[t_nodes];
+	uy_r = new real[t_nodes];
+	uz_r = new real[t_nodes];
+	rho_r = new real[t_nodes];
+
+	// get data from the HDF5 formatted "restart.h5"
+	const H5std_string FILE_NAME("restart.h5");
+	H5File file(FILE_NAME,H5F_ACC_RDONLY);
+	const H5std_string PRESSURE("density/rho");
+	const H5std_string X_VELO("velocity/x");
+	const H5std_string Y_VELO("velocity/y");
+	const H5std_string Z_VELO("velocity/z");
+
+	DataSet p_dataset = file.openDataSet(PRESSURE);
+	DataSet x_dataset = file.openDataSet(X_VELO);
+	DataSet y_dataset = file.openDataSet(Y_VELO);
+	DataSet z_dataset = file.openDataSet(Z_VELO);
+
+	// read data into the arrays
+	p_dataset.read(rho_r,PredType::NATIVE_FLOAT);
+	x_dataset.read(ux_r,PredType::NATIVE_FLOAT);
+	y_dataset.read(uy_r,PredType::NATIVE_FLOAT);
+	z_dataset.read(uz_r,PredType::NATIVE_FLOAT);
+
+	// load data from arrays ux_r,uy_r,uz_r,rho_r into the local partition arrays
+	for(auto nd = 0; nd<numLnodes; ++nd)
+	{
+		int gnd = localToGlobal[nd];
+		ux[nd] = ux_r[gnd];
+		uy[nd] = uy_r[gnd];
+		uz[nd] = uz_r[gnd];
+		rho[nd] = rho_r[gnd];
+	}
+
+	// using the macroscopic data arrays, initialize fEven and fOdd
+	for(auto nd = 0; nd<numLnodes; ++nd)
+	{
+		myLattice->compute_equilibrium(fEven,ux,uy,uz,rho,nd);
+		myLattice->compute_equilibrium(fOdd,ux,uy,uz,rho,nd);
+	}
+
+	// free memory allocated for restart data
+	delete [] ux_r;
+	delete [] uy_r;
+	delete [] uz_r;
+	delete [] rho_r;
 
 }
 

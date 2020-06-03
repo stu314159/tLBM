@@ -2,6 +2,7 @@
 #define TLBM_PARTITION_H
 
 #include <mpi.h>
+#include "H5Cpp.h"
 
 #include "TLBM_definitions.h" // global constants and definitions.  Hack-ish?
 #include "Problem.h"
@@ -44,6 +45,7 @@ class TLBM_Partition{
     int get_ts_rep_freq();
     int get_plot_freq();
     int get_num_global_nodes();
+    int is_restart();
     real get_data_member(const real * f, const int nd, const int spd);
     void set_data_member(real * f, const real val, const int nd, const int spd);
     void take_LBM_time_step(bool isEven);
@@ -100,6 +102,7 @@ class TLBM_Partition{
     void allocate_arrays();
     void load_ndType();
     void initialize_data_arrays();
+    void load_restart_data();
     void finalize_halo_data_arrays();
     void write_node_ordering();
     void make_interior_node_list();
@@ -107,10 +110,6 @@ class TLBM_Partition{
     void extract_halo_data(real * fOut);
     void insert_halo_data(real * fOut);
     void initiate_data_exchange();
-
-
-
-
 
 };
 
