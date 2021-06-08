@@ -952,8 +952,8 @@ def fluid_properties(fluid_str):
    
    """
    fluid_lib = {'water':(1000., 1.0e-6), 
-                'glycol':(965.3,6.216e-4),
-                'glycerin':(1260,1.18e-3)}
+                'glycol':(965.3,0.06/965.3),
+                'glycerin':(1260.0,1.49/1260.0)}
    if fluid_str in list(fluid_lib.keys()):
      return fluid_lib[fluid_str]
    else:
