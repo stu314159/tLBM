@@ -64,8 +64,8 @@ int main(int argc, char* argv[]){
 		// report basic performance parameters
 		printf("Test complete.\n");
 		printf("Elapsed time: %g seconds \n",execTime);
-		int numNodes = myPart.get_num_global_nodes();
-		double LPUs = numNodes*numTs/execTime;
+		double numNodes = static_cast<double>(myPart.get_num_global_nodes());
+		double LPUs = numNodes*(static_cast<double>(numTs))/execTime;
 		printf("Estimated LPU/s = %g \n",LPUs);
 	}
 
