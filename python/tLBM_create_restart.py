@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 generate a set of restart files for pyNFC based on
 contents of a user-specified dump number.
