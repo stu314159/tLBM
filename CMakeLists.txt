@@ -26,7 +26,7 @@ add_executable(tLBMexec src/tLBM.cpp
                     include/HaloDataOrganizer.hpp
                     include/TLBM_definitions.h)
 
-target_compile_options(tLBMexec PUBLIC -Wall -Wextra -Wpedantic -std=c++11)
+target_compile_options(tLBMexec PUBLIC -O3 -Wall -Wextra -Wpedantic -std=c++11)
 target_include_directories(tLBMexec PUBLIC include
 	                            PRIVATE src ${MPI_CXX_INCLUDE_PATH} ${HDF5_INCLUDE_DIRS})
 
