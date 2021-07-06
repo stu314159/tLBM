@@ -273,6 +273,54 @@ class SphereObstruction(EmptyChannel):
         dist = (x - self.x_c)**2 + (y - self.y_c)**2 + (z - self.z_c)**2
        
         return list(np.where(dist < self.r**2))
+
+class ProlateSpheroid(EmptyChannel):
+    """
+    a channel with a prolate spheroid obstruction
+    """
+    def __init__(self,x_c,y_c,z_c,ab,c,aoa):
+        """
+        define the centroid of the object, semi-minor axis (ab) and semi-major axis (c)
+        aoa is the angle of attack
+       
+        """
+        self.x_c = x_c;
+        self.y_c = y_c;
+        self.z_c = z_c;
+        self.ab = ab;
+        self.c = c;
+        self.aoa = aoa
+        self.rot_mat = np.array([[1., 0., 0.],
+                                [0.,np.cos(aoa),np.sin(aoa)],
+                                [0., -np.sin(aoa),-np.cos(aoa)]]
+                                );
+                                
+            
+    def get_Lo(self):
+        return 2.*self.ab;
+    
+    def prolSphere(self,x,y,z):
+        return (1./self.ab**2)*((x)**2 + 
+                             (y)**2) + (1./self.c**2)*((z)**2) - 1.
+    
+    def get_obstList(self,X,Y,Z):
+        """
+        return a list of all indicies within the object       
+
+        """
+        
+        #x = np.array(X); y = np.array(Y); z = np.array(Z);
+        
+        xyz = np.ndarray((X.size,3));
+        xyz[:,0]=X.T - self.x_c; 
+        xyz[:,1]=Y.T-self.y_c; 
+        xyz[:,2]=Z.T-self.z_c;
+       # xyz_r = xyz - [self.x_c, self.y_c, self.z_c];
+        xyz_r = np.dot(xyz,self.rot_mat);
+        gval = self.prolSphere(xyz_r[:,0], xyz_r[:,1], xyz_r[:,2]);
+        gval = gval.flatten()
+        return list(np.where(gval <= 0));
+        
     
 
 class WallMountedBrick(EmptyChannel):
