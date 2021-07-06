@@ -144,6 +144,7 @@ def part_advisor(Nx,Ny,Nz,num_procs, numTrials = 2000):
                 sample_partition = Partition(Nx,Ny,Nz,r_part)
                 sample_score = sample_partition.get_score()
                 if sample_score < bestScore:
+                    bestScore = sample_score
                     bestPartition = Partition(Nx,Ny,Nz,r_part)
             
     
