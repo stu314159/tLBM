@@ -75,11 +75,11 @@ class Partition:
 def partitionfunc(n,k,l=1):
     '''n is the integer to partition, k is the length of partitions, l is the min partition element size'''
     if k < 1:
-        raise StopIteration
+        return
     if k == 1:
         if n >= l:
             yield (n,)
-        raise StopIteration
+        return
     for i in range(l,n+1):
         for result in partitionfunc(n-i,k-1,i):
             yield (i,)+result
