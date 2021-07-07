@@ -1,0 +1,22 @@
+#!/bin/bash
+#PBS -A USNAM37752431
+#PBS -q debug
+#PBS -l select=8:ncpus=48:mpiprocs=48
+#PBS -l walltime=00:30:00
+#PBS -N tWMB_200_metis
+#PBS -j oe
+#PBS -V
+
+cd $WORKDIR
+JOBID=`echo $PBS_JOBID | cut -d '.' -f 1`
+if [ ! -d $JOBID ]; then
+  mkdir -p $JOBID
+fi
+cd $JOBID
+# copy files from $PBS_O_WORKDIR
+cp $PBS_O_WORKDIR/tLBMexec .
+cp $PBS_O_WORKDIR/*.py .
+cp $PBS_O_WORKDIR/*.sh .
+
+./run_test.sh 1 384
+
