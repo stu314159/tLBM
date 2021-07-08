@@ -1,0 +1,35 @@
+#!/bin/bash
+#PBS -A USNAM37752431
+#PBS -q debug
+#PBS -l select=32:ncpus=48:mpiprocs=48
+#PBS -l walltime=00:30:00
+#PBS -N pSph_100_N33
+#PBS -j oe
+#PBS -V
+
+cd $WORKDIR
+JOBID=`echo $PBS_JOBID | cut -d '.' -f 1`
+if [ ! -d $JOBID ]; then
+  mkdir -p $JOBID
+fi
+cd $JOBID
+# copy files from $PBS_O_WORKDIR
+cp $PBS_O_WORKDIR/tLBMexec .
+cp $PBS_O_WORKDIR/*.py .
+cp $PBS_O_WORKDIR/*.sh .
+
+# this is a hack but if params.lbm is
+# in $PBS_O_WORKDIR then copy it to the job directory.
+# this is intended for use in cases where I do not want
+# to re-do pre-processing
+if [ -f $PBS_O_WORKDIR/params.lbm ]
+       cp $PBS_O_WORKDIR/*.lbm .	
+fi
+
+if [ -f $PBS_O_WORKDIR/restart.h5 ]
+	cp $PBS_O_WORKDIR/restart.h5 .
+fi
+
+
+./test_pSpheriod.sh 1 1536
+
