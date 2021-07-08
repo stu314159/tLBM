@@ -7,6 +7,7 @@ import math
 import numpy as np
 from vtkHelper import saveStructuredPointsVTK_ascii as writeVTK
 import scipy.io
+import pyvista as pv
 
 
 class LatticeSubset(object):
@@ -237,7 +238,7 @@ class StraightPipe(EmptyChannel):
     def get_Lo(self):
         return self.diameter;
         
-    def get_obstList(self,X,Y,Z):
+    def get_obstList(self,X,Y,Z,Nx=None,Ny=None,Nz=None):
         x = np.array(X); y = np.array(Y); 
         dist = (x - self.x_c)**2 + (y - self.y_c)**2
         
@@ -264,7 +265,7 @@ class SphereObstruction(EmptyChannel):
     def get_Lo(self):
         return self.r*2.
 
-    def get_obstList(self,X,Y,Z):
+    def get_obstList(self,X,Y,Z,Nx=None,Ny=None,Nz=None):
         """
             return a list of all indices all indices within boundary of sphere 
         """
@@ -273,6 +274,82 @@ class SphereObstruction(EmptyChannel):
         dist = (x - self.x_c)**2 + (y - self.y_c)**2 + (z - self.z_c)**2
        
         return list(np.where(dist < self.r**2))
+
+class STL_Obstruction(EmptyChannel):
+    """
+    a channel with an obstruction described by a STL file (filename required)
+    """
+    def __init__(self,filename):
+        self.filename = filename;
+        self.mesh = pv.read(filename);
+        bnds = self.mesh.bounds
+        self.x_min_obst = bnds[0]; self.x_max_obst = bnds[1];
+        self.y_min_obst = bnds[2]; self.y_max_obst = bnds[3];
+        self.z_min_obst = bnds[4]; self.z_max_obst = bnds[5];
+        self.size_x = self.x_max_obst - self.x_min_obst;
+        self.size_y = self.y_max_obst - self.y_min_obst;
+        self.size_z = self.z_max_obst - self.z_min_obst;
+        
+        self.Lo = None; # default value
+        
+    def get_Lo(self):
+        """
+
+        Returns
+        -------
+        float
+            Characteristic length.  
+            If the characteristic length has not been set by self.set_Lo,
+            then the characteristic length is designated to be the maximum
+            of all of the STL dimensions
+
+        """
+        if self.Lo == None:
+            return np.max([self.size_x, self.size_y, self.size_z])
+        else:
+            return self.Lo;
+        
+    def set_Lo(self,L):
+        self.Lo = L;
+        
+    def get_obstList(self,X,Y,Z):
+        """
+
+        Parameters
+        ----------
+        X : float
+            .
+        Y : float
+           array of y-coordinates.
+        Z : float
+            array of z-coordinates.
+
+        Returns
+        -------
+        list of integer node numbers of global lattice points within the obstruction.
+
+        """
+       
+        #X = np.reshape(X,(Nz,Ny,Nx));
+        #Y = np.reshape(Y,(Nz,Ny,Nx));
+        #Z = np.reshape(Z,(Nz,Ny,Nx));
+        grid = pv.StructuredGrid(X,Y,Z);
+        ugrid = pv.UnstructuredGrid(grid);
+        selection = ugrid.select_enclosed_points(self.mesh.extract_surface(),
+                                                 tolerance=0.0,
+                                                 check_surface=False);
+        mask = selection.point_arrays['SelectedPoints'].view(np.bool);
+        mask.reshape(X.shape)
+        
+        #mask = mask.flatten()
+        #mask = np.array(mask[:]); mask.flatten();
+        
+        solid = np.where(mask==True); 
+        
+        return list(solid[:])
+        
+        
+    
 
 class ProlateSpheroid(EmptyChannel):
     """
@@ -536,50 +613,7 @@ class EllipticalScourPit(EmptyChannel):
         
         return list(obst_list[:])
 
-class ConeScourPit(EmptyChannel):
-    """
-    a channel with a conical scour pit determined by the angle of repose of the soil particles (assumed to be river sand, phi=30 deg).  
-    """
 
-    def __init__(self,x_c,z_c,cyl_rad):
-        """
-          constructor giving the x and z coordinates of the scour pit along with the radius of the cylindrical piling
-        """
-        self.x_c = x_c
-        self.z_c = z_c
-        self.cyl_rad = cyl_rad
-
-    def get_Lo(self):
-        return self.cyl_rad*2.
-
-    def get_obstList(self,X,Y,Z):
-        """
-         return a list of all indices of lattice points within the boundaries of the conical scour pit obstacle.  x_s is defined in 'Scour at marine structures' by Richard Whitehouse, 1998.  Assumes river sand with phi (angle of repose) equal to 30 degrees.  h_cone is equal to rad_cone*tan(30) = rad_cone*0.57735
-        """
-       
-        x_c_cone = self.x_c
-        z_c_cone = self.z_c
-        y_c_cone = 0
-        x_s = 2.25*2*self.cyl_rad
-        rad_cone = x_s + self.cyl_rad
-        h_cone = rad_cone*0.57735
-
-        floor_part = np.array(np.where(Y < h_cone)).flatten()
-
-        dist = (X - self.x_c)**2 + (Z - self.z_c)**2;
-        cyl_part = list(np.array(np.where( dist < self.cyl_rad**2)).flatten())
-
-        scour_pit = np.array(np.where( (X - x_c_cone)**2 + (Z - z_c_cone)**2 <= ((self.cyl_rad/cone)/(h_cone))**2*(Y - y_c_cone)**2))
-
-        # remove the scour pit from the floor
-        obst_list = np.setxor1d(floor_part[:], 
-                        np.intersect1d(floor_part[:],scour_pit[:]))
-
-
-        # then add the cylinder
-        obst_list = np.union1d(obst_list[:],cyl_part[:])
-        
-        return list(obst_list[:])
 
 class SinglePile(EmptyChannel):
     """
@@ -1194,7 +1228,7 @@ class FluidChannel:
         
         print("Getting obstacle list")
         # get obstacle list
-        self.obst_list = self.obst.get_obstList(self.x[:],self.y[:],self.z[:])
+        self.obst_list = self.obst.get_obstList(self.x[:],self.y[:],self.z[:]);
         
 
         print("Generating channel solid boundaries")
