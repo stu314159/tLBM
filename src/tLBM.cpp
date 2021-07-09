@@ -21,7 +21,7 @@ int main(int argc, char* argv[]){
 	TLBM_Partition myPart(rank,size,MPI_COMM_WORLD);
 
 
-	int numTs, tsRepFreq, plotFreq;
+	int numTs, tsRepFreq, warmupTs, plotFreq;
 
 
 	numTs = myPart.get_num_ts();
@@ -29,6 +29,8 @@ int main(int argc, char* argv[]){
 
 	tsRepFreq = myPart.get_ts_rep_freq();
 
+
+	warmupTs = myPart.get_warmupTs();
 
 	plotFreq = myPart.get_plot_freq();
 
@@ -49,7 +51,7 @@ int main(int argc, char* argv[]){
 		// carry-out a single LBM time step (including data communication)
 		myPart.take_LBM_time_step(ts%2);
 
-		if((ts+1)%plotFreq == 0)
+		if(((ts+1)%plotFreq == 0) & ((ts+1) > warmupTs) )
 		{
 			// plot the data at specified intervals
 			myPart.write_data();

@@ -47,6 +47,11 @@ int TLBM_Partition::get_plot_freq()
 	return thisProblem.plotFreq;
 }
 
+int TLBM_Partition::get_warmupTs()
+{
+	return thisProblem.warmupTs;
+}
+
 int TLBM_Partition::is_restart()
 {
     return thisProblem.restartFlag;

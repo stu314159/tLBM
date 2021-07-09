@@ -44,6 +44,7 @@ class TLBM_Partition{
     int get_num_ts();
     int get_ts_rep_freq();
     int get_plot_freq();
+    int get_warmupTs();
     int get_num_global_nodes();
     int is_restart();
     real get_data_member(const real * f, const int nd, const int spd);
