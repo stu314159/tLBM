@@ -26,6 +26,14 @@ TLBM_Partition::~TLBM_Partition(){
   delete [] uz;
   delete [] rho;
 
+  if (timeAvg == 1)
+  {
+	delete [] uAvg;
+	delete [] vAvg;
+	delete [] wAvg;
+	delete [] rhoAvg;
+  }
+
   delete [] mpiInRequest;
   delete [] mpiOutRequest;
   delete [] mpiStatus;
@@ -55,6 +63,11 @@ int TLBM_Partition::get_warmupTs()
 int TLBM_Partition::is_restart()
 {
     return thisProblem.restartFlag;
+}
+
+int TLBM_Partition::get_time_avg_flag()
+{
+	return thisProblem.timeAvgFlag;
 }
 
 int TLBM_Partition::tlbm_initialize(){
@@ -329,6 +342,14 @@ void TLBM_Partition::allocate_arrays()
 	uz = new real[numLnodes];
 	rho = new real[numLnodes];
 
+	if (timeAvg == 1)
+	{
+		uAvg = new real[numLnodes];
+		vAvg = new real[numLnodes];
+		wAvg = new real[numLnodes];
+		rhoAvg = new real[numLnodes];
+	}
+
 }
 
 void TLBM_Partition::initialize_data_arrays()
@@ -348,6 +369,17 @@ void TLBM_Partition::initialize_data_arrays()
 				fEven[getIDx(numSpd,nd,spd)] = w[spd]*rho;
 				fOdd[getIDx(numSpd,nd,spd)] = w[spd]*rho;
 			}
+		}
+	}
+
+	if (timeAvg == 1)
+	{
+		for(auto nd = 0; nd<numLnodes; ++nd)
+		{
+			uAvg[nd] = 0;
+			vAvg[nd] = 0;
+			wAvg[nd] = 0;
+			rhoAvg[nd] = 0;
 		}
 	}
 
@@ -434,6 +466,50 @@ void TLBM_Partition::write_node_ordering()
 
 	MPI_File_close(&fh);
 
+}
+
+void TLBM_Partition::write_time_avg_data()
+{
+	MPI_File fh;
+	MPI_Status status;
+	int rc;
+	std::string filename = "uAvg.b_dat";
+	int offset = writeOffset*sizeof(real);
+
+	rc = MPI_File_open(comm,(char *)(filename.c_str()),MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
+	MPI_File_write_at(fh,offset,uAvg,numLnodes,MPI_DTYPE,&status);
+	MPI_File_close(&fh);
+	if(rc)
+	{
+		throw "Error opening file to write uAvg";
+	}
+
+	filename = "vAvg.b_dat";
+	rc = MPI_File_open(comm,(char *)(filename.c_str()),MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
+	MPI_File_write_at(fh,offset,vAvg,numLnodes,MPI_DTYPE,&status);
+	MPI_File_close(&fh);
+	if(rc)
+	{
+		throw "Error opening file to write vAvg";
+	}
+
+	filename = "wAvg.b_dat";
+	rc = MPI_File_open(comm,(char *)(filename.c_str()),MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
+	MPI_File_write_at(fh,offset,wAvg,numLnodes,MPI_DTYPE,&status);
+	MPI_File_close(&fh);
+	if(rc)
+	{
+		throw "Error opening file to write wAvg";
+	}
+
+	filename = "rhoAvg.b_dat";
+	rc = MPI_File_open(comm,(char *)(filename.c_str()),MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
+	MPI_File_write_at(fh,offset,rhoAvg,numLnodes,MPI_DTYPE,&status);
+	MPI_File_close(&fh);
+	if(rc)
+	{
+		throw "Error opening file to write rhoAvg";
+	}
 }
 
 void TLBM_Partition::write_data()
@@ -609,7 +685,24 @@ void TLBM_Partition::process_node_list(real * fOut, real * fIn,
 		}
 		stream_node_data(fOut, fIn, nd);
 
+		// if collecting time average data, ux, uy, uz, and rho are all up to date and should be tallied now
+		if (timeAvg == 1)
+		{
+			update_time_avg();
+		}
 
+
+	}
+}
+
+void TLBM_Partition::update_time_avg()
+{
+	for (auto nd=0; nd<numLnodes; ++nd)
+	{
+		uAvg[nd]+=ux[nd];
+		vAvg[nd]+=uy[nd];
+		wAvg[nd]+=uz[nd];
+		rhoAvg[nd]+=rho[nd];
 	}
 }
 

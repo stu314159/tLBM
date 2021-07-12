@@ -47,10 +47,12 @@ class TLBM_Partition{
     int get_warmupTs();
     int get_num_global_nodes();
     int is_restart();
+    int get_time_avg_flag();
     real get_data_member(const real * f, const int nd, const int spd);
     void set_data_member(real * f, const real val, const int nd, const int spd);
     void take_LBM_time_step(bool isEven);
     void write_data();
+    void write_time_avg_data();
     void process_node_list(real * fOut, real * fIn, const std::set<int>& nodeList);
     static inline unsigned getIDx(int nSpd, int nIdx, int spd){
     	return nIdx*nSpd + spd;
@@ -91,6 +93,11 @@ class TLBM_Partition{
     real * uy = NULL;
     real * uz = NULL;
     real * rho = NULL;
+    real * uAvg = NULL;
+    real * vAvg = NULL;
+    real * wAvg = NULL;
+    real * rhoAvg = NULL;
+    bool timeAvg;
 
     MPI_Request * mpiOutRequest = NULL;
     MPI_Request * mpiInRequest = NULL;
@@ -111,6 +118,7 @@ class TLBM_Partition{
     void extract_halo_data(real * fOut);
     void insert_halo_data(real * fOut);
     void initiate_data_exchange();
+    void update_time_avg();
 
 };
 

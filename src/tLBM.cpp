@@ -21,7 +21,7 @@ int main(int argc, char* argv[]){
 	TLBM_Partition myPart(rank,size,MPI_COMM_WORLD);
 
 
-	int numTs, tsRepFreq, warmupTs, plotFreq;
+	int numTs, tsRepFreq, warmupTs, plotFreq, timeAvgFlag;
 
 
 	numTs = myPart.get_num_ts();
@@ -33,6 +33,8 @@ int main(int argc, char* argv[]){
 	warmupTs = myPart.get_warmupTs();
 
 	plotFreq = myPart.get_plot_freq();
+
+	timeAvgFlag = myPart.get_time_avg_flag();
 
 	double timeStart, timeEnd, execTime;
 
@@ -69,6 +71,14 @@ int main(int argc, char* argv[]){
 		double numNodes = static_cast<double>(myPart.get_num_global_nodes());
 		double LPUs = numNodes*(static_cast<double>(numTs))/execTime;
 		printf("Estimated LPU/s = %g \n",LPUs);
+	}
+
+	if (timeAvgFlag == 1)
+	{
+		if (rank == 0)
+			printf("Writing time average data.\n");
+
+		myPart.write_time_avg_data();
 	}
 
 
