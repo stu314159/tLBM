@@ -10,3 +10,16 @@ Output data file processing and packaging (currently, into HDF5-formatted) binar
 The main computational pieces will be written in C++ with MPI libraries for distributed parallelism.  Branches enabled with CUDA and/or OpenCL will (over time) be developed and made available when ready.
 
 This is a research code aimed at gaining greater insight into fluid flows through CFD, but also a platform for which students can experiment with distributed parallel HPC.  Please keep your expectations low regarding results.
+
+Requirements:
+1. CMake
+2. MPI
+3. HDF5
+
+Python Requirements for pre- and post-processing:
+1. numpy
+2. scipy
+3. h5py
+4. pymetis
+5. pyvista
+
