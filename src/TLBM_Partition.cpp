@@ -685,13 +685,7 @@ void TLBM_Partition::process_node_list(real * fOut, real * fIn,
 		}
 		stream_node_data(fOut, fIn, nd);
 
-		// if collecting time average data, ux, uy, uz, and rho are all up to date and should be tallied now
-		if (timeAvg == 1)
-		{
-			update_time_avg();
-		}
-
-
+		
 	}
 }
 
@@ -814,7 +808,11 @@ void TLBM_Partition::take_LBM_time_step(bool isEven)
 
 	// process interior nodes
 	process_node_list(fOut,fIn,interiorNdList);
-
+	
+	if (timeAvg == 1)
+	{
+   		update_time_avg();
+	}	
 
 	// ensure MPI comms are complete
 	MPI_Waitall(ngbSet.size(),mpiInRequest,mpiStatus);
