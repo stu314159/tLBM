@@ -330,9 +330,6 @@ class STL_Obstruction(EmptyChannel):
 
         """
        
-        #X = np.reshape(X,(Nz,Ny,Nx));
-        #Y = np.reshape(Y,(Nz,Ny,Nx));
-        #Z = np.reshape(Z,(Nz,Ny,Nx));
         grid = pv.StructuredGrid(X,Y,Z);
         ugrid = pv.UnstructuredGrid(grid);
         selection = ugrid.select_enclosed_points(self.mesh.extract_surface(),
@@ -340,10 +337,7 @@ class STL_Obstruction(EmptyChannel):
                                                  check_surface=False);
         mask = selection.point_arrays['SelectedPoints'].view(np.bool);
         mask.reshape(X.shape)
-        
-        #mask = mask.flatten()
-        #mask = np.array(mask[:]); mask.flatten();
-        
+                    
         solid = np.where(mask==True); 
         
         return list(solid[:])
@@ -399,7 +393,31 @@ class ProlateSpheroid(EmptyChannel):
         return list(np.where(gval <= 0));
         
     
-
+class CylinderObstacle(EmptyChannel):
+    """
+    A channel with a crossflow cylindrical obstacle
+    
+    """
+    
+    def __init__(self,y_c,z_c,r):
+        self.y_c = y_c;
+        self.z_c = z_c;
+        self.r = r;
+        
+        
+    def get_Lo(self):
+        
+        return 2.0*self.r
+    
+    def get_obstList(self,X,Y,Z):
+        
+        y = np.array(Y); z = np.array(Z);
+        dist = (y - self.y_c)**2 + (z - self.z_c)**2
+        return list(np.where(dist < self.r**2))
+       
+        
+        
+        
 class WallMountedBrick(EmptyChannel):
     """
     a channel with a brick mounted to the wall (y = min)
