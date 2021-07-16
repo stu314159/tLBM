@@ -16,11 +16,11 @@ class D3Q15LatticeStructure : public LatticeStructure<T>
 public:
   D3Q15LatticeStructure();
   ~D3Q15LatticeStructure();
-  void set_inlet_bc_macro(const T * fIn,T* ux, T* uy, T * uz, T * rho,
+  void set_inletW_bc_macro(const T * fIn,T* ux, T* uy, T * uz, T * rho,
 		  const T u_bc, const int nd);
-  void set_inlet_bc_micro(T* fIn, const T* fEq, const int nd);
-  void set_outlet_bc_macro(const T * fIn, T * uz, T * rho,const T rho_bc, const int nd);
-  void set_outlet_bc_micro(T* fIn, const T* fEq, const int nd);
+  void set_inletW_bc_micro(T* fIn, const T* fEq, const int nd);
+  void set_outletE_bc_macro(const T * fIn, T * uz, T * rho,const T rho_bc, const int nd);
+  void set_outletE_bc_micro(T* fIn, const T* fEq, const int nd);
   void bounce_back(T* fIn, const int nd);
 
 private:
@@ -74,7 +74,7 @@ D3Q15LatticeStructure<T>::~D3Q15LatticeStructure(){
 }
 
 template <class T>
-void D3Q15LatticeStructure<T>::set_inlet_bc_micro(T* fIn, const T* fEq, const int n)
+void D3Q15LatticeStructure<T>::set_inletW_bc_micro(T* fIn, const T* fEq, const int n)
 {
 //	int sp[5]={5,7,8,9,10};
 //	  int bbSp[5]={6,11,12,13,14};
@@ -96,7 +96,7 @@ void D3Q15LatticeStructure<T>::set_inlet_bc_micro(T* fIn, const T* fEq, const in
 }
 
 template < class T>
-void D3Q15LatticeStructure<T>::set_outlet_bc_micro(T* fIn, const T* fEq, const int nd)
+void D3Q15LatticeStructure<T>::set_outletE_bc_micro(T* fIn, const T* fEq, const int nd)
 {
 	int sp[5]={6,11,12,13,14};
 	int bbSp[5]={5,7,8,9,10};
@@ -110,7 +110,7 @@ void D3Q15LatticeStructure<T>::set_outlet_bc_micro(T* fIn, const T* fEq, const i
 }
 
 template < class T >
-void D3Q15LatticeStructure<T>::set_inlet_bc_macro(const T * fIn, T* ux, T* uy,
+void D3Q15LatticeStructure<T>::set_inletW_bc_macro(const T * fIn, T* ux, T* uy,
 		T * uz, T * rho, const T u_bc, const int nd)
 {
 
@@ -134,7 +134,7 @@ void D3Q15LatticeStructure<T>::set_inlet_bc_macro(const T * fIn, T* ux, T* uy,
 }
 
 template < class T >
-void D3Q15LatticeStructure<T>::set_outlet_bc_macro(const T * fIn, T* uz, T* rho, const T rho_bc,const int nd)
+void D3Q15LatticeStructure<T>::set_outletE_bc_macro(const T * fIn, T* uz, T* rho, const T rho_bc,const int nd)
 {
 	rho[nd] = rho_bc;
 	T f0,f1,f2,f3,f4,f5,f7,f8,f9,f10;

@@ -39,12 +39,12 @@ public:
   void compute_equilibrium(T * fEq,
 		  const T* ux, const T* uy, const T* uz, const T* rho, const int nd);
   virtual void bounce_back(T * fIN, const int nd) = 0;
-  virtual void set_inlet_bc_macro(const T * fIn, T* ux, T* uy, T * uz, T * rho,
+  virtual void set_inletW_bc_macro(const T * fIn, T* ux, T* uy, T * uz, T * rho,
 		  const T u_bc, const int nd) = 0;
-  virtual void set_inlet_bc_micro(T* fIn,const T* fEq, const int nd) = 0;
-  virtual void set_outlet_bc_macro(const T * fIn, T * uz, T * rho, const T rho_bc,
+  virtual void set_inletW_bc_micro(T* fIn,const T* fEq, const int nd) = 0;
+  virtual void set_outletE_bc_macro(const T * fIn, T * uz, T * rho, const T rho_bc,
 		  const int nd) = 0;
-  virtual void set_outlet_bc_micro(T* fIn, const T* fEq, const int nd) = 0;
+  virtual void set_outletE_bc_micro(T* fIn, const T* fEq, const int nd) = 0;
 
   void set_uz_bc(T* fIn, const T* ux, const T* uy, T* uz, const T* rho,
 		  const T u_bc, const int nd);

@@ -635,22 +635,22 @@ void TLBM_Partition::process_node_list(real * fOut, real * fIn,
 
 		if (ndType[nd] != 1) {
 
-			// node type 2 = inlet velocity node
-			// node type 3 = outlet pressure node
+			// node type 2 = inlet (west) velocity node
+			// node type 3 = outlet (east) pressure node
 			// node type 5 = specified u_z node
 			if (ndType[nd] == 2) {
-				myLattice->set_inlet_bc_macro(fIn, ux, uy, uz, rho,
+				myLattice->set_inletW_bc_macro(fIn, ux, uy, uz, rho,
 						thisProblem.uLBM, nd);
 				// other than solid nodes, all nodes will need to compute equilibrium.
 				myLattice->compute_equilibrium(fEq, ux, uy, uz, rho, nd);
-				myLattice->set_inlet_bc_micro(fIn, fEq, nd);
+				myLattice->set_inletW_bc_micro(fIn, fEq, nd);
 			}
 			if (ndType[nd] == 3) {
-				myLattice->set_outlet_bc_macro(fIn, uz, rho, thisProblem.rhoLBM,
+				myLattice->set_outletE_bc_macro(fIn, uz, rho, thisProblem.rhoLBM,
 						nd);
 				// other than solid nodes, all nodes will need to compute equilibrium.
 				myLattice->compute_equilibrium(fEq, ux, uy, uz, rho, nd);
-				myLattice->set_outlet_bc_micro(fIn, fEq, nd);
+				myLattice->set_outletE_bc_micro(fIn, fEq, nd);
 			}
 			if (ndType[nd] == 5) {
 				myLattice->set_uz_bc(fIn, ux, uy, uz, rho, thisProblem.uLBM,
