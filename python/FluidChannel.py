@@ -458,6 +458,46 @@ class WallMountedBrick(EmptyChannel):
         obst = np.intersect1d(obst[:],inX);
         
         return obst[:]
+
+class VentilatedRoom(EmptyChannel):
+    """
+    A class to create the solid nodes needed for a ventilated classroom
+    
+    """
+    def __init__(self,rDims,inC,inR,outC,outR):
+        """
+        rDims - 3 tuple with the physical Lx, Ly, and Lz of the overall room
+        inC - a 2 tuple with the center of the inlet duct
+        inR - radius of inlet (circular) duct
+        outC - a 2 tuple with the center of the outlet duct
+        outR - radius of outlet (circular) duct
+        
+        """
+        self.rDims = rDims; self.inC = inC; self.inR = inR;
+        self.outC = outC; self.outR = outR;
+        self.dz = 0.05*rDims[2]; # thickness (in Z direction of end walls)
+        
+        
+    def get_Lo(self):
+        
+        return self.inR # we will define the radius of the inlet duct as Lo
+    
+    def get_obstList(self,X,Y,Z):
+        """
+        return a list of all indices within the boundary of the brick
+        """
+        x = np.array(X); y = np.array(Y); z = np.array(Z);
+        inCyl = np.where( np.sqrt((x - self.inC[0])**2 + (y - self.inC[1])**2) <= self.inR)
+        obst_l = np.where(z <= self.dz);       
+        inObst = np.setxor1d(obst_l,np.intersect1d(inCyl,obst_l)) 
+        
+        outCyl = np.where( np.sqrt((x-self.outC[0])**2 + (y - self.outC[1])**2) <= self.outR)        
+        obst_r = np.where(z >= (self.rDims[2]-self.dz));
+               
+        outObst = np.setxor1d(obst_r,np.intersect1d(outCyl,obst_r)) 
+        
+        return list(np.union1d(inObst,outObst))
+        
         
 
 
