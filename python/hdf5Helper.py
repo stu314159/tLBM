@@ -1,7 +1,7 @@
 import numpy as np
 import h5py
 
-def writeH5(pressure,u,v,w,velmag,filename):
+def writeH5(pressure,u,v,w,Fx,Fy,Fz,velmag,filename):
   """
   Write the h5 file that will save the information needed in proper structure.
   pressure = numpy array with pressure values
@@ -18,6 +18,11 @@ def writeH5(pressure,u,v,w,velmag,filename):
   y_velo = velo_group.create_dataset("y_velo",data=v)
   z_velo = velo_group.create_dataset("z_velo",data=w)
   velmag = velo_group.create_dataset("velmag",data=velmag)
+  
+  force_group = f.create_group("force_group")
+  x_force = force_group.create_dataset("x_force",data=Fx)
+  y_force = force_group.create_dataset("y_force",data=Fy)
+  z_force = force_group.create_dataset("z_force",data=Fz)
 
   # Store velocity data into the velo_group of h5 file
   pres_group = f.create_group("pres_group")
@@ -67,6 +72,26 @@ def writeXdmf(dims,dx,filename,h5_file):
   f.write('</DataItem>\n')
   f.write('</DataItem>\n')
   f.write('</Attribute>\n')
+  
+  # -------------
+  f.write('<Attribute Name="force" AttributeType="Vector" Center="Node">\n')
+  f.write('<DataItem ItemType="Function" Function="JOIN($0, $1, $2)" Dimensions="%d %d %d 3">\n'%(dims[0],dims[1],dims[2]))
+  f.write('<DataItem Dimensions="%d %d %d" NumberType="Float" Format="HDF">\n'%(dims[0],dims[1],dims[2]))
+  
+  f.write('%s:/force_group/x_force\n'%h5_file)
+  f.write('</DataItem>\n')
+  f.write('<DataItem Dimensions="%d %d %d" NumberType="Float" Format="HDF">\n'%(dims[0],dims[1],dims[2]))
+  
+  f.write('%s:/force_group/y_force\n'%h5_file)
+  f.write('</DataItem>\n')
+  f.write('<DataItem Dimensions="%d %d %d" NumberType="Float" Format="HDF">\n'%(dims[0],dims[1],dims[2]))
+  
+  f.write('%s:/force_group/z_force\n'%h5_file)
+  f.write('</DataItem>\n')
+  f.write('</DataItem>\n')
+  f.write('</Attribute>\n')
+  
+  # -------------
 
   f.write('<Attribute Name="pressure" AttributeType="Scalar" Center="Node">\n')
   f.write('<DataItem Dimensions="%d %d %d" NumberType="Float" Format="HDF">\n'%(dims[0],dims[1],dims[2]))

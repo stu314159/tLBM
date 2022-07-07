@@ -26,6 +26,10 @@ TLBM_Partition::~TLBM_Partition(){
   delete [] uz;
   delete [] rho;
 
+  delete [] Fx;
+  delete [] Fy;
+  delete [] Fz;
+
   if (timeAvg == 1)
   {
 	delete [] uAvg;
@@ -107,6 +111,8 @@ int TLBM_Partition::tlbm_initialize(){
 
   finalize_halo_data_arrays();
 
+  make_force_calc_map();
+
 
   return 0;
 }
@@ -116,18 +122,89 @@ void TLBM_Partition::load_ndType()
 	std::ifstream ndtype("ndType.lbm");
 	int nt;
 	int gNdInd = 0;
-	int localNdInd;
+    int localNdInd;
+	int nNodes = thisProblem.nx*thisProblem.ny*thisProblem.nz;
+	std::vector<int> allNdType = std::vector<int> (nNodes,0);
 
-	while (ndtype >> nt){
-		if (partsG[gNdInd] == rank)// if gNdInd is a local node
-		{
-			localNdInd = globalToLocal.at(gNdInd); // get the local node index
-			ndType[localNdInd] = nt; // assign node type to the ndType array
-		}
-
+	while (ndtype >> nt)
+	{
+		allNdType[gNdInd] = nt;
 		++gNdInd;
 	}
 	ndtype.close();
+
+	for (const auto & ndit : localNdList)// remember: localNdList has *global* node numbers for local nodes (including halo)
+	{
+		localNdInd = globalToLocal.at(ndit); // get the local node number
+		ndType[localNdInd] = allNdType[ndit]; // assign node type to local ndType array
+	}
+}
+
+void TLBM_Partition::make_force_calc_map()
+{
+	// iterate through all local nodes (not including the halo) and identify which nodes are on a fluid/surface boundary.
+	// the local node number will be the key for the forceCalcMap and the set of all lattice speeds pointing to fluid
+	// nodes is the value.
+
+	int numSpd = myLattice->get_numSpd();
+	int idx, ngbNd, ngbNd_type;
+
+	for (int nd = 0; nd < numLnodes; nd++)
+	{
+		if ( ndType[nd] == 1 ) // if a solid node
+		{ // iterate through neighbors.
+			for ( int spd=0; spd < numSpd; spd++)
+			{
+			   	idx =  getIDx(numSpd,nd,spd);
+			   	ngbNd = adjMatrix[idx];
+			   	ngbNd_type = ndType[ngbNd];
+
+			   	if (ngbNd_type == 0) // if a neighbor node type is 0 (fluid), then add to the force calc map
+			   	{
+			   		forceCalcMap[nd].insert(spd);
+			   	}
+			}
+		}
+	}
+
+//	printf("Rank %d has %lu surface nodes for the force calculation.\n ",rank,forceCalcMap.size());
+
+}
+
+void TLBM_Partition::calc_force()
+{
+	// initialize all of the force values to zero
+	for(int nd = 0; nd < numLnodes; nd++)
+	{
+	  Fx[nd] = 0; Fy[nd] = 0; Fz[nd] = 0;
+	}
+
+	// get lattice information
+	int numSpd = myLattice->get_numSpd();
+	const int * ex = myLattice->get_ex();
+    const int * ey = myLattice->get_ey();
+	const int * ez = myLattice->get_ez();
+	const int * bb_spds = myLattice->get_bbSpd();
+
+	// iterate through all of the keys of the forceCalcMap
+	for( auto & fnd_pairs : forceCalcMap )
+	{
+		int fnd = fnd_pairs.first; // local node number of LP on fluid/surface interface
+		for ( auto & spd : fnd_pairs.second ) // iterate through speeds of fnd that point to fluid nodes
+		{
+			int idx = getIDx(numSpd,fnd,spd);
+			int bb_spd = bb_spds[spd];
+			int ngbNd = adjMatrix[idx];
+			real f1 = fOut[idx]; // get fOut in speed towards fluid neighbor
+			int idx_bb = getIDx(numSpd,ngbNd,bb_spd);
+			real f2 = fOut[idx_bb]; // get fOut from neighbor node, in speed towards fnd
+
+			Fx[fnd] += ex[bb_spd] * ( f1 + f2 );
+			Fy[fnd] += ey[bb_spd] * ( f1 + f2 );
+			Fz[fnd] += ez[bb_spd] * ( f1 + f2 );
+
+		}
+	}
 }
 
 void TLBM_Partition::load_parts(){
@@ -283,11 +360,23 @@ void TLBM_Partition::compute_halo_data()
 
    // generate local nodes for the halo nodes and add to the local2global node map.
     int lNd = numLnodes; // initialize to the next local node number
+
+    std::pair<std::map<int,int>::iterator,bool> ret;
     for (const auto & hnIt : haloNodes)
     {
     	localNdList.push_back(hnIt);
-    	globalToLocal[hnIt] = lNd;
-    	localToGlobal[lNd] = hnIt;
+    	ret = globalToLocal.insert(std::pair<int,int>(hnIt,lNd));
+    	if (ret.second == false)
+    	{
+    	  	 throw "global to local key already existed!";
+    	}
+
+    	ret = localToGlobal.insert(std::pair<int,int>(lNd,hnIt));
+    	if (ret.second == false)
+    	{
+    	  	 throw "local to global key already existed!";
+    	}
+
     	++lNd;
     }
 
@@ -335,12 +424,16 @@ void TLBM_Partition::allocate_arrays()
 	fEven = new real[numSpd*totalNodes];//larger to store halo data (as stream target) as well.
 	fOdd = new real[numSpd*totalNodes];// larger to store halo data (as stream target) as well
 	fEq = new real[numSpd*numLnodes];
-	ndType = new int[numLnodes];
+	ndType = new int[totalNodes];
 
 	ux = new real[numLnodes];
 	uy = new real[numLnodes];
 	uz = new real[numLnodes];
 	rho = new real[numLnodes];
+
+	Fx = new real[numLnodes];
+	Fy = new real[numLnodes];
+	Fz = new real[numLnodes];
 
 	if (timeAvg == 1)
 	{
@@ -554,6 +647,36 @@ void TLBM_Partition::write_data()
 	{
 		throw "Error opening file to write rho";
 	}
+
+    calc_force();
+
+    fileName = "Fx"+std::to_string(dataWriteNum)+".b_dat";
+    rc = MPI_File_open(comm,(char *)(fileName.c_str()),MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
+    MPI_File_write_at(fh,offset,Fx,numLnodes,MPI_DTYPE,&status);
+    MPI_File_close(&fh);
+    if(rc)
+    {
+    	throw "Error opening file to write Fx";
+    }
+
+    fileName = "Fy"+std::to_string(dataWriteNum)+".b_dat";
+    rc = MPI_File_open(comm,(char *)(fileName.c_str()),MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
+    MPI_File_write_at(fh,offset,Fy,numLnodes,MPI_DTYPE,&status);
+    MPI_File_close(&fh);
+    if(rc)
+    {
+    	throw "Error opening file to write Fy";
+    }
+
+    fileName = "Fz"+std::to_string(dataWriteNum)+".b_dat";
+    rc = MPI_File_open(comm,(char *)(fileName.c_str()),MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
+    MPI_File_write_at(fh,offset,Fz,numLnodes,MPI_DTYPE,&status);
+    MPI_File_close(&fh);
+    if(rc)
+    {
+    	throw "Error opening file to write Fz";
+    }
+
 	++dataWriteNum;
 
 

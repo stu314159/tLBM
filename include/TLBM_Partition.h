@@ -66,7 +66,7 @@ class TLBM_Partition{
     int size;
     MPI_Comm comm;
     LatticeStructure<real> * myLattice;
-    std::vector<int> localNdList; // my lattice points (global node numbers)
+    std::vector<int> localNdList; // my lattice points (global node numbers) - this includes Halo nodes
     std::vector<int> partSizes; // number of LPs in each partition
     std::vector<int> partsG; // partition assignment for each node by global node number
     std::set<int> boundaryNdList; // local node number set of boundary nodes
@@ -74,6 +74,9 @@ class TLBM_Partition{
     std::set<int> haloNodes;
     std::map<int,int> globalToLocal;
     std::map<int,int> localToGlobal;
+
+    std::map<int, std::set<int> > forceCalcMap;
+
     HaloDataOrganizer<real> HDO_out;
     HaloDataOrganizer<real> HDO_in;
     std::set<int> ngbSet;
@@ -97,6 +100,10 @@ class TLBM_Partition{
     real * vAvg = NULL;
     real * wAvg = NULL;
     real * rhoAvg = NULL;
+    real * Fx = NULL;
+    real * Fy = NULL;
+    real * Fz = NULL;
+
     bool timeAvg;
 
     MPI_Request * mpiOutRequest = NULL;
@@ -119,6 +126,9 @@ class TLBM_Partition{
     void insert_halo_data(real * fOut);
     void initiate_data_exchange();
     void update_time_avg();
+
+    void make_force_calc_map();
+    void calc_force();
 
 };
 

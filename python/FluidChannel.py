@@ -1315,6 +1315,7 @@ class FluidChannel:
         # solid node: 1
         # velocity zm (inlet) node: 2
         # pressure zp (outlet) node: 3
+        # prescribed velocity (moving solid) node: 5
         self.ndType[np.union1d(self.obst_list,self.solid_list).astype(np.int32)] = 1
         self.inlet_list = np.array(self.inlet_list).astype(np.int32);
         self.outlet_list = np.array(self.outlet_list).astype(np.int32);
