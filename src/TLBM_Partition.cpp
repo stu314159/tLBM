@@ -107,6 +107,8 @@ int TLBM_Partition::tlbm_initialize(){
 
   finalize_halo_data_arrays();
 
+  make_force_calc_map();
+
 
   return 0;
 }
@@ -117,25 +119,13 @@ void TLBM_Partition::load_ndType()
 	int nt;
 	int gNdInd = 0;
     int localNdInd;
-//	int globalNdInd;
-
 	int nNodes = thisProblem.nx*thisProblem.ny*thisProblem.nz;
 	std::vector<int> allNdType = std::vector<int> (nNodes,0);
-
-
 
 	while (ndtype >> nt)
 	{
 		allNdType[gNdInd] = nt;
 		++gNdInd;
-
-//		if (partsG[gNdInd] == rank)// if gNdInd is a local node
-//		{
-//			localNdInd = globalToLocal.at(gNdInd); // get the local node index
-//			ndType[localNdInd] = nt; // assign node type to the ndType array
-//		}
-//
-//		++gNdInd;
 	}
 	ndtype.close();
 
@@ -144,7 +134,36 @@ void TLBM_Partition::load_ndType()
 		localNdInd = globalToLocal.at(ndit); // get the local node number
 		ndType[localNdInd] = allNdType[ndit]; // assign node type to local ndType array
 	}
+}
 
+void TLBM_Partition::make_force_calc_map()
+{
+	// iterate through all local nodes (not including the halo) and identify which nodes are on a fluid/surface boundary.
+	// the local node number will be the key for the forceCalcMap and the set of all lattice speeds pointing to fluid
+	// nodes is the value.
+
+	int numSpd = myLattice->get_numSpd();
+	int idx, ngbNd, ngbNd_type;
+
+	for (int nd = 0; nd < numLnodes; nd++)
+	{
+		if ( ndType[nd] == 1 ) // if a solid node
+		{ // iterate through neighbors.
+			for ( int spd=0; spd < numSpd; spd++)
+			{
+			   	idx =  getIDx(numSpd,nd,spd);
+			   	ngbNd = adjMatrix[idx];
+			   	ngbNd_type = ndType[ngbNd];
+
+			   	if (ngbNd_type == 0) // if a neighbor node type is 0 (fluid), then add to the force calc map
+			   	{
+			   		forceCalcMap[nd].insert(spd);
+			   	}
+			}
+		}
+	}
+
+	printf("Rank %d has %lu surface nodes for the force calculation.\n ",rank,forceCalcMap.size());
 
 }
 

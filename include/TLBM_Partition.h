@@ -74,6 +74,9 @@ class TLBM_Partition{
     std::set<int> haloNodes;
     std::map<int,int> globalToLocal;
     std::map<int,int> localToGlobal;
+
+    std::map<int, std::set<int> > forceCalcMap;
+
     HaloDataOrganizer<real> HDO_out;
     HaloDataOrganizer<real> HDO_in;
     std::set<int> ngbSet;
@@ -119,6 +122,8 @@ class TLBM_Partition{
     void insert_halo_data(real * fOut);
     void initiate_data_exchange();
     void update_time_avg();
+
+    void make_force_calc_map();
 
 };
 
