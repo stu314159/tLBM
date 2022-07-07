@@ -26,6 +26,10 @@ TLBM_Partition::~TLBM_Partition(){
   delete [] uz;
   delete [] rho;
 
+  delete [] Fx;
+  delete [] Fy;
+  delete [] Fz;
+
   if (timeAvg == 1)
   {
 	delete [] uAvg;
@@ -163,8 +167,44 @@ void TLBM_Partition::make_force_calc_map()
 		}
 	}
 
-	printf("Rank %d has %lu surface nodes for the force calculation.\n ",rank,forceCalcMap.size());
+//	printf("Rank %d has %lu surface nodes for the force calculation.\n ",rank,forceCalcMap.size());
 
+}
+
+void TLBM_Partition::calc_force()
+{
+	// initialize all of the force values to zero
+	for(int nd = 0; nd < numLnodes; nd++)
+	{
+	  Fx[nd] = 0; Fy[nd] = 0; Fz[nd] = 0;
+	}
+
+	// get lattice information
+	int numSpd = myLattice->get_numSpd();
+	const int * ex = myLattice->get_ex();
+    const int * ey = myLattice->get_ey();
+	const int * ez = myLattice->get_ez();
+	const int * bb_spds = myLattice->get_bbSpd();
+
+	// iterate through all of the keys of the forceCalcMap
+	for( auto & fnd_pairs : forceCalcMap )
+	{
+		int fnd = fnd_pairs.first; // local node number of LP on fluid/surface interface
+		for ( auto & spd : fnd_pairs.second ) // iterate through speeds of fnd that point to fluid nodes
+		{
+			int idx = getIDx(numSpd,fnd,spd);
+			int bb_spd = bb_spds[spd];
+			int ngbNd = adjMatrix[idx];
+			real f1 = fOut[idx]; // get fOut in speed towards fluid neighbor
+			int idx_bb = getIDx(numSpd,ngbNd,bb_spd);
+			real f2 = fOut[idx_bb]; // get fOut from neighbor node, in speed towards fnd
+
+			Fx[fnd] += ex[bb_spd] * ( f1 + f2 );
+			Fy[fnd] += ey[bb_spd] * ( f1 + f2 );
+			Fz[fnd] += ez[bb_spd] * ( f1 + f2 );
+
+		}
+	}
 }
 
 void TLBM_Partition::load_parts(){
@@ -391,6 +431,10 @@ void TLBM_Partition::allocate_arrays()
 	uz = new real[numLnodes];
 	rho = new real[numLnodes];
 
+	Fx = new real[numLnodes];
+	Fy = new real[numLnodes];
+	Fz = new real[numLnodes];
+
 	if (timeAvg == 1)
 	{
 		uAvg = new real[numLnodes];
@@ -603,6 +647,36 @@ void TLBM_Partition::write_data()
 	{
 		throw "Error opening file to write rho";
 	}
+
+    calc_force();
+
+    fileName = "Fx"+std::to_string(dataWriteNum)+".b_dat";
+    rc = MPI_File_open(comm,(char *)(fileName.c_str()),MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
+    MPI_File_write_at(fh,offset,Fx,numLnodes,MPI_DTYPE,&status);
+    MPI_File_close(&fh);
+    if(rc)
+    {
+    	throw "Error opening file to write Fx";
+    }
+
+    fileName = "Fy"+std::to_string(dataWriteNum)+".b_dat";
+    rc = MPI_File_open(comm,(char *)(fileName.c_str()),MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
+    MPI_File_write_at(fh,offset,Fy,numLnodes,MPI_DTYPE,&status);
+    MPI_File_close(&fh);
+    if(rc)
+    {
+    	throw "Error opening file to write Fy";
+    }
+
+    fileName = "Fz"+std::to_string(dataWriteNum)+".b_dat";
+    rc = MPI_File_open(comm,(char *)(fileName.c_str()),MPI_MODE_CREATE|MPI_MODE_WRONLY,MPI_INFO_NULL,&fh);
+    MPI_File_write_at(fh,offset,Fz,numLnodes,MPI_DTYPE,&status);
+    MPI_File_close(&fh);
+    if(rc)
+    {
+    	throw "Error opening file to write Fz";
+    }
+
 	++dataWriteNum;
 
 

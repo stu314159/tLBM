@@ -100,6 +100,10 @@ class TLBM_Partition{
     real * vAvg = NULL;
     real * wAvg = NULL;
     real * rhoAvg = NULL;
+    real * Fx = NULL;
+    real * Fy = NULL;
+    real * Fz = NULL;
+
     bool timeAvg;
 
     MPI_Request * mpiOutRequest = NULL;
@@ -124,6 +128,7 @@ class TLBM_Partition{
     void update_time_avg();
 
     void make_force_calc_map();
+    void calc_force();
 
 };
 

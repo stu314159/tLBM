@@ -96,6 +96,22 @@ for i in range(int(nDumps)):
   pressure -= pRef; # adjust for reference pressure
   
   velmag = np.sqrt(ux**2+uy**2+uz**2)
+  
+  # load force data
+  f_conv_fact = l_conv_fact/u_conv_fact**2;
+  Fx_fn = 'Fx'+str(i)+'.b_dat'
+  Fy_fn = 'Fy'+str(i)+'.b_dat'
+  Fz_fn = 'Fz'+str(i)+'.b_dat'
+  
+  # create numpy arrays from binary data files
+  Fx_i = np.fromfile(Fx_fn,dtype=np.float32); Fx_i *= f_conv_fact;
+  Fy_i = np.fromfile(Fy_fn,dtype=np.float32); Fy_i *= f_conv_fact;
+  Fz_i = np.fromfile(Fz_fn,dtype=np.float32); Fz_i *= f_conv_fact;
+  Fx = np.zeros_like(Fx_i); Fy = np.zeros_like(Fy_i); Fz = np.zeros_like(Fz_i);
+  Fx[order_map] = Fx_i;
+  Fy[order_map] = Fy_i;  
+  Fz[order_map] = Fz_i;  
+  
 
   # Create dimensions tuple for pressure reshape and XMF writer
   dims = (Nz,Ny,Nx)
@@ -112,7 +128,7 @@ for i in range(int(nDumps)):
   # Write output files
   h5_file = 'out'+str(i)+'.h5'
   xmf_file = 'data'+str(i)+'.xmf'
-  writeH5(pressure,ux,uy,uz,velmag,h5_file)
+  writeH5(pressure,ux,uy,uz,Fx,Fy,Fz,velmag,h5_file)
   writeXdmf(dims,dx,xmf_file,h5_file)
 
 if TimeAvg_flag == 1:
