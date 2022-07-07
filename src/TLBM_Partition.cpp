@@ -116,18 +116,36 @@ void TLBM_Partition::load_ndType()
 	std::ifstream ndtype("ndType.lbm");
 	int nt;
 	int gNdInd = 0;
-	int localNdInd;
+    int localNdInd;
+//	int globalNdInd;
 
-	while (ndtype >> nt){
-		if (partsG[gNdInd] == rank)// if gNdInd is a local node
-		{
-			localNdInd = globalToLocal.at(gNdInd); // get the local node index
-			ndType[localNdInd] = nt; // assign node type to the ndType array
-		}
+	int nNodes = thisProblem.nx*thisProblem.ny*thisProblem.nz;
+	std::vector<int> allNdType = std::vector<int> (nNodes,0);
 
+
+
+	while (ndtype >> nt)
+	{
+		allNdType[gNdInd] = nt;
 		++gNdInd;
+
+//		if (partsG[gNdInd] == rank)// if gNdInd is a local node
+//		{
+//			localNdInd = globalToLocal.at(gNdInd); // get the local node index
+//			ndType[localNdInd] = nt; // assign node type to the ndType array
+//		}
+//
+//		++gNdInd;
 	}
 	ndtype.close();
+
+	for (const auto & ndit : localNdList)// remember: localNdList has *global* node numbers for local nodes (including halo)
+	{
+		localNdInd = globalToLocal.at(ndit); // get the local node number
+		ndType[localNdInd] = allNdType[ndit]; // assign node type to local ndType array
+	}
+
+
 }
 
 void TLBM_Partition::load_parts(){
@@ -283,11 +301,23 @@ void TLBM_Partition::compute_halo_data()
 
    // generate local nodes for the halo nodes and add to the local2global node map.
     int lNd = numLnodes; // initialize to the next local node number
+
+    std::pair<std::map<int,int>::iterator,bool> ret;
     for (const auto & hnIt : haloNodes)
     {
     	localNdList.push_back(hnIt);
-    	globalToLocal[hnIt] = lNd;
-    	localToGlobal[lNd] = hnIt;
+    	ret = globalToLocal.insert(std::pair<int,int>(hnIt,lNd));
+    	if (ret.second == false)
+    	{
+    	  	 throw "global to local key already existed!";
+    	}
+
+    	ret = localToGlobal.insert(std::pair<int,int>(lNd,hnIt));
+    	if (ret.second == false)
+    	{
+    	  	 throw "local to global key already existed!";
+    	}
+
     	++lNd;
     }
 
@@ -335,7 +365,7 @@ void TLBM_Partition::allocate_arrays()
 	fEven = new real[numSpd*totalNodes];//larger to store halo data (as stream target) as well.
 	fOdd = new real[numSpd*totalNodes];// larger to store halo data (as stream target) as well
 	fEq = new real[numSpd*numLnodes];
-	ndType = new int[numLnodes];
+	ndType = new int[totalNodes];
 
 	ux = new real[numLnodes];
 	uy = new real[numLnodes];

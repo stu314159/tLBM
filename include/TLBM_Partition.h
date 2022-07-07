@@ -66,7 +66,7 @@ class TLBM_Partition{
     int size;
     MPI_Comm comm;
     LatticeStructure<real> * myLattice;
-    std::vector<int> localNdList; // my lattice points (global node numbers)
+    std::vector<int> localNdList; // my lattice points (global node numbers) - this includes Halo nodes
     std::vector<int> partSizes; // number of LPs in each partition
     std::vector<int> partsG; // partition assignment for each node by global node number
     std::set<int> boundaryNdList; // local node number set of boundary nodes
