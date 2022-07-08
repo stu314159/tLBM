@@ -344,7 +344,7 @@ void TLBM_Partition::compute_halo_data()
     			// (will be converted back to local node number when the HDO allocates and fills low-level arrays)
     			//
     			// above is okay since local node numbers are generated in order
-    			// of increasing global node number.
+    			// of increasing global node number. (both for local and halo nodes)
     		}
 
     	}
@@ -356,7 +356,7 @@ void TLBM_Partition::compute_halo_data()
     totalNodes  = numLnodes + numHaloNodes;
 
     // make a list of the halo nodes (by global node number)
-    haloNodes = HDO_out.get_halo_nodes(); // set of global node numbers for halo nodes
+    haloNodes = HDO_out.get_halo_nodes(); // set of global node numbers for halo nodes (in global node # order)
 
    // generate local nodes for the halo nodes and add to the local2global node map.
     int lNd = numLnodes; // initialize to the next local node number

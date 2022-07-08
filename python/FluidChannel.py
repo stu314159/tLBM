@@ -415,6 +415,80 @@ class CylinderObstacle(EmptyChannel):
         dist = (y - self.y_c)**2 + (z - self.z_c)**2
         return list(np.where(dist < self.r**2))
        
+
+class WallMountedWedge(EmptyChannel):
+    """
+    A channel with a wedge mounted to the wall (y = min)
+    
+    """        
+    def __init__(self, x_c,z_c,z_max,width, theta):
+        """
+        x_c, z_c: the x-, and z-coordinates of the center of the
+        leading edge of the wedge.  The y-coordinate is assumed to be zero.
+        
+        z_max: the z-coordinate of the back side / top of the wedge
+        
+        theta: the angle of inclination of the wedge. 
+        
+        """    
+        self.x_c = x_c;
+        self.y_c = 0;
+        self.z_c = z_c;
+        self.z_max = z_max;
+        self.width = width;
+        self.theta = theta;
+        
+        # make an array with three non-colinear points on the plane
+        # two front corners of the wedge and the middle of the top (back) of the wedge
+        P = np.empty((3,3));
+        P[0,0] = x_c - width/2.; P[0,1] = 0.; P[0,2] = z_c;
+        P[1,0] = x_c + width/2.; P[1,1] = 0.; P[1,2] = z_c;
+        
+        # consider the wedge as a right triangle
+        # b is the bottom face, a is the back face, and c is the hypotenuse
+        b = z_max - z_c; c = b/np.cos(theta); a = c*np.sin(theta);         
+        P[2,0] = x_c;  P[2,1] = a; P[2,2] = z_max;
+        
+         # get the coefficients of the equation of the plane
+        rhs = np.empty((3,1)); rhs[0] = -1; rhs[1] = -1; rhs[2] = -1;
+         
+        coeffs = np.linalg.solve(P,rhs);
+        self.a = coeffs[0]; self.b = coeffs[1]; self.c = coeffs[2]; self.d = 1.;
+        
+        self.Lo = z_max - z_c;
+        
+    def get_Lo(self):
+        
+        return self.Lo;
+    
+    def line_poly(self,X,Y,Z):
+        """
+        returns the value of the equation of the line
+        
+        """
+        
+        return self.a*X + self.b*Y + self.c*Z + self.d; 
+        
+        
+    def get_obstList(self,X,Y,Z):
+        """
+        return a list of all indices within the boundary of the wedge
+        
+        """
+        x = np.array(X); y = np.array(Y); z = np.array(Z);
+        
+        inXa = np.where(x>=(self.x_c - self.width/2.));
+        inXb = np.where(x<=(self.x_c + self.width/2.));
+        inX = np.intersect1d(inXa,inXb);
+        inZa = np.where(z>=self.z_c);
+        inZb = np.where(z<=self.z_max);  
+        inZ = np.intersect1d(inZa,inZb);  
+        inY = np.where(self.line_poly(x,y,z) <= 0);
+        
+        obst = np.intersect1d(inX,inZ);
+        obst = np.intersect1d(obst[:],inY);  
+        
+        return obst[:];
         
         
         
