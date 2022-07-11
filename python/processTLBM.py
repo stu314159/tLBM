@@ -182,5 +182,5 @@ if TimeAvg_flag == 1:
   # Write output files
   h5_file = 'timeAvg.h5'
   xmf_file = 'timeAvg.xmf'
-  writeH5(pressure,ux,uy,uz,velmag,h5_file)
-  writeXdmf(dims,dx,xmf_file,h5_file)
+  writeH5_time_avg(pressure,ux,uy,uz,velmag,h5_file)
+  writeXdmf_time_avg(dims,dx,xmf_file,h5_file)
