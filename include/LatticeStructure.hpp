@@ -29,32 +29,36 @@ public:
   void setW(T * tw) {w = tw;}
   void setBB(int * bb){bbSpd = bb;}
   void set_numSpd(int ns){numSpd = ns;}
-  inline unsigned getIDx(int nSpd, int nIdx, int spd){
-      	return nIdx*nSpd + spd;
-      	// return spd*nnods + nIdx; // use this if it performs faster.
+  inline unsigned getIDx(int nnodes, int nIdx, int spd){
+//      	return nIdx*nSpd + spd;
+      	return spd*nnodes + nIdx; // use this if it performs faster.
       }
 
   void compute_macroscopic_data(T * ux, T * uy, T * uz, T * rho,
-		  const T * fIn, const int nd);
+		  const T * fIn, const int nd, const int nnodes);
   void compute_equilibrium(T * fEq,
-		  const T* ux, const T* uy, const T* uz, const T* rho, const int nd);
-  virtual void bounce_back(T * fIN, const int nd) = 0;
+		  const T* ux, const T* uy, const T* uz, const T* rho, const int nd, const int nlnodes);
+  virtual void bounce_back(T * fIN, const int nd, const int nnodes) = 0;
   virtual void set_inletW_bc_macro(const T * fIn, T* ux, T* uy, T * uz, T * rho,
-		  const T u_bc, const int nd) = 0;
-  virtual void set_inletW_bc_micro(T* fIn,const T* fEq, const int nd) = 0;
+		  const T u_bc, const int nd, const int nnodes) = 0;
+  virtual void set_inletW_bc_micro(T* fIn,const T* fEq, const int nd, const int nnodes,
+		  const int nlnodes) = 0;
   virtual void set_outletE_bc_macro(const T * fIn, T * uz, T * rho, const T rho_bc,
-		  const int nd) = 0;
-  virtual void set_outletE_bc_micro(T* fIn, const T* fEq, const int nd) = 0;
+		  const int nd, const int nnodes) = 0;
+  virtual void set_outletE_bc_micro(T* fIn, const T* fEq, const int nd, const int nnodes,
+		  const int nlnodes) = 0;
 
   void set_uz_bc(T* fIn, const T* ux, const T* uy, T* uz, const T* rho,
-		  const T u_bc, const int nd);
+		  const T u_bc, const int nd, const int nnodes);
 
-  void compute_strain_tensor(T* S, const T* fIn, const T* fEq, const int nd);
+  void compute_strain_tensor(T* S, const T* fIn, const T* fEq, const int nd, const int nnodes,
+		  const int nlnodes);
   T apply_turbulence_model(T omega, const T* S, const T cs);
 
-  void relax(T* fIn, const T* fEq, const T omega, const int nd);
+  void relax(T* fIn, const T* fEq, const T omega, const int nd, const int nnodes,
+		  const int nlnodes);
 
-  void compute_piflat(T* piFlat,const T* fIn, const T* fEq, const int nd);
+  void compute_piflat(T* piFlat,const T* fIn, const T* fEq, const int nd, const int nnodes);
 
 
 protected:
@@ -68,7 +72,7 @@ protected:
 
 template <class T>
 void LatticeStructure<T>::compute_macroscopic_data(T * ux, T * uy, T * uz, T * rho,
-		const T * fIn, const int nd){
+		const T * fIn, const int nd,const int nnodes){
 	T ux_l = 0;
 	T uy_l = 0;
 	T uz_l = 0;
@@ -76,7 +80,7 @@ void LatticeStructure<T>::compute_macroscopic_data(T * ux, T * uy, T * uz, T * r
 	T f;
 	for ( int spd = 0; spd < numSpd; ++spd)
 	{
-		f = fIn[getIDx(numSpd,nd,spd)];
+		f = fIn[getIDx(nnodes,nd,spd)];
 		rho_l += f;
 		ux_l += f*ex[spd];
 		uy_l += f*ey[spd];
@@ -91,19 +95,20 @@ void LatticeStructure<T>::compute_macroscopic_data(T * ux, T * uy, T * uz, T * r
 
 template <class T>
 void LatticeStructure<T>::compute_equilibrium(T* fEq,
-		const T* ux, const T* uy, const T* uz, const T* rho, const int nd)
+		const T* ux, const T* uy, const T* uz, const T* rho, const int nd, const int nlnodes)
 {
 	T cu;
 	for (int spd = 0; spd<numSpd; ++spd)
 	{
 		cu = 3.0*(ex[spd]*ux[nd]+ey[spd]*uy[nd]+ez[spd]*uz[nd]);
-		fEq[getIDx(numSpd,nd,spd)]=w[spd]*rho[nd]*
+		fEq[getIDx(nlnodes,nd,spd)]=w[spd]*rho[nd]*
 				(1.0+cu+0.5*(cu*cu)-3./2.*(ux[nd]*ux[nd]+uy[nd]*uy[nd]+uz[nd]*uz[nd]));
 	}
 }
 
 template <class T>
-void LatticeStructure<T>::compute_strain_tensor(T* S,const T* fIn, const T* fEq, const int nd)
+void LatticeStructure<T>::compute_strain_tensor(T* S,const T* fIn, const T* fEq, const int nd,
+		const int nnodes, const int nlnodes)
 {
 	T e[3];
 	const int nDim = 3;
@@ -114,7 +119,7 @@ void LatticeStructure<T>::compute_strain_tensor(T* S,const T* fIn, const T* fEq,
 		{
 			for(int j = 0; j<nDim; ++j)
 			{
-				S[i*nDim+j]+=e[i]*e[j]*(fIn[this->getIDx(numSpd,nd,spd)] - fEq[this->getIDx(numSpd,nd,spd)]);
+				S[i*nDim+j]+=e[i]*e[j]*(fIn[this->getIDx(nnodes,nd,spd)] - fEq[this->getIDx(nlnodes,nd,spd)]);
 			}
 		}
 	}
@@ -122,12 +127,13 @@ void LatticeStructure<T>::compute_strain_tensor(T* S,const T* fIn, const T* fEq,
 }
 
 template <class T>
-void LatticeStructure<T>::compute_piflat(T* piFlat, const T* fIn, const T* fEq, const int nd)
+void LatticeStructure<T>::compute_piflat(T* piFlat, const T* fIn, const T* fEq, const int nd,
+		const int nnodes)
 {
 	T fNeq;
 	for(int spd = 0; spd<numSpd; ++spd)
 	{
-		int idx = getIDx(numSpd,nd,spd);
+		int idx = getIDx(nnodes,nd,spd);
 		fNeq = fIn[idx] - fEq[idx];
 		piFlat[0]+=ex[spd]*ey[spd]*fNeq;
 		piFlat[1]+=ey[spd]*ex[spd]*fNeq;
@@ -153,24 +159,25 @@ T LatticeStructure<T>::apply_turbulence_model(T omega, const T* S, const T cs)
 }
 
 template <class T>
-void LatticeStructure<T>::relax(T* fIn, const T* fEq, const T omega, const int nd)
+void LatticeStructure<T>::relax(T* fIn, const T* fEq, const T omega, const int nd,
+		const int nnodes, const int nlnodes)
 {
 	for (int spd = 0; spd<numSpd; ++spd)
 	{
-		int idx = getIDx(numSpd,nd,spd);
-		fIn[idx] = fIn[idx] - omega*(fIn[idx] - fEq[idx]);
+		int idx = getIDx(nnodes,nd,spd);
+		fIn[idx] = fIn[idx] - omega*(fIn[idx] - fEq[getIDx(nlnodes,nd,spd)]);
 	}
 }
 
 
 template <class T>
 void LatticeStructure<T>::set_uz_bc(T* fIn, const T* ux, const T* uy, T* uz,
-		const T* rho, const T u_bc, const int nd)
+		const T* rho, const T u_bc, const int nd, const int nnodes)
 {
 	for ( int spd = 0; spd<numSpd; ++spd)
 	{
 		// pushes fIn[spd] values towards one such that uz = u_bc, ux = uy = 0.
-		fIn[this->getIDx(numSpd,nd,spd)] += 3.*rho[nd]*w[spd]*
+		fIn[this->getIDx(nnodes,nd,spd)] += 3.*rho[nd]*w[spd]*
 				(ez[spd]*(u_bc - uz[nd]) + ex[spd]*(0.-ux[nd]) + ey[spd]*(0. - uy[spd]));
 	}
 

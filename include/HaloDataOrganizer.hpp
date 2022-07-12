@@ -30,11 +30,11 @@ public:
 	std::set<int> get_halo_nodes() const;
 	void allocate_halo_arrays();
 	void fill_arrays(std::map<int,int> & globalToLocal);
-	static inline unsigned getIDx(int nSpd, int nIdx, int spd){
-		return nIdx*nSpd + spd;
-		// return spd*nnods + nIdx; // use this if it performs faster.
+	static inline unsigned getIDx(int nnodes, int nIdx, int spd){
+//		return nIdx*nSpd + spd;
+		return spd*nnodes + nIdx; // use this if it performs faster.
 	}
-	void extract_halo_data(const T* fOut, const int numSpd);
+	void extract_halo_data(const T* fOut, const int nnodes);
 	void insert_halo_data(T* fOut, const int numSpd);
 
 private:
@@ -60,21 +60,21 @@ HaloDataOrganizer<T>::~HaloDataOrganizer()
 }
 
 template <class T>
-void HaloDataOrganizer<T>::extract_halo_data(const T* fOut, const int numSpd)
+void HaloDataOrganizer<T>::extract_halo_data(const T* fOut, const int nnodes)
 {
 	for(auto & ngbIT : Halo)
 	{
-		ngbIT.second.extract_halo_data(fOut,numSpd);
+		ngbIT.second.extract_halo_data(fOut,nnodes);
 	}
 
 }
 
 template <class T>
-void HaloDataOrganizer<T>::insert_halo_data(T* fOut, const int numSpd)
+void HaloDataOrganizer<T>::insert_halo_data(T* fOut, const int nnodes)
 {
 	for(auto & ngbIT: Halo)
 	{
-		ngbIT.second.insert_halo_data(fOut,numSpd);
+		ngbIT.second.insert_halo_data(fOut,nnodes);
 	}
 }
 

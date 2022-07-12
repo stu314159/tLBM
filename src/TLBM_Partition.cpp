@@ -155,7 +155,7 @@ void TLBM_Partition::make_force_calc_map()
 		{ // iterate through neighbors.
 			for ( int spd=0; spd < numSpd; spd++)
 			{
-			   	idx =  getIDx(numSpd,nd,spd);
+			   	idx =  getIDx(totalNodes,nd,spd);
 			   	ngbNd = adjMatrix[idx];
 			   	ngbNd_type = ndType[ngbNd];
 
@@ -180,7 +180,7 @@ void TLBM_Partition::calc_force()
 	}
 
 	// get lattice information
-	int numSpd = myLattice->get_numSpd();
+//	int numSpd = myLattice->get_numSpd();
 	const int * ex = myLattice->get_ex();
     const int * ey = myLattice->get_ey();
 	const int * ez = myLattice->get_ez();
@@ -192,11 +192,12 @@ void TLBM_Partition::calc_force()
 		int fnd = fnd_pairs.first; // local node number of LP on fluid/surface interface
 		for ( auto & spd : fnd_pairs.second ) // iterate through speeds of fnd that point to fluid nodes
 		{
-			int idx = getIDx(numSpd,fnd,spd);
+			int idx = getIDx(totalNodes,fnd,spd);
 			int bb_spd = bb_spds[spd];
-			int ngbNd = adjMatrix[idx];
+//			int ngbNd = adjMatrix[idx];
 			real f1 = fOut[idx]; // get fOut in speed towards fluid neighbor
-			int idx_bb = getIDx(numSpd,ngbNd,bb_spd);
+//			int idx_bb = getIDx(numSpd,ngbNd,bb_spd);
+			int idx_bb = getIDx(totalNodes,fnd,bb_spd);
 			real f2 = fOut[idx_bb]; // get fOut from neighbor node, in speed towards fnd
 
 			Fx[fnd] += ex[bb_spd] * ( f1 + f2 );
@@ -265,7 +266,7 @@ void TLBM_Partition::create_adj_matrix(){
 		  tgt = get_tgt_index(node,ex[spd],ey[spd],ez[spd]);
 //		  printf("Rank %d, node %d, spd %d, tgt node: %d \n",
 //				  rank,node,spd,tgt);
-		  adjMatrix[getIDx(numSpd,nd,spd)] = tgt;
+		  adjMatrix[getIDx(numLnodes,nd,spd)] = tgt;
 	  }
   }
 }
@@ -275,7 +276,7 @@ void TLBM_Partition::print_adjacency(const int nd){
 	std::cout << "adjacency for nd " << nd << ": ";
 	for(unsigned int s=0; s<numSpd; s++)
 	{
-		std::cout << adjMatrix[getIDx(numSpd,nd,s)] << ", ";
+		std::cout << adjMatrix[getIDx(numLnodes,nd,s)] << ", ";
 	}
 	std::cout << std::endl;
 
@@ -290,7 +291,7 @@ void TLBM_Partition::compute_halo_data()
 		// iterate through the adjacency list for all of my local nodes
 		for(auto spd = 0; spd < numSpd; spd++)
 		{
-			tgtNd = adjMatrix[getIDx(numSpd,nd,spd)]; // get global node number of tgt node
+			tgtNd = adjMatrix[getIDx(numLnodes,nd,spd)]; // get global node number of tgt node
 			tgtP = partsG[tgtNd];// get partition number of tgt node
 			// if tgtP not equal to rank, then nd is in the set of boundary nodes
 			if (tgtP != rank)
@@ -330,7 +331,7 @@ void TLBM_Partition::compute_halo_data()
     	for(int spd = 0; spd < numSpd; ++spd)
     	{
     		const int * bbSpd = myLattice->get_bbSpd();
-    		tgtNd = adjMatrix[getIDx(numSpd,nd,spd)]; // get global node number of tgt node
+    		tgtNd = adjMatrix[getIDx(numLnodes,nd,spd)]; // get global node number of tgt node
     		tgtP = partsG[tgtNd];
     		if ( tgtP != rank)
     		{
@@ -411,8 +412,8 @@ void TLBM_Partition::make_adj_matrix_local()
 		// iterate through the adjacency list for all of my local nodes
 		for(auto spd = 0; spd < numSpd; spd++)
 		{
-		  tgtNd = adjMatrix[getIDx(numSpd,nd,spd)]; // get global node number of tgt node
-		  adjMatrix[getIDx(numSpd,nd,spd)] = globalToLocal.at(tgtNd);
+		  tgtNd = adjMatrix[getIDx(numLnodes,nd,spd)]; // get global node number of tgt node
+		  adjMatrix[getIDx(numLnodes,nd,spd)] = globalToLocal.at(tgtNd);
 		  // use map::at to generate an exception if tgtNd is not in the map
 		}
 	}
@@ -459,8 +460,8 @@ void TLBM_Partition::initialize_data_arrays()
 		{
 			for(auto spd = 0; spd < numSpd; ++spd)
 			{
-				fEven[getIDx(numSpd,nd,spd)] = w[spd]*rho;
-				fOdd[getIDx(numSpd,nd,spd)] = w[spd]*rho;
+				fEven[getIDx(totalNodes,nd,spd)] = w[spd]*rho;
+				fOdd[getIDx(totalNodes,nd,spd)] = w[spd]*rho;
 			}
 		}
 	}
@@ -527,8 +528,8 @@ void TLBM_Partition::load_restart_data()
 	// using the macroscopic data arrays, initialize fEven and fOdd
 	for(auto nd = 0; nd<numLnodes; ++nd)
 	{
-		myLattice->compute_equilibrium(fEven,ux,uy,uz,rho,nd);
-		myLattice->compute_equilibrium(fOdd,ux,uy,uz,rho,nd);
+		myLattice->compute_equilibrium(fEven,ux,uy,uz,rho,nd, totalNodes);
+		myLattice->compute_equilibrium(fOdd,ux,uy,uz,rho,nd, totalNodes);
 	}
 
 	// free memory allocated for restart data
@@ -741,17 +742,17 @@ void TLBM_Partition::process_node_list(real * fOut, real * fIn,
 
 	for(auto const & nd : nodeList)
 	{
-		myLattice->compute_macroscopic_data(ux,uy,uz,rho,fIn,nd);
+		myLattice->compute_macroscopic_data(ux,uy,uz,rho,fIn,nd,totalNodes);
 		if (ndType[nd] == 0)
 		{
-			myLattice->compute_equilibrium(fEq,ux,uy,uz,rho,nd);
+			myLattice->compute_equilibrium(fEq,ux,uy,uz,rho,nd,numLnodes);
 
 		}
 		if (ndType[nd] == 1) // 1 is a solid node
 		{
 			ux[nd] = 0; uy[nd] = 0; uz[nd] = 0; // set macroscopic speed to zero
-			myLattice->compute_equilibrium(fEq,ux,uy,uz,rho,nd);
-			myLattice->bounce_back(fIn,nd);
+			myLattice->compute_equilibrium(fEq,ux,uy,uz,rho,nd,numLnodes);
+			myLattice->bounce_back(fIn,nd,totalNodes);
 			//continue; // skip to next iteration of the for-loop
 		}
 
@@ -763,30 +764,30 @@ void TLBM_Partition::process_node_list(real * fOut, real * fIn,
 			// node type 5 = specified u_z node
 			if (ndType[nd] == 2) {
 				myLattice->set_inletW_bc_macro(fIn, ux, uy, uz, rho,
-						thisProblem.uLBM, nd);
+						thisProblem.uLBM, nd,totalNodes);
 				// other than solid nodes, all nodes will need to compute equilibrium.
-				myLattice->compute_equilibrium(fEq, ux, uy, uz, rho, nd);
-				myLattice->set_inletW_bc_micro(fIn, fEq, nd);
+				myLattice->compute_equilibrium(fEq, ux, uy, uz, rho, nd,numLnodes);
+				myLattice->set_inletW_bc_micro(fIn, fEq, nd,totalNodes, numLnodes);
 			}
 			if (ndType[nd] == 3) {
 				myLattice->set_outletE_bc_macro(fIn, uz, rho, thisProblem.rhoLBM,
-						nd);
+						nd,totalNodes);
 				// other than solid nodes, all nodes will need to compute equilibrium.
-				myLattice->compute_equilibrium(fEq, ux, uy, uz, rho, nd);
-				myLattice->set_outletE_bc_micro(fIn, fEq, nd);
+				myLattice->compute_equilibrium(fEq, ux, uy, uz, rho, nd, numLnodes);
+				myLattice->set_outletE_bc_micro(fIn, fEq, nd,totalNodes, numLnodes);
 			}
 			if (ndType[nd] == 5) {
 				myLattice->set_uz_bc(fIn, ux, uy, uz, rho, thisProblem.uLBM,
-						nd);
+						nd,totalNodes);
 				// other than solid nodes, all nodes will need to compute equilibrium.
-				myLattice->compute_equilibrium(fEq, ux, uy, uz, rho, nd);
+				myLattice->compute_equilibrium(fEq, ux, uy, uz, rho, nd, numLnodes);
 			}
 
 			real omega = thisProblem.omega;
 			if (thisProblem.cs > 0) {
 				// create data structures needed for each individual lattice point
 				real S[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				myLattice->compute_strain_tensor(S, fIn, fEq, nd);
+				myLattice->compute_strain_tensor(S, fIn, fEq, nd,totalNodes, numLnodes);
 				omega = myLattice->apply_turbulence_model(omega, S,
 						thisProblem.cs);
 			}
@@ -794,12 +795,12 @@ void TLBM_Partition::process_node_list(real * fOut, real * fIn,
 			// pick between relaxation methodologies
 			switch (thisProblem.dynamics) {
 			case 1:
-				myLattice->relax(fIn, fEq, omega, nd);
+				myLattice->relax(fIn, fEq, omega, nd,totalNodes, numLnodes);
 				break;
 
 			case 2: // for now, do not do this.
 				real piFlat[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-				myLattice->compute_piflat(piFlat, fIn, fEq, nd);
+				myLattice->compute_piflat(piFlat, fIn, fEq, nd, totalNodes);
 
 				break;
 				//		case 3:
@@ -828,9 +829,9 @@ void TLBM_Partition::stream_node_data(real * fOut, const real * fIn, const int n
 	int numSpd = myLattice->get_numSpd();
 	for(int spd = 0; spd<numSpd;++spd)
 	{
-		int idx = getIDx(numSpd,nd,spd);
-		int t_nd = adjMatrix[idx];
-		int t_idx = getIDx(numSpd,t_nd,spd);
+		int idx = getIDx(totalNodes,nd,spd);
+		int t_nd = adjMatrix[getIDx(numLnodes,nd,spd)];
+		int t_idx = getIDx(totalNodes,t_nd,spd);
 		fOut[t_idx] = fIn[idx];
 	}
 
@@ -859,28 +860,28 @@ int TLBM_Partition::get_num_global_nodes()
 
 real TLBM_Partition::get_data_member(const real * f, const int nd, const int spd)
 {
-	int numSpd = myLattice->get_numSpd();
-	return f[getIDx(numSpd,nd,spd)];
+//	int numSpd = myLattice->get_numSpd();
+	return f[getIDx(totalNodes,nd,spd)];
 }
 
 void TLBM_Partition::set_data_member(real * f,const real val, const int nd, const int spd)
 {
-	int numSpd = myLattice->get_numSpd();
-	f[getIDx(numSpd,nd,spd)] = val;
+//	int numSpd = myLattice->get_numSpd();
+	f[getIDx(totalNodes,nd,spd)] = val;
 }
 
 void TLBM_Partition::extract_halo_data(real * fOut)
 {
-	int numSpd = myLattice->get_numSpd();
-	HDO_out.extract_halo_data(fOut,numSpd);
+//	int numSpd = myLattice->get_numSpd();
+	HDO_out.extract_halo_data(fOut,totalNodes);
 
 }
 
 void TLBM_Partition::insert_halo_data(real * fOut)
 {
 	//printf("Rank %d inserting halo data\n",rank);
-	int numSpd = myLattice->get_numSpd();
-	HDO_in.insert_halo_data(fOut,numSpd);
+//	int numSpd = myLattice->get_numSpd();
+	HDO_in.insert_halo_data(fOut,totalNodes);
 
 }
 

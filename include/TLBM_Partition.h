@@ -54,9 +54,9 @@ class TLBM_Partition{
     void write_data();
     void write_time_avg_data();
     void process_node_list(real * fOut, real * fIn, const std::set<int>& nodeList);
-    static inline unsigned getIDx(int nSpd, int nIdx, int spd){
-    	return nIdx*nSpd + spd;
-    	// return spd*nnods + nIdx; // use this if it performs faster.
+    static inline unsigned getIDx(int nnodes, int nIdx, int spd){
+//    	return nIdx*nSpd + spd;
+        return spd*nnodes + nIdx; // use this if it performs faster.
     }
     void print_adjacency(const int nIdx);
 

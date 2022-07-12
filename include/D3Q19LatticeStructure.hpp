@@ -18,11 +18,14 @@ public:
   D3Q19LatticeStructure();
   ~D3Q19LatticeStructure();
   void set_inletW_bc_macro(const T * fIn, T* ux, T* uy, T * uz, T * rho,
-		  const T u_bc, const int nd);
-  void bounce_back(T* fIn, const int nd);
-  void set_inletW_bc_micro(T* fIn, const T* fEq, const int nd);
-  void set_outletE_bc_macro(const T* fIn, T* uz, T* rho, const T rho_bc, const int nd);
-  void set_outletE_bc_micro(T* fIn, const T* fEq, const int nd);
+		  const T u_bc, const int nd, const int nnodes);
+  void bounce_back(T* fIn, const int nd, const int nnodes);
+  void set_inletW_bc_micro(T* fIn, const T* fEq, const int nd, const int nnodes,
+		  const int nlnodes);
+  void set_outletE_bc_macro(const T* fIn, T* uz, T* rho, const T rho_bc, const int nd,
+		  const int nnodes);
+  void set_outletE_bc_micro(T* fIn, const T* fEq, const int nd, const int nnodes,
+		  const int nlnodes);
 
 private:
   static const int numSpd = 19;
@@ -62,43 +65,45 @@ D3Q19LatticeStructure<T>::~D3Q19LatticeStructure(){
 }
 
 template < class T >
-void D3Q19LatticeStructure<T>::bounce_back(T* fIn, const int nd){
+void D3Q19LatticeStructure<T>::bounce_back(T* fIn, const int nd, const int nnodes){
 	T tmp[numSpd];
 	for(int s=0;s<numSpd;++s)
 	{
-		tmp[s] = fIn[this->getIDx(numSpd,nd,bbSpd[s])];
+		tmp[s] = fIn[this->getIDx(nnodes,nd,bbSpd[s])];
 	}
 	for(int s=0;s<numSpd;++s)
 	{
-		fIn[this->getIDx(numSpd,nd,s)]=tmp[s];
+		fIn[this->getIDx(nnodes,nd,s)]=tmp[s];
 	}
 
 }
 
 
 template <class T>
-void D3Q19LatticeStructure<T>::set_inletW_bc_micro(T* fIn, const T* fEq, const int n)
+void D3Q19LatticeStructure<T>::set_inletW_bc_micro(T* fIn, const T* fEq, const int n,
+		const int nnodes, const int nlnodes)
 {
 	int sp[5]={5,11,12,15,16};
 	int bbSp[5]={6,14,13,18,17};
 	int numBB = 5;
 	for(int s=0 ; s<numBB ; ++s)
 	{
-		fIn[this->getIDx(numSpd,n,sp[s])]= fEq[this->getIDx(numSpd,n,sp[s])]+
-				fIn[this->getIDx(numSpd,n,bbSp[s])]-fEq[this->getIDx(numSpd,n,bbSp[s])];
+		fIn[this->getIDx(nnodes,n,sp[s])]= fEq[this->getIDx(nlnodes,n,sp[s])]+
+				fIn[this->getIDx(nnodes,n,bbSp[s])]-fEq[this->getIDx(nlnodes,n,bbSp[s])];
 	}
 }
 
 template <class T>
-void D3Q19LatticeStructure<T>::set_outletE_bc_micro(T* fIn, const T* fEq, const int nd)
+void D3Q19LatticeStructure<T>::set_outletE_bc_micro(T* fIn, const T* fEq, const int nd,
+		const int nnodes, const int nlnodes)
 {
 	int sp[5]={6,14,13,18,17};
 	int bbSp[5]={5,11,12,15,16};
 	int numBB = 5;
 	for(int s=0;s<numBB;s++)
 	{
-		fIn[this->getIDx(numSpd,nd,sp[s])] = fEq[this->getIDx(numSpd,nd,sp[s])] +
-				fIn[this->getIDx(numSpd,nd,bbSp[s])]-fEq[this->getIDx(numSpd,nd,bbSp[s])];
+		fIn[this->getIDx(nnodes,nd,sp[s])] = fEq[this->getIDx(nlnodes,nd,sp[s])] +
+				fIn[this->getIDx(nnodes,nd,bbSp[s])]-fEq[this->getIDx(nlnodes,nd,bbSp[s])];
 	}
 
 }
@@ -106,25 +111,25 @@ void D3Q19LatticeStructure<T>::set_outletE_bc_micro(T* fIn, const T* fEq, const 
 
 template <class T>
 void D3Q19LatticeStructure<T>::set_inletW_bc_macro(const T * fIn,T* ux, T* uy,T * uz,
-		T * rho, const T u_bc, const int nd)
+		T * rho, const T u_bc, const int nd, const int nnodes)
 {
 
 
 	T f0, f1, f2, f3, f4, f6, f7, f8, f9, f10, f13, f14, f17, f18;
-	f0 = fIn[this->getIDx(numSpd,nd,0)];
-	f1 = fIn[this->getIDx(numSpd,nd,1)];
-	f2 = fIn[this->getIDx(numSpd,nd,2)];
-	f3 = fIn[this->getIDx(numSpd,nd,3)];
-	f4 = fIn[this->getIDx(numSpd,nd,4)];
-	f6 = fIn[this->getIDx(numSpd,nd,6)];
-	f7 = fIn[this->getIDx(numSpd,nd,7)];
-	f8 = fIn[this->getIDx(numSpd,nd,8)];
-	f9 = fIn[this->getIDx(numSpd,nd,9)];
-	f10 = fIn[this->getIDx(numSpd,nd,10)];
-	f13 = fIn[this->getIDx(numSpd,nd,13)];
-	f14 = fIn[this->getIDx(numSpd,nd,14)];
-	f17 = fIn[this->getIDx(numSpd,nd,17)];
-	f18 = fIn[this->getIDx(numSpd,nd,18)];
+	f0 = fIn[this->getIDx(nnodes,nd,0)];
+	f1 = fIn[this->getIDx(nnodes,nd,1)];
+	f2 = fIn[this->getIDx(nnodes,nd,2)];
+	f3 = fIn[this->getIDx(nnodes,nd,3)];
+	f4 = fIn[this->getIDx(nnodes,nd,4)];
+	f6 = fIn[this->getIDx(nnodes,nd,6)];
+	f7 = fIn[this->getIDx(nnodes,nd,7)];
+	f8 = fIn[this->getIDx(nnodes,nd,8)];
+	f9 = fIn[this->getIDx(nnodes,nd,9)];
+	f10 = fIn[this->getIDx(nnodes,nd,10)];
+	f13 = fIn[this->getIDx(nnodes,nd,13)];
+	f14 = fIn[this->getIDx(nnodes,nd,14)];
+	f17 = fIn[this->getIDx(nnodes,nd,17)];
+	f18 = fIn[this->getIDx(nnodes,nd,18)];
     uz[nd] = u_bc; ux[nd] = 0; uy[nd] = 0;
     rho[nd] = (1./(1.-u_bc))*(2.*(f6 + f13 + f14 + f17 + f18) +
     		(f0 + f1 + f2 + f3 + f4 + f7 + f8 + f9 + f10));
@@ -132,24 +137,25 @@ void D3Q19LatticeStructure<T>::set_inletW_bc_macro(const T * fIn,T* ux, T* uy,T 
 }
 
 template <class T>
-void D3Q19LatticeStructure<T>::set_outletE_bc_macro(const T* fIn, T* uz, T* rho, const T rho_bc, const int nd)
+void D3Q19LatticeStructure<T>::set_outletE_bc_macro(const T* fIn, T* uz, T* rho, const T rho_bc,
+		const int nd, const int nnodes)
 {
 	rho[nd] = rho_bc;
 	T f0,f1,f2,f3,f4,f5,f7,f8,f9,f10,f11,f12,f15,f16;
-	f0 = fIn[this->getIDx(numSpd,nd,0)];
-	f1 = fIn[this->getIDx(numSpd,nd,1)];
-	f2 = fIn[this->getIDx(numSpd,nd,2)];
-	f3 = fIn[this->getIDx(numSpd,nd,3)];
-	f4 = fIn[this->getIDx(numSpd,nd,4)];
-	f5 = fIn[this->getIDx(numSpd,nd,5)];
-	f7 = fIn[this->getIDx(numSpd,nd,7)];
-	f8 = fIn[this->getIDx(numSpd,nd,8)];
-	f9 = fIn[this->getIDx(numSpd,nd,9)];
-	f10 = fIn[this->getIDx(numSpd,nd,10)];
-	f11 = fIn[this->getIDx(numSpd,nd,11)];
-	f12 = fIn[this->getIDx(numSpd,nd,12)];
-	f15 = fIn[this->getIDx(numSpd,nd,15)];
-	f16 = fIn[this->getIDx(numSpd,nd,16)];
+	f0 = fIn[this->getIDx(nnodes,nd,0)];
+	f1 = fIn[this->getIDx(nnodes,nd,1)];
+	f2 = fIn[this->getIDx(nnodes,nd,2)];
+	f3 = fIn[this->getIDx(nnodes,nd,3)];
+	f4 = fIn[this->getIDx(nnodes,nd,4)];
+	f5 = fIn[this->getIDx(nnodes,nd,5)];
+	f7 = fIn[this->getIDx(nnodes,nd,7)];
+	f8 = fIn[this->getIDx(nnodes,nd,8)];
+	f9 = fIn[this->getIDx(nnodes,nd,9)];
+	f10 = fIn[this->getIDx(nnodes,nd,10)];
+	f11 = fIn[this->getIDx(nnodes,nd,11)];
+	f12 = fIn[this->getIDx(nnodes,nd,12)];
+	f15 = fIn[this->getIDx(nnodes,nd,15)];
+	f16 = fIn[this->getIDx(nnodes,nd,16)];
 
 	uz[nd] = -1. + (1./rho_bc)*(2.*(f5+f11+f12+f15+f16)+(f0+f1+f2+f3+f4+f7+f8+f9+f10));
 
