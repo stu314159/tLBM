@@ -1,6 +1,6 @@
-cmake_minimum_required (VERSION 3.5)
-project (tLBM VERSION 0.1
-               LANGUAGES CXX)
+cmake_minimum_required (VERSION 3.17)
+project (tLBM VERSION 0.2
+	LANGUAGES CUDA CXX)
 
 find_package(MPI REQUIRED)
 find_package(HDF5 REQUIRED COMPONENTS CXX)
