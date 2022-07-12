@@ -104,6 +104,25 @@ class TLBM_Partition{
     real * Fy = NULL;
     real * Fz = NULL;
 
+//    // Device Arrays
+//    real * d_fIn = NULL;
+//    real * d_fOut = NULL;
+//    real * d_fEven = NULL;
+//    real * d_fOdd = NULL;
+//    real * d_ux = NULL;
+//    real * d_uy = NULL;
+//    real * d_uz = NULL;
+//    real * d_uAvg = NULL;
+//    real * d_vAvg = NULL;
+//    real * d_wAvg = NULL;
+//    real * d_rhoAvg = NULL;
+//    real * d_Fx = NULL;
+//    real * d_Fy = NULL;
+//    real * d_Fz = NULL;
+//    int * d_INL = NULL;
+//    int * d_BNL = NULL;
+//    int * d_ndType = NULL;
+
     bool timeAvg;
 
     MPI_Request * mpiOutRequest = NULL;

@@ -4,6 +4,7 @@ project (tLBM VERSION 0.2
 
 find_package(MPI REQUIRED)
 find_package(HDF5 REQUIRED COMPONENTS CXX)
+find_package(CUDA REQUIRED)
 
 
 #[==[
