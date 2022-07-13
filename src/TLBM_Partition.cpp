@@ -282,7 +282,7 @@ void TLBM_Partition::create_adj_matrix(){
   const int * ez = myLattice->get_ez();
   int tgt, node;
   for (int nd = 0; nd < numLnodes;nd++){
-	  node = localNdList[nd];// note this is a global node number of the local node
+	  node = localNdList[nd];// note this (node) is a global node number of the local node (nd)
 	  for(unsigned spd = 0; spd < numSpd; spd++){
 		  tgt = get_tgt_index(node,ex[spd],ey[spd],ez[spd]);
 //		  printf("Rank %d, node %d, spd %d, tgt node: %d \n",
@@ -488,7 +488,7 @@ void TLBM_Partition::initialize_data_arrays()
 		load_restart_data();
 	}else
 	{
-		for(auto nd = 0; nd<numLnodes; ++nd)
+		for(auto nd = 0; nd<totalNodes; ++nd)
 		{
 			for(auto spd = 0; spd < numSpd; ++spd)
 			{
