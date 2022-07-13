@@ -20,9 +20,6 @@ int main(int argc, char* argv[]){
 	// initialize the partition.  TLBM_Partition reads input files to obtain problem data.
 	TLBM_Partition myPart(rank,size,MPI_COMM_WORLD);
 
-	printf("Rank %d initialized \n",rank);
-
-
 	int numTs, tsRepFreq, warmupTs, plotFreq, timeAvgFlag;
 
 

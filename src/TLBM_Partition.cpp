@@ -91,11 +91,15 @@ int TLBM_Partition::tlbm_initialize(){
 	  throw std::invalid_argument("Invalid Lattice Structure!");
   }
 
+
   load_parts();
 
   create_adj_matrix();
 
+
   compute_halo_data();
+
+
 
   make_adj_matrix_local();
 
@@ -105,13 +109,30 @@ int TLBM_Partition::tlbm_initialize(){
 
   initialize_data_arrays();
 
+
+
   write_node_ordering();
 
   make_interior_node_list();
 
   finalize_halo_data_arrays();
 
+
+
   make_force_calc_map();
+
+  // swap HALO information to ensure consistency
+
+
+  swap_halo_node_data();
+
+  swap_halo_speed_data();
+
+  // the HDO_in objects should now have the comp_ndNums and comp_spds arrays populated
+  // with information passed from their neighboring partitions
+  check_halo_data();
+
+
 
 
   return 0;
@@ -155,7 +176,7 @@ void TLBM_Partition::make_force_calc_map()
 		{ // iterate through neighbors.
 			for ( int spd=0; spd < numSpd; spd++)
 			{
-			   	idx =  getIDx(totalNodes,nd,spd);
+			   	idx =  getIDx(numLnodes,nd,spd);
 			   	ngbNd = adjMatrix[idx];
 			   	ngbNd_type = ndType[ngbNd];
 
@@ -324,13 +345,14 @@ void TLBM_Partition::compute_halo_data()
     // iterate over boundary nodes, traverse the boundary node
     // adjacency list, and add nodes from the halo into the HDOs.
 
+    const int * bbSpd = myLattice->get_bbSpd();
     for (const auto & bnlIt : boundaryNdList)
     {
 
     	int nd = bnlIt; // bnl is already the local node number of boundary nodes
     	for(int spd = 0; spd < numSpd; ++spd)
     	{
-    		const int * bbSpd = myLattice->get_bbSpd();
+
     		tgtNd = adjMatrix[getIDx(numLnodes,nd,spd)]; // get global node number of tgt node
     		tgtP = partsG[tgtNd];
     		if ( tgtP != rank)
@@ -398,6 +420,16 @@ void TLBM_Partition::finalize_halo_data_arrays()
 
 
 
+}
+
+void TLBM_Partition::check_halo_data()
+{
+	int numHaloErrors = HDO_in.check_ndNums_and_spds(globalToLocal);
+
+	if(numHaloErrors > 0)
+	{
+		printf("Rank %d reports %d Halo Errors \n", rank, numHaloErrors);
+	}
 }
 
 void TLBM_Partition::make_adj_matrix_local()
@@ -906,6 +938,55 @@ void TLBM_Partition::initiate_data_exchange()
 	}
 
 
+}
+
+void TLBM_Partition::swap_halo_node_data()
+{
+	int ngbIndex = 0;
+	int count;
+
+	int * in_buff;
+	int * out_buff;
+
+	for(auto & ngbIt : ngbSet)
+	{
+		out_buff = HDO_out[ngbIt].get_g_ndNums();
+		in_buff = HDO_in[ngbIt].get_comp_ndNums_buffer();
+		count = HDO_out[ngbIt].get_num_items();
+
+		MPI_Isend(static_cast<void *>(out_buff),count,MPI_INT,ngbIt,ngbIndex,comm,mpiOutRequest+ngbIndex);
+		MPI_Irecv(static_cast<void *>(in_buff),count,MPI_INT,ngbIt,MPI_ANY_TAG,comm,mpiInRequest+ngbIndex);
+		++ngbIndex;
+
+	}
+
+	// ensure MPI comms are complete
+	MPI_Waitall(ngbSet.size(),mpiInRequest,mpiStatus);
+
+}
+
+void TLBM_Partition::swap_halo_speed_data()
+{
+	int ngbIndex = 0;
+	int count;
+
+	int * in_buff;
+	int * out_buff;
+
+	for(auto & ngbIt : ngbSet)
+	{
+		out_buff = HDO_out[ngbIt].get_spds();
+		in_buff = HDO_in[ngbIt].get_comp_spds_buffer();
+		count = HDO_out[ngbIt].get_num_items();
+
+		MPI_Isend(static_cast<void *>(out_buff),count,MPI_INT,ngbIt,ngbIndex,comm,mpiOutRequest+ngbIndex);
+		MPI_Irecv(static_cast<void *>(in_buff),count,MPI_INT,ngbIt,MPI_ANY_TAG,comm,mpiInRequest+ngbIndex);
+		++ngbIndex;
+
+	}
+
+	// ensure MPI comms are complete
+	MPI_Waitall(ngbSet.size(),mpiInRequest,mpiStatus);
 }
 
 void TLBM_Partition::take_LBM_time_step(bool isEven)

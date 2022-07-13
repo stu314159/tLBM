@@ -29,6 +29,7 @@ public:
 	void print_halo();
 	std::set<int> get_halo_nodes() const;
 	void allocate_halo_arrays();
+	int check_ndNums_and_spds(std::map<int,int> & globalToLocal);
 	void fill_arrays(std::map<int,int> & globalToLocal);
 	static inline unsigned getIDx(int nnodes, int nIdx, int spd){
 //		return nIdx*nSpd + spd;
@@ -96,6 +97,19 @@ void HaloDataOrganizer<T>::fill_arrays(std::map<int,int> & globalToLocal)
 	}
 
 }
+
+template <class T>
+int HaloDataOrganizer<T>::check_ndNums_and_spds(std::map<int,int> & globalToLocal)
+{
+	int errCt = 0;
+	for(auto & haloIt : Halo)
+	{
+		errCt += haloIt.second.check_ndNums_and_spds(globalToLocal);
+	}
+
+	return errCt;
+}
+
 
 template <class T>
 std::set<int> HaloDataOrganizer<T>::get_halo_nodes() const

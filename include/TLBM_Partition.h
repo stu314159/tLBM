@@ -52,6 +52,9 @@ class TLBM_Partition{
     void set_data_member(real * f, const real val, const int nd, const int spd);
     void take_LBM_time_step(bool isEven);
     void write_data();
+    void swap_halo_node_data();
+    void swap_halo_speed_data();
+    void check_halo_data();
     void write_time_avg_data();
     void process_node_list(real * fOut, real * fIn, const std::set<int>& nodeList);
     static inline unsigned getIDx(int nnodes, int nIdx, int spd){

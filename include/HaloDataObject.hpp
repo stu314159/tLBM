@@ -31,8 +31,16 @@ public:
 	int get_num_nodes()const;
 	std::set<int> get_halo_nodes() const;
 	T* get_buffer() const;
+
+
+	int * get_comp_ndNums_buffer() const;
+	int * get_comp_spds_buffer() const;
+
 	int * get_ndNums(){return ndNums;}
+	int * get_g_ndNums() {return g_ndNums;}
 	int * get_spds(){return spds;}
+
+	int check_ndNums_and_spds(std::map<int,int> & globalToLocal) const;
 
 	void allocate_arrays();
 	void fill_nums_and_speeds(std::map<int,int> & globalToLocal);
@@ -50,6 +58,10 @@ private:
 	T* buffer;
 	int * ndNums;
 	int * spds;
+	int * g_ndNums;
+
+	int * comp_ndNums;
+	int * comp_spds;
 
 };
 
@@ -60,11 +72,16 @@ void HaloDataObject<T>::allocate_arrays()
   buffer = new T[numItems];
   ndNums = new int[numItems];
   spds = new int[numItems];
+
+  g_ndNums = new int[numItems];
+  comp_ndNums = new int[numItems];
+  comp_spds = new int[numItems];
+
 }
 
 template <class T>
 HaloDataObject<T>::HaloDataObject():
-numItems(0), buffer(0), ndNums(0), spds(0)
+numItems(0), buffer(0), ndNums(0), spds(0), g_ndNums(0), comp_ndNums(0),comp_spds(0)
 {
 
 }
@@ -89,6 +106,27 @@ void HaloDataObject<T>::insert_halo_data(T* fOut, const int nnodes)
 }
 
 template <class T>
+int HaloDataObject<T>::check_ndNums_and_spds(std::map<int,int> & globalToLocal) const
+{
+	int spdCount = 0;
+	int ndCount = 0;
+	for(int i = 0; i<numItems; ++i)
+	{
+		if (spds[i] != comp_spds[i])
+		{
+			spdCount++;
+//			spds[i] = comp_spds[i]; // try fixing this.
+		}
+		if (ndNums[i] != globalToLocal[comp_ndNums[i]])
+		{
+			ndCount++;
+//			ndNums[i] = globalToLocal[comp_ndNums[i]]; // try fixing this.
+		}
+	}
+	return (spdCount + ndCount);
+}
+
+template <class T>
 void HaloDataObject<T>::fill_nums_and_speeds(std::map<int,int> & globalToLocal)
 {
 	int entry = 0;
@@ -99,6 +137,7 @@ void HaloDataObject<T>::fill_nums_and_speeds(std::map<int,int> & globalToLocal)
 		for(const auto & spdIt : gNdIt.second)
 		{
 			ndNums[entry] = lNd;
+			g_ndNums[entry] = gNd;
 			spds[entry] = spdIt;
 			++entry;
 		}
@@ -113,6 +152,10 @@ HaloDataObject<T>::~HaloDataObject()
   delete [] buffer;
   delete [] ndNums;
   delete [] spds;
+  delete [] g_ndNums;
+
+  delete [] comp_ndNums;
+  delete [] comp_spds;
 }
 
 template <class T>
@@ -120,6 +163,19 @@ T* HaloDataObject<T>::get_buffer() const
 {
 	return buffer;
 }
+
+template <class T>
+int * HaloDataObject<T>::get_comp_ndNums_buffer() const
+{
+	return comp_ndNums;
+}
+
+template <class T>
+int * HaloDataObject<T>::get_comp_spds_buffer() const
+{
+	return comp_spds;
+}
+
 
 template <class T>
 std::set<int> HaloDataObject<T>::get_halo_nodes() const
