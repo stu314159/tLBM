@@ -468,6 +468,8 @@ void TLBM_Partition::allocate_arrays()
 	Fy = new real[numLnodes];
 	Fz = new real[numLnodes];
 
+	timeAvg = thisProblem.timeAvgFlag;
+
 	if (timeAvg == 1)
 	{
 		uAvg = new real[numLnodes];
