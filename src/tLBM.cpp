@@ -41,7 +41,7 @@ int main(int argc, char* argv[]){
 	// carry out time-stepping process
 	timeStart = MPI_Wtime();
 
-
+        // commmence time stepping
 	for(int ts = 0; ts < numTs; ++ts)
 	{
 		if((rank == 0) & ((ts+1)%tsRepFreq==0))
